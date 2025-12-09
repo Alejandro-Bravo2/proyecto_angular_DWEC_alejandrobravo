@@ -1,0 +1,60 @@
+// ============================================================================
+// COFIRA - Heading Elements
+// ============================================================================
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-heading;
+  font-weight: $font-weight-bold;
+  line-height: $line-height-tight;
+  color: var(--text-primary);
+  margin-bottom: $spacing-s;
+}
+
+h1 {
+  font-size: $font-size-h2; // Mobile first
+
+  @include respond-to(m) {
+    font-size: $font-size-h1; // 48px en desktop
+  }
+}
+
+h2 {
+  font-size: $font-size-h3;
+
+  @include respond-to(m) {
+    font-size: $font-size-h2; // 36px en desktop
+  }
+}
+
+h3 {
+  font-size: $font-size-h4;
+  font-weight: $font-weight-semibold;
+
+  @include respond-to(m) {
+    font-size: $font-size-h3; // 24px en desktop
+  }
+}
+
+h4 {
+  font-size: $font-size-body;
+  font-family: $font-family-base;
+  font-weight: $font-weight-semibold;
+
+  @include respond-to(m) {
+    font-size: $font-size-h4; // 20px en desktop
+  }
+}
+
+h5 {
+  font-size: $font-size-body;
+  font-family: $font-family-base;
+  font-weight: $font-weight-semibold;
+}
+
+h6 {
+  font-size: $font-size-small;
+  font-family: $font-family-base;
+  font-weight: $font-weight-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}

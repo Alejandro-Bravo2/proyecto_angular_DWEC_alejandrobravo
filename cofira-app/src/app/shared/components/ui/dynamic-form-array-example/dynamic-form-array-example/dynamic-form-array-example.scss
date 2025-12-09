@@ -1,0 +1,58 @@
+@import '../../../../../../styles/settings/colors';
+@import '../../../../../../styles/settings/typography';
+@import '../../../../../../styles/settings/spacing';
+@import '../../../../../../styles/settings/radios';
+@import '../../../../../../styles/settings/breakpoints';
+@import '../../../../../../styles/tools/mixins';
+@import '../../../../../../styles/components/_buttons.scss';
+@import '../../../../../../styles/components/_forms.scss';
+@import '../../../../../../styles/components/_cards.scss';
+
+.dynamic-form-array-example {
+  @include card;
+  padding: $spacing-xl;
+  max-width: 600px;
+  margin: $spacing-xl auto;
+
+  &__header {
+    margin-bottom: $spacing-xl;
+    text-align: center;
+
+    h1 {
+      font-family: $font-family-heading;
+      font-size: $font-size-h2;
+      margin-bottom: $spacing-xs;
+      color: var(--text-primary);
+    }
+
+    p {
+      font-size: $font-size-body;
+      color: var(--text-secondary);
+    }
+  }
+
+  &__phone-input-group {
+    display: flex;
+    gap: $spacing-s;
+    align-items: center;
+
+    .c-form__input {
+      flex-grow: 1;
+    }
+
+    .c-button--ghost {
+      color: $color-error;
+    }
+  }
+
+  &__footer {
+    margin-top: $spacing-xl;
+    text-align: center;
+    border-top: 1px solid var(--card-border);
+    padding-top: $spacing-m;
+
+    .c-button {
+      width: 100%;
+    }
+  }
+}

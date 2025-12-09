@@ -1,0 +1,338 @@
+// ============================================================================
+// COFIRA - Forms Component
+// ============================================================================
+
+.c-form {
+  // Form Group (campo + label + error)
+  &__group {
+    margin-bottom: $spacing-m;
+  }
+
+  // Label
+  &__label {
+    display: block;
+    margin-bottom: $spacing-xs;
+    font-size: $font-size-body;
+    font-weight: $font-weight-medium;
+    color: var(--text-primary);
+
+    // Required indicator
+    &--required::after {
+      content: ' *';
+      color: $color-error;
+    }
+  }
+
+  // Input, Textarea, Select base styles
+  &__input,
+  &__textarea,
+  &__select {
+    width: 100%;
+    padding: $spacing-s;
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    border-radius: $radius-xs;
+    color: var(--text-primary);
+    font-size: $font-size-body;
+    font-family: $font-family-base;
+    @include transition(border-color box-shadow);
+
+    @include placeholder {
+      color: var(--text-disabled);
+    }
+
+    // Focus state
+    &:focus {
+      outline: none;
+      border-color: $color-brand-primary;
+      box-shadow: 0 0 0 3px rgba($color-brand-primary, 0.2);
+    }
+
+    // Error state
+    &--error {
+      border-color: $color-error;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba($color-error, 0.2);
+      }
+    }
+
+    // Success state
+    &--success {
+      border-color: $color-success;
+
+      &:focus {
+        box-shadow: 0 0 0 3px rgba($color-success, 0.2);
+      }
+    }
+
+    // Disabled state
+    &:disabled {
+      background-color: var(--bg-secondary);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+  }
+
+  // Textarea específico
+  &__textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: $line-height-normal;
+  }
+
+  // Select específico
+  &__select {
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right $spacing-s center;
+    padding-right: $spacing-xl;
+    cursor: pointer;
+  }
+
+  // Error message
+  &__error {
+    display: block;
+    margin-top: $spacing-xs;
+    color: $color-error;
+    font-size: $font-size-small;
+    font-weight: $font-weight-medium;
+  }
+
+  // Hint/Help text
+  &__hint {
+    display: block;
+    margin-top: $spacing-xs;
+    color: var(--text-secondary);
+    font-size: $font-size-small;
+  }
+
+  // Loading indicator
+  &__loading {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    margin-top: $spacing-xs;
+    color: $color-info;
+    font-size: $font-size-small;
+    font-style: italic;
+
+    &::before {
+      content: '';
+      width: 14px;
+      height: 14px;
+      border: 2px solid currentColor;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+  }
+}
+
+// ========================================
+// Checkbox & Radio
+// ========================================
+
+.c-checkbox,
+.c-radio {
+  display: flex;
+  align-items: flex-start;
+  gap: $spacing-xs;
+  cursor: pointer;
+  user-select: none;
+
+  input[type="checkbox"],
+  input[type="radio"] {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px; // Alinear con texto
+    cursor: pointer;
+    accent-color: $color-brand-primary;
+
+    &:focus-visible {
+      outline: 2px solid $color-brand-primary;
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  label {
+    cursor: pointer;
+    user-select: none;
+    flex: 1;
+  }
+
+  // Disabled state
+  &--disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    input,
+    label {
+      cursor: not-allowed;
+    }
+  }
+}
+
+// ========================================
+// Input con icono
+// ========================================
+
+.c-input-group {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+
+  &__icon {
+    position: absolute;
+    left: $spacing-s;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-disabled);
+    pointer-events: none;
+
+    &--right {
+      left: auto;
+      right: $spacing-s;
+    }
+  }
+
+  &__input {
+    flex: 1;
+
+    &--with-icon-left {
+      padding-left: $spacing-xl;
+    }
+
+    &--with-icon-right {
+      padding-right: $spacing-xl;
+    }
+  }
+
+  &__addon {
+    display: flex;
+    align-items: center;
+    padding: 0 $spacing-s;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--input-border);
+    color: var(--text-secondary);
+    font-size: $font-size-small;
+    white-space: nowrap;
+
+    &--left {
+      border-right: none;
+      border-radius: $radius-xs 0 0 $radius-xs;
+
+      + .c-form__input {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+      }
+    }
+
+    &--right {
+      border-left: none;
+      border-radius: 0 $radius-xs $radius-xs 0;
+    }
+  }
+}
+
+// ========================================
+// Switch Toggle
+// ========================================
+
+.c-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-s;
+  cursor: pointer;
+  user-select: none;
+
+  &__input {
+    @include visually-hidden;
+
+    &:checked + .c-switch__slider {
+      background-color: $color-brand-primary;
+
+      &::before {
+        transform: translateX(20px);
+      }
+    }
+
+    &:focus-visible + .c-switch__slider {
+      outline: 2px solid $color-brand-primary;
+      outline-offset: 2px;
+    }
+
+    &:disabled + .c-switch__slider {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background-color: var(--input-border);
+    border-radius: $radius-pill;
+    @include transition(background-color);
+    cursor: pointer;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background-color: $color-white;
+      border-radius: 50%;
+      @include transition(transform);
+    }
+  }
+
+  &__label {
+    cursor: pointer;
+  }
+}
+
+// ========================================
+// File Upload
+// ========================================
+
+.c-file-upload {
+  &__input {
+    @include visually-hidden;
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-s $spacing-m;
+    background-color: var(--card-bg);
+    border: 2px dashed var(--input-border);
+    border-radius: $radius-xs;
+    cursor: pointer;
+    @include transition(all);
+
+    &:hover {
+      border-color: $color-brand-primary;
+      background-color: rgba($color-brand-primary, 0.05);
+    }
+  }
+
+  &__text {
+    color: var(--text-primary);
+  }
+
+  &__icon {
+    color: $color-brand-primary;
+  }
+}

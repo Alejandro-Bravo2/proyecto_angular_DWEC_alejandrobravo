@@ -1,0 +1,48 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/tools/mixins';
+
+.food-item {
+  display: flex;
+  align-items: center;
+  gap: $spacing-s;
+  padding: $spacing-xs 0;
+  border-bottom: 1px dashed var(--card-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__icon {
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-circle;
+    background-color: var(--bg-primary);
+    color: var(--text-secondary);
+    margin: 0;
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__details {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-primary);
+    font-size: $font-size-body;
+  }
+
+  &__quantity {
+    font-weight: $font-weight-medium;
+  }
+
+  &__name {
+    margin-left: $spacing-s;
+  }
+}

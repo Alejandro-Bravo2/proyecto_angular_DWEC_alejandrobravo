@@ -1,0 +1,47 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/breakpoints';
+@import '../../../../../styles/tools/mixins';
+@import '../../../../../styles/components/_buttons.scss';
+@import '../../../../../styles/components/_forms.scss';
+
+.feedback-form {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: $spacing-xl;
+  border-radius: $radius-m;
+  box-shadow: var(--shadow);
+  max-width: 800px;
+  margin: $spacing-xl auto;
+
+  h2 {
+    font-family: $font-family-heading;
+    font-size: $font-size-h3;
+    margin-bottom: $spacing-xl;
+    text-align: center;
+    color: var(--text-primary);
+  }
+
+  .c-form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-m;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-s;
+    margin-top: $spacing-m;
+
+    @include respond-to(s) {
+      justify-content: center;
+    }
+  }
+
+  // Responsive adjustments
+  @include respond-to(s) {
+    padding: $spacing-xl $spacing-m;
+  }
+}

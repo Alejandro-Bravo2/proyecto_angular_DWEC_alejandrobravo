@@ -1,0 +1,97 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/radios';
+@import '../../../../../styles/settings/breakpoints';
+@import '../../../../../styles/tools/mixins';
+@import '../../../../../styles/components/_buttons.scss';
+@import '../../../../../styles/components/_cards.scss';
+
+.pricing-plans {
+  padding: $spacing-xxxl $spacing-m;
+  text-align: center;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+
+  &__header {
+    margin-bottom: $spacing-xxxl;
+
+    h2 {
+      font-family: $font-family-heading;
+      font-size: $font-size-h2;
+      font-weight: $font-weight-bold;
+      margin-bottom: $spacing-m;
+      color: var(--text-primary);
+    }
+
+    p {
+      font-size: $font-size-body;
+      color: var(--text-secondary);
+    }
+  }
+
+  &__cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+    max-width: $container-l;
+    margin: 0 auto;
+
+    @include respond-to(m) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .c-card {
+      &--pricing {
+        padding: $spacing-xl;
+        border: 1px solid var(--card-border);
+        background-color: var(--card-bg);
+        color: var(--text-primary);
+        @include transition(all);
+
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: var(--shadow);
+        }
+
+        &--featured {
+          border-color: $color-brand-primary;
+          background-color: var(--bg-secondary);
+          transform: translateY(-5px); // Lift a bit to make it stand out
+          box-shadow: 0 5px 15px rgba($color-brand-primary, 0.2); // Special shadow
+        }
+
+        .c-card__title {
+          font-size: $font-size-h3;
+          font-family: $font-family-heading;
+          color: var(--text-primary);
+          margin-bottom: $spacing-s;
+        }
+
+        .c-card__price {
+          font-family: $font-family-heading;
+          font-size: $font-size-h1;
+          font-weight: $font-weight-bold;
+          color: $color-brand-primary;
+          margin-bottom: $spacing-s;
+
+          .c-card__period {
+            font-size: $font-size-body;
+            color: var(--text-secondary);
+          }
+        }
+
+        .c-card__features {
+          list-style: none;
+          padding: 0;
+          margin-bottom: $spacing-xl;
+          color: var(--text-secondary);
+
+          li {
+            margin-bottom: $spacing-xs;
+          }
+        }
+      }
+    }
+  }
+}

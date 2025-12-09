@@ -1,0 +1,44 @@
+<section class="login-page">
+  <article class="login-card c-card">
+    <header class="login-card__header">
+      <h1 class="login-card__title">Iniciar Sesión</h1>
+    </header>
+    <form class="c-form login-card__form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <section class="c-form__group">
+        <label for="email" class="c-form__label">Email</label>
+        <input type="email" id="email" class="c-form__input" formControlName="email" placeholder="tu.email@ejemplo.com"
+               [ngClass]="{'c-form__input--error': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}">
+        @if (loginForm.get('email')?.errors && loginForm.get('email')?.touched) {
+          <p class="c-form__error">
+            @if (loginForm.get('email')?.hasError('required')) {
+              El email es obligatorio.
+            }
+            @if (loginForm.get('email')?.hasError('email')) {
+              El email no es válido.
+            }
+          </p>
+        }
+      </section>
+      <section class="c-form__group">
+        <label for="password" class="c-form__label">Contraseña</label>
+        <input type="password" id="password" class="c-form__input" formControlName="password" placeholder="********"
+               [ngClass]="{'c-form__input--error': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}">
+        @if (loginForm.get('password')?.errors && loginForm.get('password')?.touched) {
+          <p class="c-form__error">
+            @if (loginForm.get('password')?.hasError('required')) {
+              La contraseña es obligatoria.
+            }
+          </p>
+        }
+      </section>
+      <button type="submit" class="c-button c-button--primary c-button--large login-card__submit" [disabled]="loginForm.invalid">Iniciar Sesión</button>
+    </form>
+    <footer class="login-card__footer">
+      <a href="#" class="login-card__link">¿Has olvidado la contraseña?</a>
+      <p class="login-card__register-text">
+        ¿No tienes cuenta?
+        <a href="#" class="login-card__link">Regístrate</a>
+      </p>
+    </footer>
+  </article>
+</section>

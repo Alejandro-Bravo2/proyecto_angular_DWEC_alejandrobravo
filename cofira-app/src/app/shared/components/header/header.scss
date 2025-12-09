@@ -1,0 +1,159 @@
+@import '../../../../styles/settings/_colors';
+@import '../../../../styles/settings/_typography';
+@import '../../../../styles/settings/_spacing';
+@import '../../../../styles/settings/_radios';
+@import '../../../../styles/settings/_breakpoints';
+@import '../../../../styles/tools/_mixins';
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background-color: var(--card-bg); // Use theme variable
+  color: var(--text-primary);
+  z-index: 100;
+  box-shadow: var(--shadow);
+  border-bottom: 1px solid var(--card-border);
+  @include transition(background-color, 300ms);
+
+  &__inner {
+    @include flex-between;
+    height: 80px;
+    padding: 0 $spacing-m; // From o-container
+    max-width: $container-xxl;
+    margin: 0 auto;
+  }
+
+  &__logo {
+    font-family: $font-family-heading;
+    font-size: $font-size-h3;
+    font-weight: $font-weight-bold;
+    color: $color-brand-primary;
+    text-decoration: none;
+    @include transition(color);
+
+    &:hover {
+      color: $color-brand-primary-hover;
+    }
+  }
+
+  &__nav {
+    &--desktop {
+      display: none;
+      @include respond-to(m) {
+        display: flex;
+        gap: $spacing-l;
+      }
+    }
+
+    &--mobile {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: 80px;
+      left: 0;
+      right: 0;
+      background-color: var(--bg-primary);
+      padding: $spacing-m;
+      gap: $spacing-s;
+      box-shadow: var(--shadow);
+      animation: slideInDown 300ms ease-out;
+
+      @include respond-to(m) {
+        display: none;
+      }
+    }
+  }
+
+  &__nav-link {
+    color: var(--text-primary);
+    font-weight: $font-weight-medium;
+    text-decoration: none;
+    padding: $spacing-xs $spacing-s;
+    border-radius: $radius-xs;
+    @include transition(all);
+
+    &:hover {
+      background-color: var(--bg-secondary);
+    }
+
+    &--active {
+      color: $color-brand-primary;
+      background-color: rgba($color-brand-primary, 0.1);
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $spacing-s;
+  }
+
+  &__theme-toggle {
+    @include button-reset;
+    width: 40px;
+    height: 40px;
+    @include flex-center;
+    border-radius: $radius-xs;
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    @include transition(background-color);
+
+    &:hover {
+      background-color: var(--card-border);
+    }
+  }
+
+  &__theme-icon {
+    font-size: 20px;
+  }
+
+  &__hamburger {
+    @include button-reset;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+
+    @include respond-to(m) {
+      display: none;
+    }
+
+    &-line {
+      width: 100%;
+      height: 3px;
+      background-color: var(--text-primary);
+      border-radius: 2px;
+      @include transition(all);
+    }
+
+    &[aria-expanded="true"] {
+      .header__hamburger-line {
+        &:nth-child(1) {
+          transform: rotate(45deg) translate(5px, 5px);
+        }
+        &:nth-child(2) {
+          opacity: 0;
+        }
+        &:nth-child(3) {
+          transform: rotate(-45deg) translate(7px, -7px);
+        }
+      }
+    }
+  }
+
+  .c-button {
+    display: none;
+
+    @include respond-to(m) {
+      display: inline-flex;
+    }
+  }
+}
+
+// Import button styles to be used in the template
+@import '../../../../styles/components/_buttons.scss';

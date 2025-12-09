@@ -1,0 +1,74 @@
+@import '../../../../../../styles/settings/colors';
+@import '../../../../../../styles/settings/typography';
+@import '../../../../../../styles/settings/spacing';
+@import '../../../../../../styles/settings/radios';
+@import '../../../../../../styles/settings/breakpoints';
+@import '../../../../../../styles/tools/mixins';
+@import '../../../../../../styles/components/_buttons.scss';
+@import '../../../../../../styles/components/_forms.scss';
+
+.searchable-tags {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: $spacing-m;
+  border-radius: $radius-m;
+  box-shadow: var(--shadow);
+  max-width: 600px;
+  margin: 0 auto;
+
+  &__header {
+    margin-bottom: $spacing-m;
+    input {
+      width: 100%;
+    }
+  }
+
+  &__tags,
+  &__suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-xs;
+    margin-bottom: $spacing-m; // Space between sections
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: $spacing-xs $spacing-s;
+    border-radius: $radius-pill;
+    font-size: $font-size-small;
+    font-weight: $font-weight-medium;
+
+    button {
+      @include button-reset;
+      margin-left: $spacing-xs;
+      font-weight: $font-weight-bold;
+      color: inherit;
+    }
+
+    &--red {
+      background-color: rgba($color-error, 0.1);
+      color: $color-error;
+    }
+
+    &--yellow {
+      background-color: rgba($color-brand-primary, 0.1);
+      color: $color-brand-primary;
+    }
+  }
+
+  &__suggestions {
+    .c-button {
+      padding: $spacing-xs $spacing-s;
+      border-radius: $radius-pill;
+      font-size: $font-size-small;
+      font-weight: $font-weight-normal;
+      border: 1px solid var(--card-border); // Outline for ghost buttons
+      color: var(--text-secondary); // Ghost button text color
+      &:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+    }
+  }
+}

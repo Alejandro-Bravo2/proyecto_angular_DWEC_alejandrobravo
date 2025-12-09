@@ -1,0 +1,90 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/radios';
+@import '../../../../../styles/settings/breakpoints';
+@import '../../../../../styles/tools/mixins';
+
+.calendar {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: $spacing-m;
+  border-radius: $radius-m;
+  box-shadow: var(--shadow);
+  max-width: 400px; // A typical calendar width
+  margin: 0 auto;
+
+  &__header {
+    @include flex-between;
+    margin-bottom: $spacing-m;
+    
+    h2 {
+      font-size: $font-size-h4;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    button {
+      @include button-reset;
+      @include flex-center;
+      width: 40px;
+      height: 40px;
+      border-radius: $radius-circle;
+      color: var(--text-secondary);
+      @include transition(all);
+
+      &:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+    }
+  }
+
+  &__weekdays,
+  &__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+  }
+
+  &__weekdays {
+    margin-bottom: $spacing-xs;
+    span {
+      font-weight: $font-weight-semibold;
+      color: var(--text-secondary);
+      font-size: $font-size-small;
+    }
+  }
+
+  &__days {
+    button {
+      @include button-reset;
+      height: 40px;
+      border-radius: $radius-xs;
+      @include flex-center;
+      font-size: $font-size-body;
+      color: var(--text-primary);
+      @include transition(background-color);
+
+      &:hover {
+        background-color: var(--bg-secondary);
+      }
+
+      &--disabled {
+        color: var(--text-disabled);
+        cursor: not-allowed;
+        background-color: transparent;
+      }
+
+      &--today {
+        border: 2px solid $color-brand-primary;
+      }
+
+      &--selected {
+        background-color: $color-brand-primary;
+        color: $color-black;
+        font-weight: $font-weight-bold;
+      }
+    }
+  }
+}

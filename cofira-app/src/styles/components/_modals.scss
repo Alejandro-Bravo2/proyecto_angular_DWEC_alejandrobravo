@@ -1,0 +1,234 @@
+// ============================================================================
+// COFIRA - Modals Component
+// ============================================================================
+
+.c-modal {
+  // Overlay (backdrop)
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: $color-overlay;
+    @include flex-center;
+    z-index: 1000;
+    padding: $spacing-m;
+    animation: fadeIn 200ms ease-out;
+
+    // Prevent body scroll
+    &.is-open {
+      overflow: hidden;
+    }
+  }
+
+  // Content container
+  &__content {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: var(--card-bg);
+    border-radius: $radius-m;
+    padding: $spacing-l;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: slideInUp 300ms ease-out;
+    @include custom-scrollbar;
+
+    @media (max-width: $breakpoint-m) {
+      max-width: 100%;
+      max-height: 100vh;
+      border-radius: 0;
+    }
+  }
+
+  // Close button
+  &__close {
+    position: absolute;
+    top: $spacing-s;
+    right: $spacing-s;
+    @include button-reset;
+    width: 32px;
+    height: 32px;
+    @include flex-center;
+    border-radius: $radius-xs;
+    color: var(--text-secondary);
+    font-size: 24px;
+    line-height: 1;
+    z-index: 1;
+    @include transition(all);
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+      color: var(--text-primary);
+    }
+
+    &::before {
+      content: '×';
+    }
+  }
+
+  // Header
+  &__header {
+    margin-bottom: $spacing-m;
+    padding-right: $spacing-xl; // Espacio para botón close
+  }
+
+  &__title {
+    font-size: $font-size-h3;
+    font-weight: $font-weight-bold;
+    margin: 0 0 $spacing-xs 0;
+    color: var(--text-primary);
+  }
+
+  &__subtitle {
+    font-size: $font-size-small;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  // Body
+  &__body {
+    margin-bottom: $spacing-m;
+    color: var(--text-primary);
+  }
+
+  // Footer (para acciones)
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: $spacing-s;
+    padding-top: $spacing-m;
+    border-top: 1px solid var(--card-border);
+
+    @media (max-width: $breakpoint-s) {
+      flex-direction: column-reverse;
+
+      .c-button {
+        width: 100%;
+      }
+    }
+  }
+
+  // ========================================
+  // Sizes
+  // ========================================
+
+  &--small {
+    .c-modal__content {
+      max-width: 400px;
+    }
+  }
+
+  &--large {
+    .c-modal__content {
+      max-width: 800px;
+    }
+  }
+
+  &--full {
+    .c-modal__content {
+      max-width: 95%;
+      max-height: 95vh;
+    }
+  }
+
+  // ========================================
+  // Variants
+  // ========================================
+
+  // Modal circular (como login en mockup)
+  &--circular {
+    .c-modal__content {
+      max-width: 500px;
+      border-radius: $radius-xl;
+      text-align: center;
+      padding: $spacing-xl $spacing-l;
+    }
+  }
+
+  // Modal con imagen
+  &--with-image {
+    .c-modal__content {
+      padding: 0;
+    }
+
+    .c-modal__image {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: $radius-m $radius-m 0 0;
+    }
+
+    .c-modal__header,
+    .c-modal__body,
+    .c-modal__footer {
+      padding-left: $spacing-l;
+      padding-right: $spacing-l;
+    }
+
+    .c-modal__header {
+      padding-top: $spacing-l;
+    }
+
+    .c-modal__footer {
+      padding-bottom: $spacing-l;
+    }
+  }
+
+  // Modal de confirmación
+  &--confirm {
+    .c-modal__content {
+      max-width: 450px;
+      text-align: center;
+    }
+
+    .c-modal__icon {
+      font-size: 48px;
+      margin-bottom: $spacing-m;
+
+      &--warning {
+        color: $color-warning;
+      }
+
+      &--danger {
+        color: $color-error;
+      }
+
+      &--success {
+        color: $color-success;
+      }
+
+      &--info {
+        color: $color-info;
+      }
+    }
+
+    .c-modal__footer {
+      justify-content: center;
+      border-top: none;
+    }
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

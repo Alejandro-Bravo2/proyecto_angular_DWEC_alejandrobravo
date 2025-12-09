@@ -1,0 +1,157 @@
+// ============================================================================
+// COFIRA - Grid & Flex Objects
+// ============================================================================
+
+// Grid System
+.o-grid {
+  display: grid;
+  gap: $spacing-m;
+
+  // 2 columnas
+  &--2-cols {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  // 3 columnas (responsive)
+  &--3-cols {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+
+  // 4 columnas (responsive)
+  &--4-cols {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  // 12 columnas (Bootstrap-like)
+  &--12-cols {
+    grid-template-columns: repeat(12, 1fr);
+  }
+
+  // Gap modifiers
+  &--gap-xs {
+    gap: $spacing-xs;
+  }
+
+  &--gap-s {
+    gap: $spacing-s;
+  }
+
+  &--gap-l {
+    gap: $spacing-l;
+  }
+
+  &--gap-xl {
+    gap: $spacing-xl;
+  }
+
+  // No gap
+  &--no-gap {
+    gap: 0;
+  }
+}
+
+// Flex System
+.o-flex {
+  display: flex;
+  gap: $spacing-s;
+
+  // Direction
+  &--row {
+    flex-direction: row;
+  }
+
+  &--column {
+    flex-direction: column;
+  }
+
+  &--row-reverse {
+    flex-direction: row-reverse;
+  }
+
+  &--column-reverse {
+    flex-direction: column-reverse;
+  }
+
+  // Justify content
+  &--center {
+    @include flex-center;
+  }
+
+  &--between {
+    @include flex-between;
+  }
+
+  &--start {
+    justify-content: flex-start;
+  }
+
+  &--end {
+    justify-content: flex-end;
+  }
+
+  &--around {
+    justify-content: space-around;
+  }
+
+  &--evenly {
+    justify-content: space-evenly;
+  }
+
+  // Align items
+  &--align-start {
+    align-items: flex-start;
+  }
+
+  &--align-center {
+    align-items: center;
+  }
+
+  &--align-end {
+    align-items: flex-end;
+  }
+
+  &--align-stretch {
+    align-items: stretch;
+  }
+
+  // Wrap
+  &--wrap {
+    flex-wrap: wrap;
+  }
+
+  &--nowrap {
+    flex-wrap: nowrap;
+  }
+
+  // Gap modifiers
+  &--gap-xs {
+    gap: $spacing-xs;
+  }
+
+  &--gap-m {
+    gap: $spacing-m;
+  }
+
+  &--gap-l {
+    gap: $spacing-l;
+  }
+
+  &--no-gap {
+    gap: 0;
+  }
+}
+
+// Flex item helpers
+.o-flex-item {
+  &--grow {
+    flex-grow: 1;
+  }
+
+  &--shrink-0 {
+    flex-shrink: 0;
+  }
+
+  &--no-grow {
+    flex-grow: 0;
+  }
+}

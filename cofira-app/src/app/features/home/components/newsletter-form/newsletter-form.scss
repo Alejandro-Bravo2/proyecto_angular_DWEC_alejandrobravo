@@ -1,0 +1,73 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/breakpoints';
+@import '../../../../../styles/tools/mixins';
+@import '../../../../../styles/components/_buttons.scss';
+@import '../../../../../styles/components/_forms.scss';
+
+.newsletter-form {
+  padding: $spacing-xxxl $spacing-m;
+  background-color: var(--bg-secondary); // Gris oscuro from design system
+  text-align: center;
+  color: var(--text-primary);
+
+  &__content {
+    max-width: 800px;
+    margin: 0 auto;
+
+    h2 {
+      font-family: $font-family-heading;
+      font-size: $font-size-h2;
+      font-weight: $font-weight-bold;
+      margin-bottom: $spacing-m;
+      color: var(--text-primary);
+    }
+
+    p {
+      font-size: $font-size-body;
+      color: var(--text-secondary);
+      margin-bottom: $spacing-xl;
+    }
+  }
+
+  &__form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-m;
+
+    @include respond-to(m) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .c-form__group {
+      margin-bottom: 0; // Reset margin for grid layout
+    }
+
+    .c-form__label {
+      @include visually-hidden; // Ocultar labels visualmente pero mantener para accesibilidad
+    }
+  }
+
+  &__submit-button {
+    width: 100%;
+    margin-top: $spacing-s; // Add some space above the button on smaller screens
+
+    @include respond-to(m) {
+      margin-top: 0; // Remove extra margin on larger screens when it's in the grid
+      grid-column: span 3; // Make button span all columns
+    }
+  }
+
+  // Responsive adjustments for form layout
+  @include respond-to(m) {
+    .newsletter-form__form {
+      grid-template-columns: repeat(3, 1fr);
+      align-items: end; // Align items to the bottom
+    }
+    .newsletter-form__submit-button {
+      grid-column: auto; // Reset grid-column for the button on medium screens
+      align-self: end; // Align to the end of the grid cell
+    }
+  }
+}

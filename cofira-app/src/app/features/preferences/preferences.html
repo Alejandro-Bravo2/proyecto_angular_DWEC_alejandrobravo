@@ -1,0 +1,30 @@
+<section class="preferences-page">
+  <header class="preferences-page__header">
+    <h1>Tus Preferencias</h1>
+    <p>Gestiona tus alergias, intolerancias e ingredientes favoritos para una experiencia personalizada.</p>
+  </header>
+
+  <section class="preferences-page__section">
+    <h2>Alergias o Intolerancias</h2>
+    <app-searchable-tags
+      [allTags]="availableAllergies"
+      [selectedTags]="preferencesService.allergies()"
+      (tagAdded)="onAllergyAdded($event)"
+      (tagRemoved)="onAllergyRemoved($event)"
+      tagType="red"
+      placeholder="Busca alergias (ej. Lácteos, Gluten...)">
+    </app-searchable-tags>
+  </section>
+
+  <section class="preferences-page__section">
+    <h2>Ingredientes Favoritos</h2>
+    <app-searchable-tags
+      [allTags]="availableIngredients"
+      [selectedTags]="preferencesService.favoriteIngredients()"
+      (tagAdded)="onFavoriteIngredientAdded($event)"
+      (tagRemoved)="onFavoriteIngredientRemoved($event)"
+      tagType="yellow"
+      placeholder="Busca ingredientes (ej. Pollo, Arroz...)">
+    </app-searchable-tags>
+  </section>
+</section>

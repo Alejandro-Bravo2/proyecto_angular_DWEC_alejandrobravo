@@ -1,0 +1,13 @@
+// ============================================================================
+// COFIRA - Body Element
+// ============================================================================
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-body;
+  font-weight: $font-weight-regular;
+  line-height: $line-height-relaxed;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  @include transition(background-color color, 300ms);
+}

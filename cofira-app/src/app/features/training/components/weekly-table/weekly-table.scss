@@ -1,0 +1,51 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/breakpoints';
+@import '../../../../../styles/tools/mixins';
+@import '../../../../../styles/components/_buttons.scss';
+@import '../../../../../styles/components/_tables.scss';
+
+.weekly-table {
+  padding: $spacing-m;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: $radius-m;
+  box-shadow: var(--shadow);
+
+  &__header {
+    @include flex-between;
+    margin-bottom: $spacing-m;
+
+    h2 {
+      font-size: $font-size-h3;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    button {
+      @include button-reset;
+      @include flex-center;
+      width: 40px;
+      height: 40px;
+      border-radius: $radius-circle;
+      color: var(--text-secondary);
+      @include transition(all);
+
+      &:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+    }
+  }
+
+  &__table {
+    width: 100%;
+    /* Apply base table styles from c-table */
+  }
+
+  // Responsive adjustments for the table
+  @include respond-to(m) {
+    padding: $spacing-xl;
+  }
+}

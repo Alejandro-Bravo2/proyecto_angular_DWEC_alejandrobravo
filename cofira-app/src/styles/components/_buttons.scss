@@ -1,0 +1,245 @@
+// ============================================================================
+// COFIRA - Buttons Component
+// ============================================================================
+
+.c-button {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-s $spacing-l;
+  border-radius: $radius-xs;
+  font-size: $font-size-body;
+  font-weight: $font-weight-semibold;
+  font-family: $font-family-base;
+  text-align: center;
+  white-space: nowrap;
+  @include transition(all, 150ms);
+  @include focus-visible;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  // ========================================
+  // Variants
+  // ========================================
+
+  // Primary Button (Amarillo - Brand)
+  &--primary {
+    background-color: $color-brand-primary;
+    color: $color-black;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: $color-brand-primary-hover;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba($color-brand-primary, 0.3);
+    }
+
+    &:active:not(:disabled) {
+      background-color: $color-brand-primary-active;
+      transform: translateY(0);
+      box-shadow: none;
+    }
+  }
+
+  // Secondary Button (Outline)
+  &--secondary {
+    background-color: transparent;
+    border: 2px solid var(--text-primary);
+    color: var(--text-primary);
+    padding: calc(#{$spacing-s} - 2px) calc(#{$spacing-l} - 2px); // Compensar border
+
+    &:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: $color-brand-primary;
+      color: $color-brand-primary;
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+  }
+
+  // Ghost Button (Transparent)
+  &--ghost {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    &:active:not(:disabled) {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  // Danger Button
+  &--danger {
+    background-color: $color-error;
+    color: $color-white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: darken($color-error, 10%);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: darken($color-error, 15%);
+      transform: translateY(0);
+    }
+  }
+
+  // Success Button
+  &--success {
+    background-color: $color-success;
+    color: $color-white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: darken($color-success, 10%);
+      transform: translateY(-2px);
+    }
+
+    &:active:not(:disabled) {
+      background-color: darken($color-success, 15%);
+      transform: translateY(0);
+    }
+  }
+
+  // ========================================
+  // Sizes
+  // ========================================
+
+  &--tiny {
+    padding: $spacing-xss $spacing-xs;
+    font-size: $font-size-tiny;
+    gap: 4px;
+  }
+
+  &--small {
+    padding: $spacing-xs $spacing-s;
+    font-size: $font-size-small;
+  }
+
+  &--large {
+    padding: $spacing-m $spacing-xl;
+    font-size: $font-size-h4;
+  }
+
+  // ========================================
+  // Modifiers
+  // ========================================
+
+  // Full Width
+  &--full {
+    width: 100%;
+  }
+
+  // Icon Only (square)
+  &--icon {
+    padding: $spacing-s;
+    width: 40px;
+    height: 40px;
+
+    &.c-button--small {
+      width: 32px;
+      height: 32px;
+      padding: $spacing-xs;
+    }
+
+    &.c-button--large {
+      width: 48px;
+      height: 48px;
+      padding: $spacing-s;
+    }
+  }
+
+  // Rounded (pill-shaped)
+  &--rounded {
+    border-radius: $radius-pill;
+  }
+
+  // Loading state
+  &--loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      left: 50%;
+      margin-left: -8px;
+      margin-top: -8px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 0.6s linear infinite;
+    }
+  }
+}
+
+// Button Group
+.c-button-group {
+  display: inline-flex;
+  gap: 0;
+
+  .c-button {
+    border-radius: 0;
+
+    &:first-child {
+      border-top-left-radius: $radius-xs;
+      border-bottom-left-radius: $radius-xs;
+    }
+
+    &:last-child {
+      border-top-right-radius: $radius-xs;
+      border-bottom-right-radius: $radius-xs;
+    }
+
+    &:not(:last-child) {
+      border-right: none;
+    }
+  }
+
+  &--vertical {
+    flex-direction: column;
+
+    .c-button {
+      &:first-child {
+        border-radius: 0;
+        border-top-left-radius: $radius-xs;
+        border-top-right-radius: $radius-xs;
+      }
+
+      &:last-child {
+        border-radius: 0;
+        border-bottom-left-radius: $radius-xs;
+        border-bottom-right-radius: $radius-xs;
+      }
+
+      &:not(:last-child) {
+        border-right: auto;
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+// Keyframe para loading spinner
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

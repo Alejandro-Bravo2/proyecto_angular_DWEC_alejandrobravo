@@ -1,0 +1,56 @@
+@import '../../../../../../styles/settings/colors';
+@import '../../../../../../styles/settings/typography';
+@import '../../../../../../styles/settings/spacing';
+@import '../../../../../../styles/settings/radios';
+@import '../../../../../../styles/settings/breakpoints';
+@import '../../../../../../styles/tools/mixins';
+@import '../../../../../../styles/components/_buttons.scss';
+@import '../../../../../../styles/components/_forms.scss';
+
+.onboarding-pricing {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: $spacing-xl;
+  border-radius: $radius-l;
+  box-shadow: var(--shadow);
+  max-width: 600px;
+  margin: $spacing-xl auto;
+
+  &__header {
+    text-align: center;
+    margin-bottom: $spacing-xl;
+
+    h1 {
+      font-family: $font-family-heading;
+      font-size: $font-size-h2;
+      margin-bottom: $spacing-s;
+      color: var(--text-primary);
+    }
+
+    p {
+      font-size: $font-size-body;
+      color: var(--text-secondary);
+    }
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-s;
+
+    .c-button {
+      width: 100%;
+    }
+
+    @include respond-to(s) {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+
+  &__footer {
+    margin-top: $spacing-xl;
+    text-align: center;
+  }
+}

@@ -1,0 +1,55 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/breakpoints';
+@import '../../../../../styles/tools/mixins';
+@import '../../../../../styles/components/_buttons.scss';
+
+.daily-menu {
+  padding: $spacing-m;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: $radius-m;
+  box-shadow: var(--shadow);
+  max-width: 800px;
+  margin: 0 auto;
+
+  &__header {
+    @include flex-between;
+    margin-bottom: $spacing-xl;
+    padding-bottom: $spacing-s;
+    border-bottom: 1px solid var(--card-border);
+
+    h2 {
+      font-size: $font-size-h3;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    button {
+      @include button-reset;
+      @include flex-center;
+      width: 40px;
+      height: 40px;
+      border-radius: $radius-circle;
+      color: var(--text-secondary);
+      @include transition(all);
+
+      &:hover {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+      }
+    }
+  }
+
+  &__sections {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-l;
+  }
+
+  // Responsive adjustments
+  @include respond-to(m) {
+    padding: $spacing-xl;
+  }
+}

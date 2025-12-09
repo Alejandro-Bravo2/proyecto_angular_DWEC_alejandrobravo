@@ -1,0 +1,58 @@
+// ============================================================================
+// COFIRA - Spacing Utilities
+// ============================================================================
+
+// Margin utilities
+@each $name, $value in $spacing-map {
+  .u-mt-#{$name} { margin-top: $value !important; }
+  .u-mb-#{$name} { margin-bottom: $value !important; }
+  .u-ml-#{$name} { margin-left: $value !important; }
+  .u-mr-#{$name} { margin-right: $value !important; }
+  .u-mx-#{$name} {
+    margin-left: $value !important;
+    margin-right: $value !important;
+  }
+  .u-my-#{$name} {
+    margin-top: $value !important;
+    margin-bottom: $value !important;
+  }
+  .u-m-#{$name} { margin: $value !important; }
+}
+
+// Padding utilities
+@each $name, $value in $spacing-map {
+  .u-pt-#{$name} { padding-top: $value !important; }
+  .u-pb-#{$name} { padding-bottom: $value !important; }
+  .u-pl-#{$name} { padding-left: $value !important; }
+  .u-pr-#{$name} { padding-right: $value !important; }
+  .u-px-#{$name} {
+    padding-left: $value !important;
+    padding-right: $value !important;
+  }
+  .u-py-#{$name} {
+    padding-top: $value !important;
+    padding-bottom: $value !important;
+  }
+  .u-p-#{$name} { padding: $value !important; }
+}
+
+// Zero spacing
+.u-m-0 { margin: 0 !important; }
+.u-p-0 { padding: 0 !important; }
+
+// Auto margin (para centrar)
+.u-mx-auto {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.u-ml-auto { margin-left: auto !important; }
+.u-mr-auto { margin-right: auto !important; }
+
+// Negative margins (útil para compensar gaps)
+@each $name, $value in $spacing-map {
+  .u-mt-n-#{$name} { margin-top: -$value !important; }
+  .u-mb-n-#{$name} { margin-bottom: -$value !important; }
+  .u-ml-n-#{$name} { margin-left: -$value !important; }
+  .u-mr-n-#{$name} { margin-right: -$value !important; }
+}

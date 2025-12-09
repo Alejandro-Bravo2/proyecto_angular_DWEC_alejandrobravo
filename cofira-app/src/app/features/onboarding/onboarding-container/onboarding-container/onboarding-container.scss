@@ -1,0 +1,42 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/radios';
+@import '../../../../../styles/settings/breakpoints';
+@import '../../../../../styles/tools/mixins';
+@import '../../../../../styles/components/_buttons.scss';
+
+.onboarding-container {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 80px); // Adjust for header height
+  background-color: var(--bg-secondary);
+  padding: $spacing-l $spacing-m;
+
+  &__content {
+    flex-grow: 1; // Content takes up available space
+    display: flex; // Allows content to center itself
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: $spacing-xl;
+    padding: $spacing-m;
+    border-top: 1px solid var(--card-border);
+    background-color: var(--bg-primary); // Footer background
+    border-radius: $radius-m; // Rounded corners for consistency
+    box-shadow: var(--shadow);
+
+    .c-button {
+      min-width: 120px;
+    }
+  }
+
+  // Responsive adjustments
+  @include respond-to(m) {
+    padding: $spacing-xl;
+  }
+}

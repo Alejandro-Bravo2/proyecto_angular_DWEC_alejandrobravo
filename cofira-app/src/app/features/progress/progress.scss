@@ -1,0 +1,31 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/breakpoints';
+
+.progress-page {
+  padding: $spacing-l $spacing-m;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  &__header {
+    margin-bottom: $spacing-xl;
+    text-align: center;
+
+    h1 {
+      font-family: $font-family-heading;
+      font-size: $font-size-h2;
+      color: var(--text-primary);
+    }
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+
+    @include respond-to(m) {
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    }
+  }
+}

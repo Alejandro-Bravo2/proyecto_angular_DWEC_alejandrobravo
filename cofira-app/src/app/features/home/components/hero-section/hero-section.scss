@@ -1,0 +1,83 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/breakpoints';
+@import '../../../../../styles/tools/mixins';
+
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 600px; // Altura de ejemplo
+  background-image: url('https://via.placeholder.com/1500x600/000000/FFFFFF?text=Hero+Section+Background'); // Placeholder
+  background-size: cover;
+  background-position: center;
+  @include flex-center;
+  text-align: center;
+  color: $color-white;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba($color-black, 0.5); // Overlay oscuro
+  }
+
+  &__content {
+    position: relative;
+    z-index: 1;
+    max-width: 800px;
+    padding: $spacing-m;
+
+    h1 {
+      font-family: $font-family-heading;
+      font-size: $font-size-h1;
+      font-weight: $font-weight-bold;
+      margin-bottom: $spacing-m;
+      color: $color-white;
+    }
+
+    p {
+      font-size: $font-size-h3;
+      margin-bottom: $spacing-xl;
+      color: $color-white;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: $spacing-s;
+    justify-content: center;
+    flex-wrap: wrap; // Asegura que los botones se envuelvan en pantallas pequeñas
+  }
+
+  // Responsive adjustments
+  @include respond-to(m) {
+    height: 700px;
+    .hero-section__content {
+      h1 {
+        font-size: $font-size-h1; // Mantener el tamaño para desktop
+      }
+      p {
+        font-size: $font-size-h2;
+      }
+    }
+  }
+
+  @include respond-to(l) {
+    height: 800px;
+    .hero-section__content {
+      h1 {
+        font-size: $font-size-h1;
+      }
+      p {
+        font-size: $font-size-h2;
+      }
+    }
+  }
+}
+
+// Import button styles for the c-button class
+@import '../../../../../styles/components/_buttons.scss';

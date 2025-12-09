@@ -1,0 +1,56 @@
+@import '../../../../../../styles/settings/colors';
+@import '../../../../../../styles/settings/typography';
+@import '../../../../../../styles/settings/spacing';
+@import '../../../../../../styles/settings/radios';
+@import '../../../../../../styles/settings/breakpoints';
+@import '../../../../../../styles/tools/mixins';
+
+.steps-indicator {
+  margin-bottom: $spacing-xl; // Space below the indicator
+  width: 100%;
+
+  &__list {
+    display: flex;
+    justify-content: center;
+    gap: $spacing-m; // Space between steps
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  &__item {
+    @include flex-center;
+    width: 40px;
+    height: 40px;
+    border-radius: $radius-circle;
+    border: 2px solid var(--card-border);
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-weight: $font-weight-bold;
+    @include transition(all);
+
+    &--active {
+      border-color: $color-brand-primary;
+      background-color: $color-brand-primary;
+      color: $color-black;
+    }
+  }
+
+  &__number {
+    font-size: $font-size-body;
+  }
+
+  // Responsive adjustments for smaller screens, reduce gap/size if needed
+  @include respond-to(s) {
+    &__list {
+      gap: $spacing-s;
+    }
+    &__item {
+      width: 32px;
+      height: 32px;
+      .steps-indicator__number {
+        font-size: $font-size-small;
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/radios';
+@import '../../../../../styles/settings/breakpoints';
+@import '../../../../../styles/tools/mixins';
+@import '../../../../../styles/components/_cards.scss';
+@import '../../../../../styles/components/_forms.scss'; // For select styling
+
+.strength-gain-chart {
+  @include card; // Apply base card styles
+  text-align: center;
+
+  &__header {
+    @include flex-between;
+    margin-bottom: $spacing-m;
+    flex-wrap: wrap; // Allow items to wrap on smaller screens
+    gap: $spacing-s;
+
+    h3 {
+      font-family: $font-family-heading;
+      font-size: $font-size-h3;
+      margin: 0;
+      color: var(--text-primary);
+    }
+  }
+
+  &__dropdown {
+    @extend .c-form__input; // Use form input styles
+    width: auto;
+    min-width: 180px;
+    padding: $spacing-xs $spacing-s; // Adjust padding for dropdown
+  }
+
+  &__body {
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block; // Remove extra space below image
+      margin: 0 auto;
+    }
+  }
+}
