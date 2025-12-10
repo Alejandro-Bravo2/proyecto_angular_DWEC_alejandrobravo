@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
+import { BaseHttpService } from '../../../../core/services/base-http.service';
+import { HttpClient } from '@angular/common/http';
+import { LoadingService } from '../../../../core/services/loading.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class TrainingService {
+export class TrainingService extends BaseHttpService {
 
-  constructor() { }
+  constructor(http: HttpClient, loadingService: LoadingService) {
+    super(http, loadingService);
+  }
 }

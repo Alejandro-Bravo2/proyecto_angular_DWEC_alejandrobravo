@@ -1,0 +1,6 @@
+<section class="c-modal__overlay" *ngIf="modalService.activeModal$()" (click)="closeModal()">
+  <article class="c-modal__content" (click)="$event.stopPropagation()">
+    <!-- Host for dynamically loaded component -->
+    <ng-template #modalContentHost></ng-template>
+  </article>
+</section>

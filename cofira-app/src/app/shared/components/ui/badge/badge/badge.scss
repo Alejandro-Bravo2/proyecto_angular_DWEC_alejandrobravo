@@ -1,0 +1,53 @@
+@import '../../../../../../styles/settings/colors';
+@import '../../../../../../styles/settings/typography';
+@import '../../../../../../styles/settings/spacing';
+@import '../../../../../../styles/settings/radios';
+@import '../../../../../../styles/tools/mixins';
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: $spacing-xs $spacing-s;
+  border-radius: $radius-pill;
+  font-size: $font-size-small;
+  font-weight: $font-weight-medium;
+
+  &__close-button {
+    @include button-reset;
+    @include flex-center;
+    margin-left: $spacing-xs;
+    width: 20px;
+    height: 20px;
+    border-radius: $radius-circle;
+    color: inherit;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  // Color variants
+  &--red {
+    background-color: rgba($color-error, 0.1);
+    color: $color-error;
+  }
+
+  &--yellow {
+    background-color: rgba($color-brand-primary, 0.1);
+    color: $color-brand-primary;
+  }
+
+  &--blue {
+    background-color: rgba($color-info, 0.1);
+    color: $color-info;
+  }
+
+  &--green {
+    background-color: rgba($color-success, 0.1);
+    color: $color-success;
+  }
+
+  &--gray {
+    background-color: var(--bg-secondary);
+    color: var(--text-secondary);
+  }
+}

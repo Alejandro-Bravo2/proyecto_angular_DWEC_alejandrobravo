@@ -241,7 +241,7 @@
 - [x] Items con icono, cantidad y nombre
 - [x] Botón (i) que abre modal de ingredientes
 - [x] Costo total por comida
-- [x] Modal con lista detallada de ingredientes y precios
+- [x] Modal con lista detallada de ingredientes y ingredientes
 
 **Tareas**:
 1. Crear NutritionComponent
@@ -491,11 +491,11 @@
 **Para que** pueda actualizar mis datos
 
 **Criterios de Aceptación**:
-- [ ] Ver datos actuales
-- [ ] Editar: Nombre, Email, Contraseña
-- [ ] Validación igual que registro
-- [ ] Botón "Guardar cambios"
-- [ ] Toast de confirmación
+- [x] Ver datos actuales
+- [x] Editar: Nombre, Email, Contraseña
+- [x] Validación igual que registro
+- [x] Botón "Guardar cambios"
+- [x] Toast de confirmación
 
 **Tareas**:
 1. Crear AccountSettingsComponent
@@ -586,10 +586,10 @@
 **Para que** pueda desarrollar sin esperar el backend real
 
 **Criterios de Aceptación**:
-- [ ] json-server instalado y configurado
-- [ ] db.json con datos iniciales (usuarios, ejercicios, menús, etc.)
-- [ ] Endpoints REST funcionando
-- [ ] Script npm para levantar json-server
+- [x] json-server instalado y configurado
+- [x] db.json con datos iniciales (usuarios, ejercicios, menús, etc.)
+- [x] Endpoints REST funcionando
+- [x] Script npm para levantar json-server
 
 **Tareas**:
 1. Instalar json-server: `npm install -D json-server`
@@ -607,11 +607,11 @@
 **Para que** no repita código en cada servicio
 
 **Criterios de Aceptación**:
-- [ ] Métodos genéricos: get, post, put, delete
-- [ ] Tipado con TypeScript generics
-- [ ] Manejo de errores centralizado con catchError
-- [ ] Retry logic (retry(2))
-- [ ] Loading state integrado
+- [x] Métodos genéricos: get, post, put, delete
+- [x] Tipado con TypeScript generics
+- [x] Manejo de errores centralizado con catchError
+- [x] Retry logic (retry(2))
+- [x] Loading state integrado
 
 **Tareas**:
 1. Crear BaseHttpService
@@ -629,10 +629,10 @@
 **Para que** la lógica esté organizada
 
 **Criterios de Aceptación**:
-- [ ] UserService: CRUD usuarios, login, register
-- [ ] TrainingService: obtener rutinas, marcar completados
-- [ ] NutritionService: obtener menús, ingredientes
-- [ ] ProgressService: obtener métricas, gráficos
+- [x] UserService: CRUD usuarios, login, register
+- [x] TrainingService: obtener rutinas, marcar completados
+- [x] NutritionService: obtener menús, ingredientes
+- [x] ProgressService: obtener métricas, gráficos
 
 **Tareas**:
 1. Crear UserService extends BaseHttpService
@@ -652,10 +652,10 @@
 **Para que** no duplique lógica en cada request
 
 **Criterios de Aceptación**:
-- [ ] AuthInterceptor: añade JWT token en headers
-- [ ] LoadingInterceptor: muestra/oculta spinner global
-- [ ] ErrorInterceptor: maneja errores globalmente (401, 500, etc.)
-- [ ] LoggingInterceptor (opcional, solo dev): console logs
+- [x] AuthInterceptor: añade JWT token en headers
+- [x] LoadingInterceptor: muestra/oculta spinner global
+- [x] ErrorInterceptor: maneja errores globalmente (401, 500, etc.)
+- [x] LoggingInterceptor (opcional, solo dev): console logs
 
 **Tareas**:
 1. Crear AuthInterceptor
@@ -676,12 +676,12 @@
 **Para que** sepa si fueron exitosas
 
 **Criterios de Aceptación**:
-- [ ] ToastService centralizado
-- [ ] 4 tipos: success, error, info, warning
-- [ ] Auto-dismiss configurable (default 4s)
-- [ ] Posición: top-right
-- [ ] Stacking de múltiples toasts
-- [ ] Animación fade in/out
+- [x] ToastService centralizado
+- [x] 4 tipos: success, error, info, warning
+- [x] Auto-dismiss configurable (default 4s)
+- [x] Posición: top-right
+- [x] Stacking de múltiples toasts
+- [x] Animación fade in/out
 
 **Tareas**:
 1. Crear ToastService con BehaviorSubject
@@ -700,12 +700,12 @@
 **Para que** pueda mostrar contenido overlay fácilmente
 
 **Criterios de Aceptación**:
-- [ ] ModalService para abrir/cerrar programáticamente
-- [ ] ModalComponent con proyección de contenido
-- [ ] Backdrop con click para cerrar
-- [ ] Cerrar con ESC
-- [ ] Animaciones de entrada/salida
-- [ ] Bloqueo de scroll del body
+- [x] ModalService para abrir/cerrar programáticamente
+- [x] ModalComponent con proyección de contenido
+- [x] Backdrop con click para cerrar
+- [x] Cerrar con ESC
+- [x] Animaciones de entrada/salida
+- [x] Bloqueo de scroll del body
 
 **Tareas**:
 1. Crear ModalService
@@ -724,12 +724,12 @@
 **Para que** la app tenga diseño uniforme
 
 **Criterios de Aceptación**:
-- [ ] ButtonComponent con variants (primary, secondary, ghost)
-- [ ] InputComponent con validación integrada
-- [ ] DropdownComponent
-- [ ] CheckboxComponent
-- [ ] RadioButtonComponent
-- [ ] BadgeComponent (pills de preferencias)
+- [x] ButtonComponent con variants (primary, secondary, ghost)
+- [x] InputComponent con validación integrada
+- [x] DropdownComponent
+- [x] CheckboxComponent
+- [x] RadioButtonComponent
+- [x] BadgeComponent (pills de preferencias)
 
 **Tareas**:
 1. Crear shared/ui/ folder
@@ -750,11 +750,11 @@
 **Para que** garantice la funcionalidad
 
 **Criterios de Aceptación**:
-- [ ] Tests de AuthService (login, register, logout)
-- [ ] Tests de ThemeService
-- [ ] Tests de ToastService
-- [ ] Tests de custom validators
-- [ ] Coverage > 50% en servicios
+- [x] Tests de AuthService (login, register, logout)
+- [x] Tests de ThemeService
+- [x] Tests de ToastService
+- [x] Tests de custom validators
+- [x] Coverage > 50% en servicios
 
 **Tareas**:
 1. Configurar Karma/Jest
@@ -772,10 +772,10 @@
 **Para que** la app funcione end-to-end
 
 **Criterios de Aceptación**:
-- [ ] Test: Registro → Onboarding → Dashboard
-- [ ] Test: Login → Ver entrenamiento → Marcar completado
-- [ ] Test: Login → Ver alimentación → Abrir modal ingredientes
-- [ ] Test: Cambiar tema claro/oscuro
+- [x] Test: Registro → Onboarding → Dashboard
+- [x] Test: Login → Ver entrenamiento → Marcar completado
+- [x] Test: Login → Ver alimentación → Abrir modal ingredientes
+- [x] Test: Cambiar tema claro/oscuro
 
 **Tareas**:
 1. Configurar Cypress o Playwright
@@ -795,11 +795,11 @@
 **Para que** la app sea rápida
 
 **Criterios de Aceptación**:
-- [ ] Build con `ng build --configuration production`
-- [ ] Lazy loading chunks separados
-- [ ] Minificación y tree-shaking
-- [ ] Source maps deshabilitados
-- [ ] Tamaño bundle < 500KB (initial)
+- [x] Build con `ng build --configuration production`
+- [x] Lazy loading chunks separados
+- [x] Minificación y tree-shaking
+- [x] Source maps deshabilitados
+- [x] Tamaño bundle < 500KB (initial)
 
 **Tareas**:
 1. Optimizar angular.json
@@ -817,11 +817,11 @@
 **Para que** esté accesible públicamente
 
 **Criterios de Aceptación**:
-- [ ] Desplegado en Netlify/Vercel/Firebase Hosting
-- [ ] URL pública funcionando
-- [ ] SSL configurado
-- [ ] Redirects para SPA (todas las rutas → index.html)
-- [ ] Variables de entorno configuradas
+- [x] Desplegado en Netlify/Vercel/Firebase Hosting
+- [x] URL pública funcionando
+- [x] SSL configurado
+- [x] Redirects para SPA (todas las rutas → index.html)
+- [x] Variables de entorno configuradas
 
 **Tareas**:
 1. Crear cuenta en hosting
@@ -839,10 +839,10 @@
 **Para que** la app sea performante
 
 **Criterios de Aceptación**:
-- [ ] Performance > 80
-- [ ] Accessibility > 90
-- [ ] Best Practices > 90
-- [ ] SEO > 80
+- [x] Performance > 80
+- [x] Accessibility > 90
+- [x] Best Practices > 90
+- [x] SEO > 80
 
 **Tareas**:
 1. Ejecutar Lighthouse
@@ -951,10 +951,10 @@
 **Objetivo**: Servicios y comunicación HTTP
 
 **Sprint Backlog**:
-- US-024: Configuración HttpClient y Backend Mock (5 SP)
-- US-025: Base HTTP Service (5 SP)
-- US-026: Feature Services (8 SP)
-- US-027: Interceptors (5 SP)
+- US-024: Configuración HttpClient y Backend Mock (5 SP) - COMPLETED
+- US-025: Base HTTP Service (5 SP) - COMPLETED
+- US-026: Feature Services (8 SP) - COMPLETED
+- US-027: Interceptors (5 SP) - COMPLETED
 
 **Total**: 23 SP
 
@@ -964,9 +964,9 @@
 **Objetivo**: Componentes de UI avanzados
 
 **Sprint Backlog**:
-- US-028: Toast System (8 SP)
-- US-029: Modal System (8 SP)
-- US-030: UI Components (13 SP)
+- US-028: Toast System (8 SP) - COMPLETED
+- US-029: Modal System (8 SP) - COMPLETED
+- US-030: UI Components (13 SP) - COMPLETED
 
 **Total**: 29 SP
 
@@ -976,8 +976,8 @@
 **Objetivo**: Quality assurance
 
 **Sprint Backlog**:
-- US-031: Unit Tests (8 SP)
-- US-032: Integration Tests (13 SP)
+- US-031: Unit Tests de Servicios (8 SP) - COMPLETED
+- US-032: Integration Tests de Flujos (13 SP) - COMPLETED
 
 **Total**: 21 SP
 
@@ -987,10 +987,10 @@
 **Objetivo**: Producción y optimización
 
 **Sprint Backlog**:
-- US-033: Build Production (5 SP)
-- US-034: Deployment (3 SP)
-- US-035: Lighthouse Audit (5 SP)
-- US-020: Account Settings (5 SP)
+- US-033: Build Production (5 SP) - COMPLETED
+- US-034: Deployment (3 SP) - COMPLETED
+- US-035: Lighthouse Audit (5 SP) - COMPLETED
+- US-020: Account Settings (5 SP) - COMPLETED
 
 **Total**: 18 SP
 

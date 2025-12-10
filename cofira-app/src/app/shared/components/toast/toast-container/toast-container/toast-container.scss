@@ -1,0 +1,90 @@
+@import '../../../../../styles/settings/colors';
+@import '../../../../../styles/settings/typography';
+@import '../../../../../styles/settings/spacing';
+@import '../../../../../styles/settings/radios';
+@import '../../../../../styles/tools/mixins';
+@import '../../../../../styles/components/_buttons.scss';
+
+.toast-container {
+  position: fixed;
+  top: $spacing-xl; // Position from top
+  right: $spacing-xl; // Position from right
+  z-index: 10000; // Ensure it's above everything
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-s; // Space between toasts
+  max-width: 350px; // Max width for toasts
+}
+
+.toast {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: $spacing-m;
+  border-radius: $radius-m;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-m;
+  animation: fadeIn 0.3s ease-out, slideInRight 0.3s ease-out; // Entrance animation
+  @include transition(transform);
+
+  &__message {
+    flex-grow: 1;
+    font-size: $font-size-body;
+    margin: 0;
+  }
+
+  &__dismiss-button {
+    @include button-reset;
+    @include flex-center;
+    width: 24px;
+    height: 24px;
+    border-radius: $radius-circle;
+    color: var(--text-secondary);
+    &:hover {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+  }
+
+  // Type-specific styles
+  &--success {
+    border-left: 5px solid $color-success;
+    .toast__message {
+      color: $color-success;
+    }
+  }
+
+  &--error {
+    border-left: 5px solid $color-error;
+    .toast__message {
+      color: $color-error;
+    }
+  }
+
+  &--info {
+    border-left: 5px solid $color-info;
+    .toast__message {
+      color: $color-info;
+    }
+  }
+
+  &--warning {
+    border-left: 5px solid $color-warning;
+    .toast__message {
+      color: $color-warning;
+    }
+  }
+}
+
+// Keyframe animations (already defined in global styles.scss, but good to have here for reference or local overrides)
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
