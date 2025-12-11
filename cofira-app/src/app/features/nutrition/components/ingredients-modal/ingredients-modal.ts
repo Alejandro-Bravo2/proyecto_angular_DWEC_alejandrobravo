@@ -18,13 +18,11 @@ export class IngredientsModal {
   // Using Angular 20 input signals
   mealName = input<string>('Plato');
   ingredients = input<Ingredient[]>([
-    { name: 'Pollo', quantity: '200g', price: 2.50 },
-    { name: 'Arroz', quantity: '150g', price: 0.30 },
-    { name: 'Verduras Mixtas', quantity: '100g', price: 0.80 },
+    { name: 'Pollo', quantity: '200g', price: 2.5 },
+    { name: 'Arroz', quantity: '150g', price: 0.3 },
+    { name: 'Verduras Mixtas', quantity: '100g', price: 0.8 },
   ]);
 
   // Using computed signal for derived state
-  totalCost = computed(() => 
-    this.ingredients().reduce((sum, item) => sum + item.price, 0)
-  );
+  totalCost = computed(() => this.ingredients().reduce((sum, item) => sum + item.price, 0));
 }

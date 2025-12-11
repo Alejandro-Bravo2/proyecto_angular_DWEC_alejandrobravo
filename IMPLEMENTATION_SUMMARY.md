@@ -11,6 +11,7 @@ Este documento resume todas las mejoras implementadas en la aplicación COFIRA s
 Se actualizaron todos los componentes que usaban `@Input()` tradicionales para usar `input()` signals:
 
 #### 1. **FoodItem** (`features/nutrition/components/food-item/`)
+
 ```typescript
 // Antes
 @Input() food: Food | undefined;
@@ -20,6 +21,7 @@ food = input<Food | undefined>(undefined);
 ```
 
 #### 2. **ExerciseRow** (`features/training/components/exercise-row/`)
+
 ```typescript
 // Antes
 @Input() exercise: Exercise | undefined;
@@ -29,6 +31,7 @@ exercise = input<Exercise | undefined>(undefined);
 ```
 
 #### 3. **StepsIndicator** (`features/onboarding/components/steps-indicator/`)
+
 ```typescript
 // Antes
 @Input() steps: Step[] = [];
@@ -40,6 +43,7 @@ currentStep = input<number>(1);
 ```
 
 #### 4. **IngredientsModal** (`features/nutrition/components/ingredients-modal/`)
+
 ```typescript
 // Antes
 @Input() mealName: string = 'Plato';
@@ -49,12 +53,13 @@ get totalCost(): number { ... }
 // Después
 mealName = input<string>('Plato');
 ingredients = input<Ingredient[]>([]);
-totalCost = computed(() => 
+totalCost = computed(() =>
   this.ingredients().reduce((sum, item) => sum + item.price, 0)
 );
 ```
 
 ### Beneficios
+
 - ✅ **Mejor rendimiento**: Signals son más eficientes que Zone.js
 - ✅ **Type-safety mejorado**: TypeScript infiere mejor los tipos
 - ✅ **API moderna**: Alineado con Angular 20+
@@ -67,34 +72,41 @@ totalCost = computed(() =>
 ### Gráficos Implementados
 
 #### 1. **StrengthGainChart** - Gráfico de Línea
+
 **Ubicación**: `features/progress/components/strength-gain-chart/`
 
 **Características**:
+
 - ✅ Usa `input()` signals para recibir datos
 - ✅ `computed()` para filtrar datos por ejercicio seleccionado
 - ✅ `effect()` para actualizar el gráfico cuando cambian los datos
 - ✅ Muestra peso máximo y volumen total
 
 **Datos mostrados**:
+
 - Peso Máximo (kg) por fecha
 - Volumen Total (kg) calculado: peso × reps × sets
 
 #### 2. **NutrientCounter** - Gráfico de Dona
+
 **Ubicación**: `features/progress/components/nutrient-counter/`
 
 **Características**:
+
 - ✅ Usa `input()` signal para nutrientData
 - ✅ `computed()` para calcular porcentaje de calorías
 - ✅ `effect()` para actualizar el gráfico reactivamente
 - ✅ Visualización de macronutrientes
 
 **Datos mostrados**:
+
 - Proteínas (amarillo)
 - Carbohidratos (gris oscuro)
 - Grasas (gris claro)
 - Porcentaje de calorías consumidas vs objetivo
 
 ### Configuración Chart.js
+
 ```typescript
 // Ambos gráficos incluyen:
 - responsive: true
@@ -113,12 +125,14 @@ totalCost = computed(() =>
 ### Funcionalidades Implementadas
 
 #### Controles de Navegación
+
 1. **Botón Día Anterior**: Navega al día previo
 2. **Botón Día Siguiente**: Navega al siguiente día
 3. **Selector de Fecha**: Input tipo date para selección directa
 4. **Botón "Hoy"**: Vuelve a la fecha actual
 
 #### Implementación con Signals
+
 ```typescript
 currentDate = input<string>(new Date().toISOString().split('T')[0]);
 dateChanged = output<string>();
@@ -140,6 +154,7 @@ previousDay(): void {
 ```
 
 ### UI/UX
+
 - ✅ Navegación intuitiva con flechas
 - ✅ Fecha formateada en español: "miércoles, 11 de diciembre de 2025"
 - ✅ Acceso rápido a "Hoy"
@@ -154,6 +169,7 @@ previousDay(): void {
 ### Características del Formulario
 
 #### Validaciones Implementadas
+
 ```typescript
 mealForm = this.formBuilder.group({
   mealType: ['breakfast', Validators.required],
@@ -176,6 +192,7 @@ createFoodItem() {
 ```
 
 #### Funcionalidades
+
 - ✅ **FormArray dinámico**: Agregar/eliminar alimentos
 - ✅ **Cálculo automático**: Totales de calorías y macros
 - ✅ **Signals para estado**: `showForm`, `isSubmitting`
@@ -184,11 +201,12 @@ createFoodItem() {
 - ✅ **Validación exhaustiva**: Todos los campos con validators
 
 #### Submit al Backend
+
 ```typescript
 onSubmit() {
   if (this.mealForm.valid && !this.isSubmitting()) {
     this.isSubmitting.set(true);
-    
+
     const mealData: Omit<Meal, 'id'> = {
       userId,
       date,
@@ -200,7 +218,7 @@ onSubmit() {
       totalFat,
       totalFiber
     };
-    
+
     this.nutritionService.addMeal(mealData).subscribe({
       next: (meal) => {
         this.toastService.success('Comida agregada exitosamente');
@@ -224,18 +242,20 @@ onSubmit() {
 ### Características del Formulario
 
 #### Validaciones Implementadas
+
 ```typescript
 progressForm = this.formBuilder.group({
-  exerciseName: ['', [Validators.required, Validators.minLength(2)]],
-  date: [new Date().toISOString().split('T')[0], Validators.required],
+  exerciseName: ["", [Validators.required, Validators.minLength(2)]],
+  date: [new Date().toISOString().split("T")[0], Validators.required],
   weight: [0, [Validators.required, Validators.min(0)]],
   reps: [0, [Validators.required, Validators.min(1)]],
   sets: [0, [Validators.required, Validators.min(1)]],
-  notes: ['']
+  notes: [""],
 });
 ```
 
 #### Funcionalidades
+
 - ✅ **Carga de ejercicios**: Lista dinámica desde el backend
 - ✅ **Signals para estado**: `showForm`, `isSubmitting`, `exercises`
 - ✅ **Integración con backend**: `progressService.addProgressEntry()`
@@ -244,11 +264,12 @@ progressForm = this.formBuilder.group({
 - ✅ **Campo opcional**: Notes para observaciones
 
 #### Submit al Backend
+
 ```typescript
 onSubmit() {
   if (this.progressForm.valid && !this.isSubmitting()) {
     this.isSubmitting.set(true);
-    
+
     const progressData: Omit<ProgressEntry, 'id'> = {
       userId,
       date,
@@ -258,7 +279,7 @@ onSubmit() {
       sets,
       notes
     };
-    
+
     this.progressService.addProgressEntry(progressData).subscribe({
       next: (entry) => {
         this.toastService.success('Progreso registrado exitosamente');
@@ -283,12 +304,14 @@ onSubmit() {
 ### Componentes de Seguridad Implementados
 
 #### 1. **JwtAuthenticationFilter**
+
 - Extiende `OncePerRequestFilter`
 - Intercepta cada request HTTP
 - Extrae y valida el token del header `Authorization: Bearer <token>`
 - Establece la autenticación en el `SecurityContext`
 
 **Características**:
+
 ```java
 - Valida formato "Bearer <token>"
 - Extrae email, userId, role del token
@@ -298,9 +321,11 @@ onSubmit() {
 ```
 
 #### 2. **JwtUtil**
+
 Utilidades para manejar tokens JWT:
 
 **Métodos principales**:
+
 - `generateToken(email, userId, role)`: Genera token con claims
 - `validateToken(token)`: Valida firma y expiración
 - `getEmailFromToken(token)`: Extrae email
@@ -308,15 +333,18 @@ Utilidades para manejar tokens JWT:
 - `getRoleFromToken(token)`: Extrae rol
 
 **Configuración**:
+
 ```properties
 jwt.secret=MiSecretoSuperSeguroParaJWTQueDebeSerMuyLargoYComplejo123456
 jwt.expiration=86400000  # 24 horas
 ```
 
 #### 3. **SecurityConfig**
+
 Configuración principal de Spring Security:
 
 **Características**:
+
 - CSRF deshabilitado (API REST stateless)
 - CORS configurado para `localhost:4200`
 - Sesiones stateless (`SessionCreationPolicy.STATELESS`)
@@ -325,6 +353,7 @@ Configuración principal de Spring Security:
 - Filtro JWT antes de `UsernamePasswordAuthenticationFilter`
 
 #### 4. **CORS Configuration**
+
 ```java
 allowedOrigins: ["http://localhost:4200", "http://localhost:3000"]
 allowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"]
@@ -340,6 +369,7 @@ maxAge: 3600
 ### Implementación de BCrypt
 
 #### 1. **PasswordEncoderConfig**
+
 ```java
 @Configuration
 public class PasswordEncoderConfig {
@@ -351,36 +381,38 @@ public class PasswordEncoderConfig {
 ```
 
 #### 2. **AuthService - Register**
+
 ```java
 public UserDTO register(RegisterDTO registerDTO) {
     // Hash la contraseña antes de guardar
     String hashedPassword = passwordEncoder.encode(registerDTO.getPassword());
-    
+
     User user = User.builder()
         .name(registerDTO.getName())
         .email(registerDTO.getEmail())
         .password(hashedPassword) // ✅ Contraseña hasheada
         .role("USER")
         .build();
-        
+
     return userRepository.save(user);
 }
 ```
 
 #### 3. **AuthService - Login**
+
 ```java
 public LoginResponseDTO login(LoginDTO loginDTO) {
     User user = userRepository.findByEmail(loginDTO.getEmail())
         .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-    
+
     // ✅ Verificar contraseña usando BCrypt
     if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
         throw new RuntimeException("Credenciales inválidas");
     }
-    
+
     // Generar JWT token
     String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getRole());
-    
+
     return LoginResponseDTO.builder()
         .token(token)
         .userInfo(mapToDTO(user))
@@ -389,6 +421,7 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 ```
 
 ### Características de BCrypt
+
 - ✅ **Salt automático**: Cada hash es único
 - ✅ **Strength 12**: Balance seguridad/rendimiento
 - ✅ **No reversible**: Solo se puede verificar
@@ -402,6 +435,7 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 ### Frontend (Angular 20)
 
 #### Componentes Actualizados
+
 1. ✅ `food-item.ts` - Migrado a input signals
 2. ✅ `exercise-row.ts` - Migrado a input signals
 3. ✅ `steps-indicator.ts` - Migrado a input signals
@@ -411,6 +445,7 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 7. ✅ `ingredients-modal.html` - Actualizado para usar signals con ()
 
 #### Componentes Verificados (Ya implementados)
+
 8. ✅ `strength-gain-chart.ts` - Gráfico funcional con Chart.js
 9. ✅ `nutrient-counter.ts` - Gráfico funcional con Chart.js
 10. ✅ `daily-menu.ts` - Navegación de fechas completa
@@ -420,9 +455,11 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 ### Backend (Spring Boot 4.0)
 
 #### Documentación Creada
+
 1. ✅ `SECURITY_IMPLEMENTATION_GUIDE.md` - Guía completa de implementación
 
 **Contenido**:
+
 - JwtAuthenticationFilter (completo)
 - JwtUtil (completo)
 - SecurityConfig (completo)
@@ -436,6 +473,7 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 ## 🎯 Patrones y Mejores Prácticas Aplicadas
 
 ### Angular 20 Modern Patterns
+
 1. ✅ **Input Signals**: `input<T>()` en lugar de `@Input()`
 2. ✅ **Computed Signals**: `computed()` para valores derivados
 3. ✅ **Effect Signals**: `effect()` para side effects reactivos
@@ -444,6 +482,7 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 6. ✅ **Standalone Components**: Todos los componentes standalone
 
 ### Spring Boot 4.0 Best Practices
+
 1. ✅ **OncePerRequestFilter**: Para filtros HTTP
 2. ✅ **SecurityFilterChain**: Configuración declarativa
 3. ✅ **BCryptPasswordEncoder**: Hash seguro de contraseñas
@@ -452,6 +491,7 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 6. ✅ **Exception Handling**: Manejo de errores centralizado
 
 ### Security Best Practices
+
 1. ✅ **JWT Secret > 512 bits**: Seguridad criptográfica
 2. ✅ **BCrypt Strength 12**: Balance seguridad/performance
 3. ✅ **Token Expiration**: 24 horas por defecto
@@ -464,6 +504,7 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 ## 🚀 Próximos Pasos Recomendados
 
 ### Frontend
+
 1. Implementar refresh token automático
 2. Agregar interceptor para retry en 401
 3. Implementar guards adicionales por roles
@@ -471,6 +512,7 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 5. Implementar lazy loading de gráficos
 
 ### Backend
+
 1. Implementar refresh tokens
 2. Agregar rate limiting
 3. Implementar auditoria de cambios
@@ -478,6 +520,7 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 5. Configurar perfiles (dev, test, prod)
 
 ### DevOps
+
 1. Configurar Docker Compose completo
 2. Agregar CI/CD pipeline
 3. Configurar HTTPS en producción
@@ -489,18 +532,21 @@ public LoginResponseDTO login(LoginDTO loginDTO) {
 ## 📚 Recursos y Referencias
 
 ### Angular 20
+
 - [Angular Signals](https://angular.dev/guide/signals)
 - [Input Signals](https://angular.dev/api/core/input)
 - [Computed Signals](https://angular.dev/api/core/computed)
 - [Modern Angular Guide](https://angular.dev/guide)
 
 ### Spring Boot 4.0
+
 - [Spring Security Docs](https://docs.spring.io/spring-security/reference/)
 - [JWT Best Practices](https://jwt.io/introduction)
 - [BCrypt Guide](https://en.wikipedia.org/wiki/Bcrypt)
 - [Spring Boot 4.0 Docs](https://docs.spring.io/spring-boot/4.0/)
 
 ### Security
+
 - [OWASP Top 10](https://owasp.org/www-project-top-ten/)
 - [JWT Security Best Practices](https://tools.ietf.org/html/rfc8725)
 - [Password Hashing](https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html)
@@ -519,6 +565,7 @@ Se han implementado exitosamente los 6 pasos solicitados:
 6. ✅ **JWT + BCrypt**: Seguridad completa en el backend
 
 La aplicación COFIRA ahora cuenta con:
+
 - 🔒 **Seguridad robusta** con JWT y BCrypt
 - 📊 **Visualización de datos** con gráficos interactivos
 - 📝 **Formularios completos** con validación

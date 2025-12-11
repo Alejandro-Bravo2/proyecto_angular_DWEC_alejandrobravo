@@ -3,6 +3,7 @@
 Esta guía documenta cómo implementar la validación de tokens JWT y el hash de contraseñas con BCrypt en el backend de Spring Boot 4.0.
 
 ## 📋 Índice
+
 1. [Configuración de BCrypt para Hash de Contraseñas](#1-configuración-de-bcrypt)
 2. [Implementación del Filtro JWT](#2-filtro-jwt)
 3. [Configuración de Spring Security](#3-configuración-de-security)
@@ -14,6 +15,7 @@ Esta guía documenta cómo implementar la validación de tokens JWT y el hash de
 ## 1. Configuración de BCrypt
 
 ### SecurityConfig.java
+
 ```java
 package com.gestioneventos.cofira.config;
 
@@ -24,7 +26,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 public class PasswordEncoderConfig {
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12); // Strength 12 para mayor seguridad
@@ -33,6 +35,7 @@ public class PasswordEncoderConfig {
 ```
 
 **Uso en AuthService:**
+
 ```java
 package com.gestioneventos.cofira.services;
 
@@ -43,38 +46,38 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    
+
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    
+
     public UserDTO register(RegisterDTO registerDTO) {
         // Hash la contraseña antes de guardar
         String hashedPassword = passwordEncoder.encode(registerDTO.getPassword());
-        
+
         User user = User.builder()
             .name(registerDTO.getName())
             .email(registerDTO.getEmail())
             .password(hashedPassword) // Contraseña hasheada
             .role("USER")
             .build();
-            
+
         User savedUser = userRepository.save(user);
         return mapToDTO(savedUser);
     }
-    
+
     public LoginResponseDTO login(LoginDTO loginDTO) {
         User user = userRepository.findByEmail(loginDTO.getEmail())
             .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-        
+
         // Verificar contraseña usando BCrypt
         if (!passwordEncoder.matches(loginDTO.getPassword(), user.getPassword())) {
             throw new RuntimeException("Credenciales inválidas");
         }
-        
+
         // Generar JWT token
         String token = jwtUtil.generateToken(user.getEmail(), user.getId(), user.getRole());
-        
+
         return LoginResponseDTO.builder()
             .token(token)
             .userInfo(mapToDTO(user))
@@ -88,6 +91,7 @@ public class AuthService {
 ## 2. Filtro JWT
 
 ### JwtAuthenticationFilter.java
+
 ```java
 package com.gestioneventos.cofira.security;
 
@@ -117,51 +121,51 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
     ) throws ServletException, IOException {
-        
+
         // Obtener el token del header Authorization
         final String authHeader = request.getHeader("Authorization");
-        
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
         }
-        
+
         try {
             // Extraer el token (después de "Bearer ")
             final String token = authHeader.substring(7);
-            
+
             // Validar el token
             if (jwtUtil.validateToken(token)) {
                 // Extraer información del token
                 String email = jwtUtil.getEmailFromToken(token);
                 String userId = jwtUtil.getUserIdFromToken(token);
                 String role = jwtUtil.getRoleFromToken(token);
-                
+
                 // Crear autenticación
-                List<SimpleGrantedAuthority> authorities = 
+                List<SimpleGrantedAuthority> authorities =
                     List.of(new SimpleGrantedAuthority("ROLE_" + role));
-                
-                UsernamePasswordAuthenticationToken authToken = 
+
+                UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
                         email,
                         null,
                         authorities
                     );
-                
+
                 authToken.setDetails(
                     new WebAuthenticationDetailsSource().buildDetails(request)
                 );
-                
+
                 // Establecer la autenticación en el contexto de seguridad
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                
+
                 log.debug("Usuario autenticado: {}", email);
             }
         } catch (Exception e) {
@@ -170,15 +174,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             response.getWriter().write("Token JWT inválido o expirado");
             return;
         }
-        
+
         filterChain.doFilter(request, response);
     }
-    
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
         // No aplicar el filtro a endpoints públicos
-        return path.startsWith("/auth/") || 
+        return path.startsWith("/auth/") ||
                path.startsWith("/swagger-ui") ||
                path.startsWith("/v3/api-docs") ||
                path.startsWith("/actuator/health");
@@ -191,6 +195,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 ## 3. Configuración de Security
 
 ### SecurityConfig.java
+
 ```java
 package com.gestioneventos.cofira.config;
 
@@ -222,10 +227,10 @@ public class SecurityConfig {
         http
             // Deshabilitar CSRF (no necesario para APIs REST stateless)
             .csrf(csrf -> csrf.disable())
-            
+
             // Configurar CORS
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            
+
             // Configurar autorización de requests
             .authorizeHttpRequests(auth -> auth
                 // Endpoints públicos (sin autenticación)
@@ -236,19 +241,19 @@ public class SecurityConfig {
                     "/actuator/health",
                     "/actuator/info"
                 ).permitAll()
-                
+
                 // Todos los demás endpoints requieren autenticación
                 .anyRequest().authenticated()
             )
-            
+
             // Configurar sesión stateless (sin estado)
-            .sessionManagement(session -> 
+            .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            
+
             // Agregar el filtro JWT antes del filtro de autenticación por defecto
             .addFilterBefore(
-                jwtAuthFilter, 
+                jwtAuthFilter,
                 UsernamePasswordAuthenticationFilter.class
             );
 
@@ -258,18 +263,18 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
+
         // Orígenes permitidos
         configuration.setAllowedOrigins(List.of(
             "http://localhost:4200",  // Angular dev
             "http://localhost:3000"   // Posible producción
         ));
-        
+
         // Métodos HTTP permitidos
         configuration.setAllowedMethods(Arrays.asList(
             "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"
         ));
-        
+
         // Headers permitidos
         configuration.setAllowedHeaders(Arrays.asList(
             "Authorization",
@@ -280,17 +285,17 @@ public class SecurityConfig {
             "Access-Control-Request-Method",
             "Access-Control-Request-Headers"
         ));
-        
+
         // Headers expuestos
         configuration.setExposedHeaders(Arrays.asList(
             "Authorization",
             "Access-Control-Allow-Origin",
             "Access-Control-Allow-Credentials"
         ));
-        
+
         // Permitir credenciales
         configuration.setAllowCredentials(true);
-        
+
         // Tiempo de caché para preflight requests
         configuration.setMaxAge(3600L);
 
@@ -306,6 +311,7 @@ public class SecurityConfig {
 ## 4. Utilidades JWT
 
 ### JwtUtil.java
+
 ```java
 package com.gestioneventos.cofira.security;
 
@@ -416,6 +422,7 @@ public class JwtUtil {
 ## 5. Integración con Servicios
 
 ### application.properties
+
 ```properties
 # JWT Configuration
 jwt.secret=${JWT_SECRET:MiSecretoSuperSeguroParaJWTQueDebeSerMuyLargoYComplejo123456}
@@ -426,6 +433,7 @@ spring.security.filter.dispatcher-types=REQUEST,FORWARD,ERROR
 ```
 
 ### Variables de Entorno (Producción)
+
 ```bash
 # En producción, configurar estas variables de entorno:
 export JWT_SECRET="tu-secreto-super-seguro-generado-aleatoriamente"
@@ -437,18 +445,22 @@ export JWT_EXPIRATION=86400000
 ## 📝 Notas Importantes
 
 ### Seguridad de BCrypt
+
 - **Strength 12**: Balance entre seguridad y rendimiento
 - Cada hash es único gracias al salt automático
 - No es reversible, solo se puede verificar
 
 ### Seguridad JWT
+
 - **Secret Key**: Debe ser de al menos 512 bits (64 caracteres)
 - **Expiración**: 24 horas por defecto, ajustar según necesidad
 - **Stateless**: No se almacena sesión en servidor
 - **Bearer Token**: Formato `Authorization: Bearer <token>`
 
 ### Endpoints Públicos
+
 Los siguientes endpoints NO requieren autenticación:
+
 - `/auth/login` - Login de usuario
 - `/auth/register` - Registro de usuario
 - `/auth/logout` - Logout (opcional)
@@ -458,7 +470,9 @@ Los siguientes endpoints NO requieren autenticación:
 - `/actuator/info` - Info de la aplicación
 
 ### Endpoints Protegidos
+
 Todos los demás endpoints requieren JWT válido:
+
 - `/rutinas-ejercicio/**`
 - `/rutinas-alimentacion/**`
 - `/alimentos/**`
@@ -470,6 +484,7 @@ Todos los demás endpoints requieren JWT válido:
 ## 🧪 Testing
 
 ### Probar el Login
+
 ```bash
 # Login
 curl -X POST http://localhost:8080/auth/login \
@@ -491,6 +506,7 @@ curl -X POST http://localhost:8080/auth/login \
 ```
 
 ### Probar Endpoint Protegido
+
 ```bash
 # Usar el token recibido
 curl -X GET http://localhost:8080/rutinas-ejercicio \
@@ -498,16 +514,17 @@ curl -X GET http://localhost:8080/rutinas-ejercicio \
 ```
 
 ### Verificar Hash de Contraseña
+
 ```java
 // En pruebas
 @Test
 void testPasswordEncoding() {
     String rawPassword = "password123";
     String encoded = passwordEncoder.encode(rawPassword);
-    
+
     assertTrue(passwordEncoder.matches(rawPassword, encoded));
     assertNotEquals(rawPassword, encoded);
-    
+
     // Cada hash es único
     String encoded2 = passwordEncoder.encode(rawPassword);
     assertNotEquals(encoded, encoded2);
@@ -520,16 +537,19 @@ void testPasswordEncoding() {
 ## 🔧 Troubleshooting
 
 ### Error: "Token JWT inválido o expirado"
+
 - Verificar que el token esté en el formato correcto: `Bearer <token>`
 - Verificar que el token no haya expirado
 - Verificar que el secret key sea el mismo que generó el token
 
 ### Error: "CORS policy"
+
 - Verificar que el origen esté en la lista de `allowedOrigins`
 - Verificar que el método HTTP esté permitido
 - Verificar que los headers estén permitidos
 
 ### Error: "Access Denied"
+
 - Verificar que el usuario tenga el rol correcto
 - Verificar que el endpoint no esté en la lista de públicos si debería estarlo
 
