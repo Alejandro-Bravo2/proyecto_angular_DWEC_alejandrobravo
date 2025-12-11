@@ -103,7 +103,7 @@ jobs:
           key: build-${{ github.sha }}
 
       - name: 📤 Upload build artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: backend-jar
           path: backend/build/libs/*.jar
