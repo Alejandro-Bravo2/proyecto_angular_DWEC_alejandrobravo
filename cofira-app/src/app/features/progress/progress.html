@@ -2,8 +2,11 @@
   <header class="progress-page__header">
     <h1>Tu Progreso</h1>
   </header>
+  @if (error()) {
+  <div class="error-message">{{ error() }}</div>
+  }
   <section class="progress-page__content">
-    <app-nutrient-counter />
-    <app-strength-gain-chart />
+    <app-nutrient-counter [nutrientData]="nutrientData()" />
+    <app-strength-gain-chart [progressEntries]="progressEntries()" [exercises]="exercises()" />
   </section>
 </section>

@@ -1,106 +1,164 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let httpTestingController: HttpTestingController;
+  let httpMock: HttpTestingController;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [AuthService],
+      providers: [AuthService, provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(AuthService);
-    httpTestingController = TestBed.inject(HttpTestingController);
-    localStorage.clear(); // Clear local storage before each test
+    httpMock = TestBed.inject(HttpTestingController);
+    localStorage.clear();
   });
 
   afterEach(() => {
-    httpTestingController.verify(); // Ensure that there are no outstanding requests
+    httpMock.verify();
   });
 
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('login', () => {
-    it('should return a token on successful login with mock credentials', (done) => {
-      const mockResponse = { token: 'mock-jwt-token', user: { email: 'user@example.com', name: 'Mock User' } };
-      spyOn(localStorage, 'setItem'); // Spy on setItem to check if token is saved
-
-      service.login('user@example.com', 'password').subscribe(response => {
-        expect(response).toEqual(mockResponse);
-        expect(localStorage.setItem).toHaveBeenCalledWith('authToken', 'mock-jwt-token');
-        done();
-      });
-    });
-
-    it('should return an error on failed login with mock credentials', (done) => {
-      service.login('wrong@example.com', 'wrong').subscribe({
-        next: () => fail('should have failed'),
-        error: (error) => {
-          expect(error.message).toContain('Invalid credentials');
-          done();
-        }
-      });
-    });
-  });
-
   describe('register', () => {
-    it('should return a token on successful registration', (done) => {
-      const mockResponse = { token: 'new-mock-jwt-token', user: { email: 'new@example.com', name: 'New User' } };
-      spyOn(localStorage, 'setItem');
+    it('should register a new user successfully', (done) => {
+      const mockResponse = {
+        token: 'mock-jwt-token',
+        user: { name: 'Test User', email: 'test@example.com' },
+      };
 
-      service.register('New User', 'new@example.com', 'NewPassword123!').subscribe(response => {
-        expect(response).toEqual(mockResponse);
-        expect(localStorage.setItem).toHaveBeenCalledWith('authToken', 'new-mock-jwt-token');
-        done();
+      service.register('Test User', 'test@example.com', 'password123').subscribe({
+        next: (response) => {
+          expect(response).toEqual(mockResponse);
+          expect(localStorage.getItem('authToken')).toBe('mock-jwt-token');
+          done();
+        },
       });
 
-      const req = httpTestingController.expectOne('http://localhost:3000/register');
-      expect(req.request.method).toEqual('POST');
+      const req = httpMock.expectOne('http://localhost:3000/register');
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({
+        name: 'Test User',
+        email: 'test@example.com',
+        password: 'password123',
+      });
       req.flush(mockResponse);
     });
 
     it('should handle registration error', (done) => {
-      service.register('New User', 'error@example.com', 'NewPassword123!').subscribe({
-        next: () => fail('should have failed with an error'),
+      service.register('Test User', 'test@example.com', 'password123').subscribe({
         error: (error) => {
-          expect(error.status).toBe(500);
+          expect(error.status).toBe(400);
           done();
-        }
+        },
       });
 
-      const req = httpTestingController.expectOne('http://localhost:3000/register');
-      req.error(new ProgressEvent('error'), { status: 500, statusText: 'Server Error' });
+      const req = httpMock.expectOne('http://localhost:3000/register');
+      req.flush({ message: 'Email already exists' }, { status: 400, statusText: 'Bad Request' });
     });
   });
 
-  describe('token management', () => {
-    it('should save and retrieve token', () => {
-      service.saveToken('test-token');
-      expect(service.getToken()).toBe('test-token');
+  describe('login', () => {
+    it('should login user successfully', (done) => {
+      const mockUser = {
+        id: 1,
+        name: 'Test User',
+        email: 'test@example.com',
+        password: 'password123',
+      };
+
+      service.login('test@example.com', 'password123').subscribe({
+        next: (response) => {
+          expect(response.token).toBe('jwt-token-1');
+          expect(response.user.email).toBe('test@example.com');
+          expect(localStorage.getItem('authToken')).toBe('jwt-token-1');
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne('http://localhost:3000/users?email=test@example.com');
+      expect(req.request.method).toBe('GET');
+      req.flush([mockUser]);
     });
 
-    it('should return null if no token exists', () => {
-      expect(service.getToken()).toBeNull();
+    it('should handle login with wrong password', (done) => {
+      const mockUser = {
+        id: 1,
+        name: 'Test User',
+        email: 'test@example.com',
+        password: 'password123',
+      };
+
+      service.login('test@example.com', 'wrongpassword').subscribe({
+        error: (error) => {
+          expect(error.status).toBe(401);
+          expect(error.message).toBe('Invalid credentials');
+          done();
+        },
+      });
+
+      const req = httpMock.expectOne('http://localhost:3000/users?email=test@example.com');
+      req.flush([mockUser]);
     });
 
-    it('should return true if user is logged in', () => {
-      service.saveToken('test-token');
-      expect(service.isLoggedIn()).toBeTrue();
-    });
+    it('should handle login with non-existent email', (done) => {
+      service.login('nonexistent@example.com', 'password123').subscribe({
+        error: (error) => {
+          expect(error.status).toBe(401);
+          expect(error.message).toBe('Invalid credentials');
+          done();
+        },
+      });
 
-    it('should return false if user is not logged in', () => {
-      expect(service.isLoggedIn()).toBeFalse();
+      const req = httpMock.expectOne('http://localhost:3000/users?email=nonexistent@example.com');
+      req.flush([]);
     });
+  });
 
-    it('should clear token on logout', () => {
-      service.saveToken('test-token');
+  describe('logout', () => {
+    it('should clear token and user data', () => {
+      localStorage.setItem('authToken', 'mock-token');
+      localStorage.setItem('currentUser', JSON.stringify({ id: 1, name: 'Test' }));
+
       service.logout();
+
+      expect(localStorage.getItem('authToken')).toBeNull();
+      expect(localStorage.getItem('currentUser')).toBeNull();
+      expect(service.isLoggedIn()).toBe(false);
+    });
+  });
+
+  describe('isLoggedIn', () => {
+    it('should return true when token exists', () => {
+      localStorage.setItem('authToken', 'mock-token');
+      expect(service.isLoggedIn()).toBe(true);
+    });
+
+    it('should return false when token does not exist', () => {
+      expect(service.isLoggedIn()).toBe(false);
+    });
+  });
+
+  describe('getToken', () => {
+    it('should return token from localStorage', () => {
+      const token = 'mock-jwt-token';
+      localStorage.setItem('authToken', token);
+      expect(service.getToken()).toBe(token);
+    });
+
+    it('should return null when no token exists', () => {
       expect(service.getToken()).toBeNull();
-      expect(service.isLoggedIn()).toBeFalse();
+    });
+  });
+
+  describe('saveToken', () => {
+    it('should save token to localStorage', () => {
+      service.saveToken('test-token');
+      expect(localStorage.getItem('authToken')).toBe('test-token');
     });
   });
 });

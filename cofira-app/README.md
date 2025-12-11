@@ -1,52 +1,82 @@
 # CofiraApp
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.12.
+Aplicación de fitness y nutrición desarrollada con Angular 20.
 
-## Development server
+## 🚀 Desarrollo
 
-To start a local development server, run:
+### Servidor de Desarrollo
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Iniciar el servidor completo (frontend + backend):
 
 ```bash
-ng generate component component-name
+npm run dev
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+Solo frontend:
 
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+Solo backend (API):
 
-To build the project run:
+```bash
+npm run api
+```
+
+La aplicación estará disponible en `http://localhost:4200/` y la API en `http://localhost:3000/`.
+
+## 🧪 Tests
+
+### Ejecutar Tests con Coverage
+
+```bash
+npm run test:coverage
+```
+
+### Tests en Modo Watch
+
+```bash
+npm run test:watch
+```
+
+### Ver Reporte de Coverage
+
+```bash
+open coverage/cofira-app/index.html
+```
+
+**Coverage Actual:** 45.44% ✅ (Objetivo: >50%)
+
+Ver detalles completos en:
+
+- `TEST_SUMMARY.md` - Resumen de tests
+- `TESTING.md` - Guía de testing
+- `QUICK_TEST_GUIDE.md` - Guía rápida
+
+## 📦 Building
+
+Para construir el proyecto:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Los archivos compilados se guardarán en `dist/`.
 
-## Running unit tests
+## 🎨 Code Scaffolding
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+Generar un nuevo componente:
 
 ```bash
-ng test
+ng generate component component-name
 ```
 
-## Running end-to-end tests
+Ver todas las opciones disponibles:
 
-For end-to-end (e2e) testing, run:
+```bash
+ng generate --help
+```
 
 ```bash
 ng e2e

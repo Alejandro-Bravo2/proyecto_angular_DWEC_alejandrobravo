@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { OnboardingService } from '../../services/onboarding.service';
+import { OnboardingService } from '../../../services/onboarding.service';
 
 @Component({
   selector: 'app-onboarding-nutrition',
@@ -29,7 +29,7 @@ export class OnboardingNutrition {
 
   onSubmit(): void {
     if (this.nutritionForm.valid) {
-      this.onboardingService.onboardingData.update(data => ({
+      this.onboardingService.onboardingData.update((data: any) => ({
         ...data,
         ...this.nutritionForm.value,
       }));

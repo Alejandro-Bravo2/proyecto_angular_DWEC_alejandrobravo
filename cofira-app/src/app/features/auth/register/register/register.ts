@@ -17,12 +17,7 @@ import { ToastService } from '../../../../core/services/toast.service'; // Place
   styleUrl: './register.scss',
 })
 export class Register {
-  registerForm = new FormGroup({
-    name: new FormControl('', [Validators.required]),
-    email: new FormControl('', [Validators.required, Validators.email], [this.asyncValidatorsService.emailUnique()]),
-    password: new FormControl('', [Validators.required, passwordStrengthValidator()]),
-    confirmPassword: new FormControl('', [Validators.required]),
-  }, { validators: passwordMatchValidator('password', 'confirmPassword') });
+  registerForm: FormGroup;
 
   constructor(
     private asyncValidatorsService: AsyncValidatorsService,
@@ -30,7 +25,14 @@ export class Register {
     private router: Router,
     private loadingService: LoadingService,
     private toastService: ToastService // Placeholder ToastService
-  ) {}
+  ) {
+    this.registerForm = new FormGroup({
+      name: new FormControl('', [Validators.required]),
+      email: new FormControl('', [Validators.required, Validators.email], [this.asyncValidatorsService.emailUnique()]),
+      password: new FormControl('', [Validators.required, passwordStrengthValidator()]),
+      confirmPassword: new FormControl('', [Validators.required]),
+    }, { validators: passwordMatchValidator('password', 'confirmPassword') });
+  }
 
   onSubmit(): void {
     if (this.registerForm.valid) {

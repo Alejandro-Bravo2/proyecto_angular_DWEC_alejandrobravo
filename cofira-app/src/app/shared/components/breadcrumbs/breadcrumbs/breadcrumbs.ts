@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, NavigationEnd, ActivatedRoute, Data } from '@angular/router';
+import { Router, NavigationEnd, ActivatedRoute, Data, RouterLink } from '@angular/router';
 import { filter, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
@@ -12,7 +12,7 @@ interface Breadcrumb {
 @Component({
   selector: 'app-breadcrumbs',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './breadcrumbs.html',
   styleUrl: './breadcrumbs.scss',
 })

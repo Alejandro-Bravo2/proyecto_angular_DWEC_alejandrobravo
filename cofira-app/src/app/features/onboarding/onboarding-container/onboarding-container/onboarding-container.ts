@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { Router, ActivatedRoute, NavigationEnd, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { StepsIndicator } from '../../components/steps-indicator/steps-indicator/steps-indicator';
 import { OnboardingService } from '../../services/onboarding.service'; // Import OnboardingService
@@ -13,7 +13,7 @@ interface OnboardingStep {
 @Component({
   selector: 'app-onboarding-container',
   standalone: true,
-  imports: [CommonModule, StepsIndicator],
+  imports: [CommonModule, StepsIndicator, RouterOutlet],
   templateUrl: './onboarding-container.html',
   styleUrl: './onboarding-container.scss',
 })

@@ -1,6 +1,12 @@
 // ============================================================================
 // COFIRA - Cards Component
 // ============================================================================
+@import '../settings/colors';
+@import '../settings/typography';
+@import '../settings/spacing';
+@import '../settings/radios';
+@import '../settings/breakpoints';
+@import '../tools/mixins';
 
 .c-card {
   @include card;

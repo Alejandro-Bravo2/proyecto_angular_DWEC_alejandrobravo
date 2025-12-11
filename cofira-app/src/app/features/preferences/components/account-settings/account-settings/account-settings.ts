@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Input } from '../../../../../shared/components/ui/input/input/input';
+import { InputComponent } from '../../../../../shared/components/ui/input/input/input';
 import { Button } from '../../../../../shared/components/ui/button/button/button';
 import { UserService } from '../../../../user/services/user.service';
 import { passwordStrengthValidator } from '../../../../../shared/validators/password-strength.validator';
@@ -19,7 +19,7 @@ interface User {
 @Component({
   selector: 'app-account-settings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Input, Button],
+  imports: [CommonModule, ReactiveFormsModule, InputComponent, Button],
   templateUrl: './account-settings.html',
   styleUrl: './account-settings.scss',
 })
@@ -45,8 +45,8 @@ export class AccountSettings implements OnInit {
     // Simulate fetching current user data
     this.loadingService.show();
     // In a real app, get actual user ID
-    this.userService.get<User>('users/1').subscribe({ // Assuming user with ID 1 exists
-      next: (user) => {
+    this.userService.getUserById('1').subscribe({ // Assuming user with ID 1 exists
+      next: (user: User) => {
         this.currentUser = user;
         this.accountSettingsForm.patchValue({
           name: user.name,
@@ -54,7 +54,7 @@ export class AccountSettings implements OnInit {
         });
         this.loadingService.hide();
       },
-      error: (err) => {
+      error: (err: Error) => {
         console.error('Error fetching user data', err);
         this.loadingService.hide();
         this.toastService.error('Error al cargar datos del usuario.');
@@ -82,7 +82,7 @@ export class AccountSettings implements OnInit {
             this.toastService.success('Configuración de cuenta actualizada.');
             // Optionally, update local user state or refresh token
           },
-          error: (err) => {
+          error: (err: Error) => {
             console.error('Error updating account settings:', err);
             this.loadingService.hide();
             this.toastService.error('Error al actualizar la configuración: ' + (err.message || 'Inténtalo de nuevo.'));

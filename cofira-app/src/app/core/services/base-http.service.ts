@@ -3,12 +3,13 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry, finalize } from 'rxjs/operators';
 import { LoadingService } from './loading.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BaseHttpService {
-  private API_BASE_URL = 'http://localhost:3000'; // Default to json-server
+  private API_BASE_URL = environment.apiUrl; // Backend URL from environment
 
   constructor(private http: HttpClient, private loadingService: LoadingService) { }
 
@@ -28,7 +29,10 @@ Message: ${error.message}`;
   }
 
   private request<T>(method: string, endpoint: string, data?: any): Observable<T> {
-    const url = `${this.API_BASE_URL}/${endpoint}`;
+    // Remove leading slash if present to avoid double slashes
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+    // Check if endpoint is already a full URL
+    const url = endpoint.startsWith('http') ? endpoint : `${this.API_BASE_URL}/${cleanEndpoint}`;
     this.loadingService.show();
 
     let requestObservable: Observable<T>;

@@ -1,55 +1,55 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { delay, tap } from 'rxjs/operators';
+import { delay, tap, map } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 interface AuthResponse {
   token: string;
-  user: {
+  userInfo: {
+    id: number;
     email: string;
-    name: string;
+    nombre: string;
   };
 }
 
+interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+interface RegisterRequest {
+  nombre: string;
+  email: string;
+  password: string;
+}
+
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthService {
+  private http = inject(HttpClient);
   private readonly TOKEN_KEY = 'authToken';
-  private readonly API_URL = 'http://localhost:3000'; // Assuming json-server runs here
-
-  constructor(private http: HttpClient) { }
+  private readonly USER_KEY = 'currentUser';
+  private readonly API_URL = `${environment.apiUrl}/auth`;
 
   login(email: string, password: string): Observable<AuthResponse> {
-    // In a real app, you'd send credentials to a backend API
-    // For json-server, we'll simulate a successful login if credentials are basic
-    if (email === 'user@example.com' && password === 'password') {
-      const mockResponse: AuthResponse = {
-        token: 'mock-jwt-token',
-        user: { email: email, name: 'Mock User' }
-      };
-      return of(mockResponse).pipe(
-        delay(1000), // Simulate network delay
-        tap(response => this.saveToken(response.token))
-      );
-    } else {
-      // Simulate login failure
-      return new Observable(observer => {
-        setTimeout(() => {
-          observer.error({ status: 401, message: 'Invalid credentials' });
-          observer.complete();
-        }, 1000);
-      });
-    }
+    const loginRequest: LoginRequest = { email, password };
+    return this.http.post<AuthResponse>(`${this.API_URL}/login`, loginRequest).pipe(
+      tap((response) => {
+        this.saveToken(response.token);
+        localStorage.setItem(this.USER_KEY, JSON.stringify(response.userInfo));
+      })
+    );
   }
 
-  // Placeholder for register method
   register(name: string, email: string, password: string): Observable<AuthResponse> {
-    // In a real app, send to /register endpoint
-    console.log('Registering user:', { name, email, password });
-    return this.http.post<AuthResponse>(`${this.API_URL}/register`, { name, email, password }).pipe(
-      delay(1000),
-      tap(response => this.saveToken(response.token))
+    const registerRequest: RegisterRequest = { nombre: name, email, password };
+    return this.http.post<AuthResponse>(`${this.API_URL}/register`, registerRequest).pipe(
+      tap((response) => {
+        this.saveToken(response.token);
+        localStorage.setItem(this.USER_KEY, JSON.stringify(response.userInfo));
+      })
     );
   }
 
@@ -65,8 +65,23 @@ export class AuthService {
     return !!this.getToken();
   }
 
-  logout(): void {
+  logout(): Observable<any> {
+    const token = this.getToken();
+    if (token) {
+      return this.http.post(`${this.API_URL}/logout`, {}).pipe(
+        tap(() => {
+          localStorage.removeItem(this.TOKEN_KEY);
+          localStorage.removeItem(this.USER_KEY);
+        })
+      );
+    }
     localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    return of(null);
+  }
+
+  getCurrentUser(): Observable<any> {
+    return this.http.get(`${this.API_URL}/me`);
   }
 
   requestPasswordResetCode(email: string): Observable<any> {
@@ -76,7 +91,14 @@ export class AuthService {
   }
 
   resetPasswordWithCode(email: string, code: string, newPassword: string): Observable<any> {
-    console.log('Resetting password for:', email, 'with code:', code, 'and new password:', newPassword);
+    console.log(
+      'Resetting password for:',
+      email,
+      'with code:',
+      code,
+      'and new password:',
+      newPassword
+    );
     // Simulate API call to reset password
     return of({ message: 'Password has been reset successfully.' }).pipe(delay(1000));
   }

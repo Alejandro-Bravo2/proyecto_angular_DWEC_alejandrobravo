@@ -2,7 +2,10 @@
   <header class="training-page__header">
     <h1>Tu Entrenamiento Semanal</h1>
   </header>
-  <app-weekly-table />
+  @if (error()) {
+  <div class="error-message">{{ error() }}</div>
+  }
+  <app-weekly-table [exercises]="exercises()" />
   <app-feedback-form />
-  <app-progress-card />
+  <app-progress-card [workoutProgress]="workoutProgress()" />
 </section>

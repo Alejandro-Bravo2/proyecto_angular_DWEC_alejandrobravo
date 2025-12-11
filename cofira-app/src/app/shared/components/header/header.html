@@ -7,51 +7,51 @@
 
     <!-- Desktop Navigation -->
     <nav class="header__nav header__nav--desktop">
-      <a
-        routerLink="/entrenamiento"
-        routerLinkActive="header__nav-link--active"
-        class="header__nav-link">
+      @if (isLoggedIn) {
+      <a routerLink="/entrenamiento" routerLinkActive="header__nav-link--active" class="header__nav-link">
         Entrenamiento
       </a>
-      <a
-        routerLink="/alimentacion"
-        routerLinkActive="header__nav-link--active"
-        class="header__nav-link">
+      <a routerLink="/alimentacion" routerLinkActive="header__nav-link--active" class="header__nav-link">
         Alimentación
       </a>
-      <a
-        routerLink="/seguimiento"
-        routerLinkActive="header__nav-link--active"
-        class="header__nav-link">
+      <a routerLink="/seguimiento" routerLinkActive="header__nav-link--active" class="header__nav-link">
         Seguimiento
       </a>
+      }
     </nav>
 
     <!-- Actions -->
     <section class="header__actions">
       <!-- Theme Toggle -->
-      <button
-        class="header__theme-toggle"
-        (click)="toggleTheme()"
+      <button class="header__theme-toggle" (click)="toggleTheme()"
         [attr.aria-label]="themeService.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
         <span class="header__theme-icon">
           {{ themeService.isDark() ? '☀️' : '🌙' }}
         </span>
       </button>
 
-      <!-- Auth Buttons -->
-      <button class="c-button c-button--primary c-button--small">
+      <!-- Auth Buttons - Not Logged In -->
+      @if (!isLoggedIn) {
+      <a routerLink="/register" class="c-button c-button--primary c-button--small">
         Inscríbete
+      </a>
+      <a routerLink="/login" class="c-button c-button--secondary c-button--small">
+        Iniciar Sesión
+      </a>
+      }
+
+      <!-- Auth Buttons - Logged In -->
+      @if (isLoggedIn) {
+      <a routerLink="/preferencias" class="c-button c-button--secondary c-button--small">
+        Mi Cuenta
+      </a>
+      <button (click)="logout()" class="c-button c-button--primary c-button--small">
+        Cerrar Sesión
       </button>
-      <button class="c-button c-button--secondary c-button--small">
-        Cuenta
-      </button>
+      }
 
       <!-- Mobile Menu Button -->
-      <button
-        class="header__hamburger"
-        (click)="toggleMobileMenu()"
-        [attr.aria-expanded]="isMobileMenuOpen()"
+      <button class="header__hamburger" (click)="toggleMobileMenu()" [attr.aria-expanded]="isMobileMenuOpen()"
         aria-label="Menú de navegación">
         <span class="header__hamburger-line"></span>
         <span class="header__hamburger-line"></span>
@@ -62,31 +62,31 @@
 
   <!-- Mobile Navigation -->
   @if (isMobileMenuOpen()) {
-    <nav class="header__nav header__nav--mobile" (click)="closeMobileMenu()">
-      <a
-        routerLink="/entrenamiento"
-        routerLinkActive="header__nav-link--active"
-        class="header__nav-link">
-        Entrenamiento
-      </a>
-      <a
-        routerLink="/alimentacion"
-        routerLinkActive="header__nav-link--active"
-        class="header__nav-link">
-        Alimentación
-      </a>
-      <a
-        routerLink="/seguimiento"
-        routerLinkActive="header__nav-link--active"
-        class="header__nav-link">
-        Seguimiento
-      </a>
-      <a
-        routerLink="/preferencias"
-        routerLinkActive="header__nav-link--active"
-        class="header__nav-link">
-        Preferencias
-      </a>
-    </nav>
+  <nav class="header__nav header__nav--mobile" (click)="closeMobileMenu()">
+    @if (isLoggedIn) {
+    <a routerLink="/entrenamiento" routerLinkActive="header__nav-link--active" class="header__nav-link">
+      Entrenamiento
+    </a>
+    <a routerLink="/alimentacion" routerLinkActive="header__nav-link--active" class="header__nav-link">
+      Alimentación
+    </a>
+    <a routerLink="/seguimiento" routerLinkActive="header__nav-link--active" class="header__nav-link">
+      Seguimiento
+    </a>
+    <a routerLink="/preferencias" routerLinkActive="header__nav-link--active" class="header__nav-link">
+      Preferencias
+    </a>
+    <button (click)="logout()" class="header__nav-link header__nav-link--logout">
+      Cerrar Sesión
+    </button>
+    } @else {
+    <a routerLink="/register" routerLinkActive="header__nav-link--active" class="header__nav-link">
+      Inscríbete
+    </a>
+    <a routerLink="/login" routerLinkActive="header__nav-link--active" class="header__nav-link">
+      Iniciar Sesión
+    </a>
+    }
+  </nav>
   }
 </header>

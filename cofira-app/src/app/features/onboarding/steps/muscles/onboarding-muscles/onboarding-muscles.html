@@ -14,14 +14,14 @@
           </button>
         }
       </section>
-      @if (musclesForm.value.muscles?.filter(m => m).length === 0 && musclesForm.touched) {
+      @if (!hasSelectedMuscles && musclesForm.touched) {
         <p class="c-form__error u-text-center">Debes seleccionar al menos un grupo muscular.</p>
       }
     </section>
 
     <footer class="onboarding-muscles__footer">
       <button type="submit" class="c-button c-button--primary c-button--large"
-              [disabled]="musclesForm.value.muscles?.filter(m => m).length === 0">Continuar</button>
+              [disabled]="!hasSelectedMuscles">Continuar</button>
     </footer>
   </form>
 </section>

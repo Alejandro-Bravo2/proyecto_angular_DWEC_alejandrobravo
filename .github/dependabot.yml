@@ -1,0 +1,120 @@
+# ============================================================================
+# Dependabot Configuration
+# ============================================================================
+# Automated dependency updates for security and maintenance
+# ============================================================================
+
+version: 2
+updates:
+  # ==========================================================================
+  # Frontend (npm)
+  # ==========================================================================
+  - package-ecosystem: "npm"
+    directory: "/cofira-app"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "Alejandro-Bravo2"
+    assignees:
+      - "Alejandro-Bravo2"
+    labels:
+      - "dependencies"
+      - "frontend"
+      - "automated"
+    commit-message:
+      prefix: "⬆️"
+      include: "scope"
+    versioning-strategy: increase
+    groups:
+      angular:
+        patterns:
+          - "@angular/*"
+        update-types:
+          - "minor"
+          - "patch"
+      development:
+        dependency-type: "development"
+        update-types:
+          - "patch"
+          - "minor"
+
+  # ==========================================================================
+  # Backend (Gradle)
+  # ==========================================================================
+  - package-ecosystem: "gradle"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "Alejandro-Bravo2"
+    assignees:
+      - "Alejandro-Bravo2"
+    labels:
+      - "dependencies"
+      - "backend"
+      - "automated"
+    commit-message:
+      prefix: "⬆️"
+      include: "scope"
+    groups:
+      spring-boot:
+        patterns:
+          - "org.springframework.boot:*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # ==========================================================================
+  # GitHub Actions
+  # ==========================================================================
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "Alejandro-Bravo2"
+    labels:
+      - "dependencies"
+      - "github-actions"
+      - "automated"
+    commit-message:
+      prefix: "⬆️"
+      include: "scope"
+
+  # ==========================================================================
+  # Docker
+  # ==========================================================================
+  - package-ecosystem: "docker"
+    directory: "/cofira-app"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "Alejandro-Bravo2"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "automated"
+
+  - package-ecosystem: "docker"
+    directory: "/backend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "Alejandro-Bravo2"
+    labels:
+      - "dependencies"
+      - "docker"
+      - "automated"

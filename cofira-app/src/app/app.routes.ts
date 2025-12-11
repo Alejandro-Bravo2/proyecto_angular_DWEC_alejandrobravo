@@ -49,7 +49,7 @@ export const routes: Routes = [
   },
   {
     path: 'onboarding',
-    loadComponent: () => import('./features/onboarding/onboarding-container/onboarding-container').then(m => m.OnboardingContainer),
+    loadComponent: () => import('./features/onboarding/onboarding-container/onboarding-container/onboarding-container').then(m => m.OnboardingContainer),
     canActivate: [authGuard], // Protect onboarding flow
     data: { breadcrumb: 'Onboarding' },
     children: [

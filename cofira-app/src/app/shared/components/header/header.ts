@@ -1,22 +1,30 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { ThemeService } from '../../../core/services/theme.service';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './header.html',
-  styleUrls: ['./header.scss']
+  styleUrls: ['./header.scss'],
 })
 export class Header {
+  private router = inject(Router);
+  private authService = inject(AuthService);
+
   isMobileMenuOpen = signal(false);
 
   constructor(public themeService: ThemeService) {}
 
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
+
   toggleMobileMenu(): void {
-    this.isMobileMenuOpen.update(value => !value);
+    this.isMobileMenuOpen.update((value) => !value);
   }
 
   closeMobileMenu(): void {
@@ -25,5 +33,11 @@ export class Header {
 
   toggleTheme(): void {
     this.themeService.toggleTheme();
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/']);
+    this.closeMobileMenu();
   }
 }

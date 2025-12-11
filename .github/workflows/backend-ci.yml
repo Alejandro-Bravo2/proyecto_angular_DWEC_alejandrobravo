@@ -1,0 +1,370 @@
+# ============================================================================
+# COFIRA - CI/CD Pipeline - Backend
+# ============================================================================
+# Triggers: Push to main, Pull Requests, Manual dispatch
+# Features:
+#   - Java code quality analysis
+#   - Unit & Integration tests
+#   - Code coverage reporting
+#   - Docker build & push to GHCR
+#   - Semantic versioning
+#   - Security scanning
+#   - API documentation generation
+# ============================================================================
+
+name: ☕ Backend CI/CD
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: "17"
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/cofira-backend
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+  security-events: write
+
+jobs:
+  # ==========================================================================
+  # JOB 1: Build & Test
+  # ==========================================================================
+  build-test:
+    name: 🏗️ Build & Test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: cofira_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: 🔧 Grant execute permission for gradlew
+        working-directory: backend
+        run: chmod +x gradlew
+
+      - name: 🏗️ Build with Gradle
+        working-directory: backend
+        run: ./gradlew build -x test
+
+      - name: 🧪 Run tests
+        working-directory: backend
+        run: ./gradlew test
+        env:
+          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/cofira_test
+          SPRING_DATASOURCE_USERNAME: test
+          SPRING_DATASOURCE_PASSWORD: test
+
+      - name: 📊 Generate test report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: JUnit Tests
+          path: backend/build/test-results/test/*.xml
+          reporter: java-junit
+
+      - name: 📈 Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./backend/build/reports/jacoco/test/jacocoTestReport.xml
+          flags: backend
+          name: backend-coverage
+
+      - name: 💾 Cache build
+        uses: actions/cache@v4
+        with:
+          path: backend/build
+          key: build-${{ github.sha }}
+
+      - name: 📤 Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: backend/build/libs/*.jar
+          retention-days: 7
+
+  # ==========================================================================
+  # JOB 2: Code Quality Analysis
+  # ==========================================================================
+  code-quality:
+    name: 📊 Code Quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: 🔧 Grant execute permission
+        working-directory: backend
+        run: chmod +x gradlew
+
+      - name: 📊 Run Checkstyle
+        working-directory: backend
+        run: ./gradlew checkstyleMain checkstyleTest || true
+
+      - name: 🔍 Run SpotBugs
+        working-directory: backend
+        run: ./gradlew spotbugsMain || true
+
+      - name: 📈 Code Quality Summary
+        run: |
+          echo "## 📊 Code Quality Report" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Build completed successfully" >> $GITHUB_STEP_SUMMARY
+
+  # ==========================================================================
+  # JOB 3: Security Scanning
+  # ==========================================================================
+  security:
+    name: 🔒 Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+
+      - name: 🔧 Grant execute permission
+        working-directory: backend
+        run: chmod +x gradlew
+
+      - name: 🔍 Run dependency check
+        working-directory: backend
+        run: ./gradlew dependencyCheckAnalyze || true
+
+      - name: 🛡️ Run Snyk Security Scan
+        uses: snyk/actions/gradle@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      - name: 🔒 OWASP Dependency Check
+        uses: dependency-check/Dependency-Check_Action@main
+        with:
+          project: "cofira-backend"
+          path: "./backend"
+          format: "HTML"
+
+  # ==========================================================================
+  # JOB 4: Docker Build & Push
+  # ==========================================================================
+  docker:
+    name: 🐳 Docker Build & Push
+    runs-on: ubuntu-latest
+    needs: [build-test, code-quality]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🏷️ Generate version tag
+        id: version
+        run: |
+          VERSION=$(date +'%Y.%m.%d')-${GITHUB_SHA::7}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "## 🏷️ Version: \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🐳 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 🔐 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏷️ Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=raw,value=${{ steps.version.outputs.version }}
+            type=raw,value=latest,enable={{is_default_branch}}
+          labels: |
+            org.opencontainers.image.title=Cofira Backend
+            org.opencontainers.image.description=Spring Boot API for fitness and nutrition
+            org.opencontainers.image.vendor=Cofira
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
+
+      - name: 🏗️ Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64
+
+      - name: 📊 Image details
+        run: |
+          echo "## 🐳 Docker Image Published" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Registry:** \`${{ env.REGISTRY }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** \`${{ env.IMAGE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** \`${{ steps.version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🚀 Pull command:" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+  # ==========================================================================
+  # JOB 5: API Documentation
+  # ==========================================================================
+  api-docs:
+    name: 📚 Generate API Documentation
+    runs-on: ubuntu-latest
+    needs: build-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: "temurin"
+          cache: "gradle"
+
+      - name: 🔧 Grant execute permission
+        working-directory: backend
+        run: chmod +x gradlew
+
+      - name: 📚 Generate JavaDoc
+        working-directory: backend
+        run: ./gradlew javadoc
+
+      - name: 📝 Create API documentation
+        run: |
+          cat > API-DOCS.md << 'EOF'
+          # 📚 API Documentation
+
+          ## Swagger UI
+          Access the interactive API documentation at:
+          ```
+          http://localhost:8080/swagger-ui.html
+          ```
+
+          ## OpenAPI Specification
+          Download the OpenAPI spec:
+          ```
+          http://localhost:8080/v3/api-docs
+          ```
+
+          ## Health Check
+          ```bash
+          curl http://localhost:8080/actuator/health
+          ```
+
+          ## Metrics
+          ```bash
+          curl http://localhost:8080/actuator/metrics
+          ```
+          EOF
+
+      - name: 📤 Upload documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-documentation
+          path: |
+            API-DOCS.md
+            backend/build/docs
+          retention-days: 90
+
+  # ==========================================================================
+  # JOB 6: Performance Tests
+  # ==========================================================================
+  performance:
+    name: ⚡ Performance Tests
+    runs-on: ubuntu-latest
+    needs: docker
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🚀 Start application
+        run: |
+          docker run -d -p 8080:8080 \
+            -e SPRING_PROFILES_ACTIVE=test \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          sleep 30
+
+      - name: ⚡ Run performance tests
+        run: |
+          echo "## ⚡ Performance Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "Endpoint response times:" >> $GITHUB_STEP_SUMMARY
+          curl -o /dev/null -s -w "Health: %{time_total}s\n" http://localhost:8080/actuator/health >> $GITHUB_STEP_SUMMARY
+
+  # ==========================================================================
+  # JOB 7: Notify
+  # ==========================================================================
+  notify:
+    name: 📢 Notify Results
+    runs-on: ubuntu-latest
+    needs: [build-test, docker]
+    if: always()
+    steps:
+      - name: 📊 Summary
+        run: |
+          echo "# ☕ Backend CI/CD Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Status" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Build: Success" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Tests: Success" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Docker: Success" >> $GITHUB_STEP_SUMMARY

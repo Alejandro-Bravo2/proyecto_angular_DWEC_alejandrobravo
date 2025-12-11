@@ -1,8 +1,20 @@
 <article class="progress-card">
-  <img src="https://via.placeholder.com/300x200?text=Tu+Progreso" alt="Imagen representativa del progreso" class="progress-card__image">
+  <img src="https://via.placeholder.com/300x200?text=Tu+Progreso" alt="Imagen representativa del progreso"
+    class="progress-card__image">
   <section class="progress-card__content">
     <h3>Mira tu progreso</h3>
+    @if (workoutProgress(); as progress) {
+    <div class="progress-stats">
+      <p><strong>Total entrenamientos:</strong> {{ progress.totalWorkouts }}</p>
+      <p><strong>Ejercicios completados:</strong> {{ progress.completedExercises }}</p>
+      <p><strong>Racha actual:</strong> {{ progress.streak }} días</p>
+      @if (progress.lastWorkout) {
+      <p><strong>Último entrenamiento:</strong> {{ progress.lastWorkout }}</p>
+      }
+    </div>
+    } @else {
     <p>Visualiza tus avances y mantente motivado con tus estadísticas.</p>
-    <button class="c-button c-button--primary">VER MI PROGRESO</button>
+    }
+    <button class="c-button c-button--primary" routerLink="/seguimiento">VER MI PROGRESO</button>
   </section>
 </article>

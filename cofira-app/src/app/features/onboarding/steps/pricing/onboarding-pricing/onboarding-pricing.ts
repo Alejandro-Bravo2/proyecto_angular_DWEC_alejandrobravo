@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { OnboardingService } from '../../services/onboarding.service';
+import { OnboardingService } from '../../../services/onboarding.service';
 
 @Component({
   selector: 'app-onboarding-pricing',
@@ -29,7 +29,7 @@ export class OnboardingPricing {
 
   onSubmit(): void {
     if (this.pricingForm.valid) {
-      this.onboardingService.onboardingData.update(data => ({
+      this.onboardingService.onboardingData.update((data: any) => ({
         ...data,
         ...this.pricingForm.value,
       }));

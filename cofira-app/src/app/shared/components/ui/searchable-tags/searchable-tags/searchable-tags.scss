@@ -62,7 +62,7 @@
       padding: $spacing-xs $spacing-s;
       border-radius: $radius-pill;
       font-size: $font-size-small;
-      font-weight: $font-weight-normal;
+      font-weight: $font-weight-regular;
       border: 1px solid var(--card-border); // Outline for ghost buttons
       color: var(--text-secondary); // Ghost button text color
       &:hover {

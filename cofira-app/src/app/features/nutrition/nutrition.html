@@ -2,5 +2,9 @@
   <header class="nutrition-page__header">
     <h1>Tu Menú Diario</h1>
   </header>
-  <app-daily-menu />
+  @if (error()) {
+  <div class="error-message">{{ error() }}</div>
+  }
+  <app-daily-menu [dailyNutrition]="dailyNutrition()" [currentDate]="currentDate()"
+    (dateChanged)="onDateChanged($event)" />
 </section>

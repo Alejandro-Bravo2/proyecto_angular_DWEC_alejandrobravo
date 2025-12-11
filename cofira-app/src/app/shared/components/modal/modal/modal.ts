@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewChild, ViewContainerRef, ComponentRef, Type, OnDestroy, inject, OnInit } from '@angular/core';
+import { Component, HostListener, ViewChild, ViewContainerRef, ComponentRef, Type, OnDestroy, inject, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalService } from '../../../../core/services/modal.service';
 import { RouterOutlet } from '@angular/router';
@@ -14,16 +14,19 @@ export class Modal implements OnInit, OnDestroy {
   @ViewChild('modalContentHost', { read: ViewContainerRef }) modalContentHost!: ViewContainerRef;
   componentRef: ComponentRef<any> | null = null;
 
-  constructor(public modalService: ModalService) {}
-
-  ngOnInit(): void {
-    this.modalService.activeModal$.subscribe(modalState => {
+  constructor(public modalService: ModalService) {
+    effect(() => {
+      const modalState = this.modalService.activeModal$();
       if (modalState && modalState.component) {
         this.loadComponent(modalState.component, modalState.inputs);
       } else {
         this.clearComponent();
       }
     });
+  }
+
+  ngOnInit(): void {
+    // Effect is already running in constructor
   }
 
   ngOnDestroy(): void {
@@ -49,7 +52,7 @@ export class Modal implements OnInit, OnDestroy {
   }
 
   @HostListener('document:keydown.escape', ['$event'])
-  onKeydownHandler(event: KeyboardEvent): void {
+  onKeydownHandler(event: Event): void {
     if (this.modalService.activeModal$()) {
       this.modalService.close();
     }

@@ -1,19 +1,41 @@
 <section class="daily-menu">
   <header class="daily-menu__header">
-    <button aria-label="Día anterior">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    <button aria-label="Día anterior" (click)="previousDay()" class="daily-menu__nav-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6" />
+      </svg>
     </button>
-    <h2>Viernes, 24 de Diciembre</h2>
-    <button aria-label="Día siguiente">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+
+    <div class="daily-menu__date-selector">
+      <h2>{{ formattedDate() }}</h2>
+      <div class="daily-menu__date-controls">
+        <input type="date" [value]="currentDate()" (change)="onDateInputChange($event)" class="daily-menu__date-input"
+          aria-label="Seleccionar fecha" />
+        <button (click)="goToToday()" class="daily-menu__today-btn" type="button">
+          Hoy
+        </button>
+      </div>
+    </div>
+
+    <button aria-label="Día siguiente" (click)="nextDay()" class="daily-menu__nav-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m9 18 6-6-6-6" />
+      </svg>
     </button>
   </header>
 
+  @if (dailyNutrition(); as nutrition) {
   <section class="daily-menu__sections">
-    <!-- Meal sections will be dynamically loaded here -->
-    <app-meal-section title="Desayuno"></app-meal-section>
-    <app-meal-section title="Almuerzo"></app-meal-section>
-    <app-meal-section title="Cena"></app-meal-section>
-    <app-meal-section title="Snacks"></app-meal-section>
+    @for (meal of nutrition.meals; track meal.id) {
+    <app-meal-section [title]="meal.mealType" [foods]="meal.foods" [mealId]="meal.id">
+    </app-meal-section>
+    }
   </section>
+  } @else {
+  <div class="daily-menu__empty">
+    <p>No hay datos de nutrición para esta fecha</p>
+  </div>
+  }
 </section>

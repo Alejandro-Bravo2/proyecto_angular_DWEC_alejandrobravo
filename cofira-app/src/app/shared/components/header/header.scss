@@ -83,6 +83,22 @@
       color: $color-brand-primary;
       background-color: rgba($color-brand-primary, 0.1);
     }
+
+    &--logout {
+      background: none;
+      border: none;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      text-align: left;
+      cursor: pointer;
+      width: 100%;
+      color: $color-error;
+
+      &:hover {
+        background-color: rgba($color-error, 0.1);
+      }
+    }
   }
 
   &__actions {
@@ -131,7 +147,7 @@
       @include transition(all);
     }
 
-    &[aria-expanded="true"] {
+    &[aria-expanded='true'] {
       .header__hamburger-line {
         &:nth-child(1) {
           transform: rotate(45deg) translate(5px, 5px);

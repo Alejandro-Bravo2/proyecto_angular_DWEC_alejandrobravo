@@ -4,19 +4,32 @@
   </header>
   <section class="nutrient-counter__body">
     <figure class="nutrient-counter__chart">
-      <!-- Placeholder for circular chart -->
-      <img src="https://via.placeholder.com/150/FDB913/FFFFFF?text=Chart" alt="Gráfico circular de nutrientes">
+      @if (nutrientData()) {
+      <div style="width: 150px; height: 150px; margin: 0 auto;">
+        <canvas baseChart [data]="doughnutChartData()" [options]="doughnutChartOptions" type="doughnut">
+        </canvas>
+      </div>
+      } @else {
+      <img src="https://via.placeholder.com/150/FDB913/FFFFFF?text=Sin+Datos" alt="Gráfico circular de nutrientes">
+      }
     </figure>
     <section class="nutrient-counter__details">
       <h4>Desglose</h4>
+      @if (nutrientData(); as data) {
       <ul>
-        <li>Proteínas: <span class="u-text-brand">80g</span></li>
-        <li>Carbohidratos: <span class="u-text-brand">200g</span></li>
-        <li>Grasas: <span class="u-text-brand">60g</span></li>
-        <li>Fibra: <span class="u-text-brand">25g</span></li>
-        <li>Agua: <span class="u-text-brand">2L</span></li>
+        <li>Proteínas: <span class="u-text-brand">{{ data.protein }}g</span></li>
+        <li>Carbohidratos: <span class="u-text-brand">{{ data.carbs }}g</span></li>
+        <li>Grasas: <span class="u-text-brand">{{ data.fat }}g</span></li>
+        <li>Fibra: <span class="u-text-brand">{{ data.fiber }}g</span></li>
+        <li>Agua: <span class="u-text-brand">{{ data.water }}L</span></li>
       </ul>
-      <p class="nutrient-counter__calories">Calorías Totales: <span class="u-text-brand">1850</span> / 2250 kcal</p>
+      <p class="nutrient-counter__calories">
+        Calorías Totales: <span class="u-text-brand">{{ data.calories }}</span> / {{ data.calorieGoal }} kcal
+        <small>({{ caloriePercentage() }}%)</small>
+      </p>
+      } @else {
+      <p>Cargando datos de nutrientes...</p>
+      }
     </section>
   </section>
 </section>

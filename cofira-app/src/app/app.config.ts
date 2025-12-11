@@ -1,6 +1,11 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import {
+  ApplicationConfig,
+  provideBrowserGlobalErrorListeners,
+  provideZoneChangeDetection,
+} from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { routes } from './app.routes';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
@@ -13,11 +18,9 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideHttpClient(withInterceptors([
-      authInterceptor,
-      loadingInterceptor,
-      errorInterceptor,
-      loggingInterceptor
-    ]))
-  ]
+    provideHttpClient(
+      withInterceptors([authInterceptor, loadingInterceptor, errorInterceptor, loggingInterceptor])
+    ),
+    provideCharts(withDefaultRegisterables()),
+  ],
 };

@@ -1,12 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 import { ExerciseRow } from '../exercise-row/exercise-row';
-
-interface Exercise {
-  name: string;
-  sets: number;
-  reps: string;
-  completed: boolean;
-}
+import { Exercise } from '../../services/training.service';
 
 @Component({
   selector: 'app-weekly-table',
@@ -16,10 +10,6 @@ interface Exercise {
   styleUrl: './weekly-table.scss',
 })
 export class WeeklyTable {
-  exercises: Exercise[] = [
-    { name: 'Press Banca', sets: 3, reps: '8-12', completed: false },
-    { name: 'Sentadilla', sets: 4, reps: '6-10', completed: true },
-    { name: 'Peso Muerto', sets: 3, reps: '5-8', completed: false },
-    { name: 'Remo con Barra', sets: 3, reps: '8-12', completed: false },
-  ];
+  // Input signal for exercises
+  exercises = input<Exercise[]>([]);
 }

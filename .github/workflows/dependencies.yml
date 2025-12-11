@@ -1,0 +1,135 @@
+# ============================================================================
+# COFIRA - Dependency Updates & Security
+# ============================================================================
+# Automated dependency updates and security vulnerability scanning
+# Runs: Daily at 2 AM UTC
+# Features:
+#   - Automated dependency updates
+#   - Security vulnerability scanning
+#   - Auto-PR creation for updates
+#   - Dependency graph updates
+# ============================================================================
+
+name: 🔄 Dependency Updates
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # Daily at 2 AM UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  security-events: write
+
+jobs:
+  # ==========================================================================
+  # Frontend Dependencies
+  # ==========================================================================
+  frontend-deps:
+    name: 📦 Update Frontend Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 🔍 Check for updates
+        working-directory: cofira-app
+        run: |
+          npm outdated || true
+          echo "## 📦 Frontend Dependencies Status" >> $GITHUB_STEP_SUMMARY
+          npm outdated >> $GITHUB_STEP_SUMMARY || true
+
+      - name: 🔒 Security audit
+        working-directory: cofira-app
+        run: |
+          npm audit --audit-level=moderate || true
+          echo "## 🔒 Security Audit" >> $GITHUB_STEP_SUMMARY
+          npm audit >> $GITHUB_STEP_SUMMARY || true
+
+      - name: 🔧 Auto-fix vulnerabilities
+        working-directory: cofira-app
+        run: npm audit fix || true
+
+      - name: 📝 Create PR if changes
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "🔒 Fix frontend security vulnerabilities"
+          title: "🔒 [Security] Frontend dependency updates"
+          body: |
+            ## 🔒 Security Updates
+
+            This PR was automatically generated to fix security vulnerabilities.
+
+            ### Changes
+            - Updated dependencies with security fixes
+            - Run `npm audit` for details
+
+            ### Testing
+            - [ ] All tests pass
+            - [ ] No breaking changes
+          branch: security/frontend-deps
+          labels: security, dependencies, automated
+
+  # ==========================================================================
+  # Backend Dependencies
+  # ==========================================================================
+  backend-deps:
+    name: ☕ Update Backend Dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: ☕ Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: 🔧 Make gradlew executable
+        working-directory: backend
+        run: chmod +x gradlew
+
+      - name: 🔍 Check for updates
+        working-directory: backend
+        run: |
+          ./gradlew dependencyUpdates || true
+          echo "## ☕ Backend Dependencies Status" >> $GITHUB_STEP_SUMMARY
+
+      - name: 🔒 OWASP Dependency Check
+        working-directory: backend
+        run: ./gradlew dependencyCheckAnalyze || true
+
+  # ==========================================================================
+  # Dependabot Auto-Merge
+  # ==========================================================================
+  auto-merge:
+    name: 🤖 Auto-merge Dependabot PRs
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: 🔍 Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v1
+        with:
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+
+      - name: ✅ Auto-approve
+        if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        run: gh pr review --approve "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🔀 Auto-merge
+        if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

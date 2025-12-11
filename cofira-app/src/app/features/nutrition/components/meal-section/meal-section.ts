@@ -1,14 +1,9 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule
-import { FoodItem } from '../food-item/food-item'; // Import FoodItem
-import { ModalService } from '../../../../../core/services/modal.service';
+import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FoodItem } from '../food-item/food-item';
+import { ModalService } from '../../../../core/services/modal.service';
 import { IngredientsModal } from '../ingredients-modal/ingredients-modal';
-
-interface Food {
-  icon: string; // Placeholder for icon path or name
-  quantity: string;
-  name: string;
-}
+import { FoodItem as FoodItemType } from '../../services/nutrition.service';
 
 interface Ingredient {
   name: string;
@@ -19,33 +14,29 @@ interface Ingredient {
 @Component({
   selector: 'app-meal-section',
   standalone: true,
-  imports: [CommonModule, FoodItem], // Add CommonModule here
+  imports: [CommonModule, FoodItem],
   templateUrl: './meal-section.html',
   styleUrl: './meal-section.scss',
 })
 export class MealSection {
-  @Input() title: string = '';
-
-  // Dummy data for food items
-  foodItems: Food[] = [
-    { icon: 'apple', quantity: '100g', name: 'Manzana' },
-    { icon: 'bread', quantity: '2 rebanadas', name: 'Pan Integral' },
-    { icon: 'egg', quantity: '2 unidades', name: 'Huevos cocidos' },
-  ];
-
-  // Dummy ingredients data for the modal
-  dummyIngredients: Ingredient[] = [
-    { name: 'Pollo', quantity: '200g', price: 2.50 },
-    { name: 'Arroz', quantity: '150g', price: 0.30 },
-    { name: 'Verduras Mixtas', quantity: '100g', price: 0.80 },
-  ];
+  // Input signals for real data
+  title = input<string>('');
+  foods = input<FoodItemType[]>([]);
+  mealId = input<string>('');
 
   constructor(private modalService: ModalService) {}
 
   openIngredientsModal(): void {
+    // Convert foods to ingredients format for modal
+    const ingredients: Ingredient[] = this.foods().map(food => ({
+      name: food.name,
+      quantity: food.quantity,
+      price: 0 // Price can be added later if available in the API
+    }));
+
     this.modalService.open(IngredientsModal, {
-      mealName: this.title,
-      ingredients: this.dummyIngredients
+      mealName: this.title(),
+      ingredients
     });
   }
 }

@@ -1,11 +1,17 @@
 <section class="weekly-table">
   <header class="weekly-table__header">
     <button aria-label="Día anterior">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6" />
+      </svg>
     </button>
     <h2>Lunes, 9 de Diciembre</h2>
     <button aria-label="Día siguiente">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m9 18 6-6-6-6" />
+      </svg>
     </button>
   </header>
 
@@ -20,12 +26,12 @@
       </tr>
     </thead>
     <tbody>
-      @for (exercise of exercises; track exercise.name) {
-        <app-exercise-row [exercise]="exercise" />
+      @for (exercise of exercises(); track exercise.name) {
+      <app-exercise-row [exercise]="exercise" />
       } @empty {
-        <tr class="c-table__row">
-          <td colspan="4" class="c-table__cell u-text-center">No hay ejercicios para este día.</td>
-        </tr>
+      <tr class="c-table__row">
+        <td colspan="4" class="c-table__cell u-text-center">No hay ejercicios para este día.</td>
+      </tr>
       }
     </tbody>
   </table>

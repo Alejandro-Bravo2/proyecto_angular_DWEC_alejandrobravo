@@ -1,0 +1,180 @@
+# ============================================================================
+# COFIRA - Code Quality & Static Analysis
+# ============================================================================
+# Comprehensive code quality checks
+# Runs: On every PR and push to main
+# Features:
+#   - CodeQL security analysis
+#   - SonarCloud analysis
+#   - Code complexity metrics
+#   - Duplicate code detection
+# ============================================================================
+
+name: 🔍 Code Quality
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    - cron: "0 6 * * 1" # Weekly on Monday at 6 AM
+
+permissions:
+  contents: read
+  pull-requests: write
+  security-events: write
+
+jobs:
+  # ==========================================================================
+  # CodeQL Analysis
+  # ==========================================================================
+  codeql:
+    name: 🛡️ CodeQL Security Analysis
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        language: ["javascript", "java"]
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔧 Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          queries: +security-and-quality
+
+      - name: 🏗️ Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: 🔍 Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+
+  # ==========================================================================
+  # SonarCloud Analysis
+  # ==========================================================================
+  sonarcloud:
+    name: 📊 SonarCloud Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: ☕ Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - name: 📊 SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=cofira
+            -Dsonar.organization=your-org
+            -Dsonar.sources=cofira-app/src,backend/src/main
+            -Dsonar.tests=cofira-app/src,backend/src/test
+            -Dsonar.typescript.lcov.reportPaths=cofira-app/coverage/lcov.info
+
+  # ==========================================================================
+  # Code Complexity
+  # ==========================================================================
+  complexity:
+    name: 📈 Code Complexity Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 📦 Install complexity tools
+        run: npm install -g complexity-report
+
+      - name: 📈 Analyze frontend complexity
+        working-directory: cofira-app/src
+        run: |
+          cr --format json app/**/*.ts > complexity.json || true
+          echo "## 📈 Code Complexity Report" >> $GITHUB_STEP_SUMMARY
+          cat complexity.json >> $GITHUB_STEP_SUMMARY || echo "No complexity data" >> $GITHUB_STEP_SUMMARY
+
+      - name: 📤 Upload complexity report
+        uses: actions/upload-artifact@v4
+        with:
+          name: complexity-report
+          path: cofira-app/src/complexity.json
+          retention-days: 30
+
+  # ==========================================================================
+  # Duplicate Code Detection
+  # ==========================================================================
+  duplication:
+    name: 🔄 Duplicate Code Detection
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 📦 Install jscpd
+        run: npm install -g jscpd
+
+      - name: 🔄 Detect duplicates
+        run: |
+          jscpd cofira-app/src --reporters html,console || true
+          echo "## 🔄 Code Duplication Report" >> $GITHUB_STEP_SUMMARY
+
+      - name: 📤 Upload duplication report
+        uses: actions/upload-artifact@v4
+        with:
+          name: duplication-report
+          path: report/
+          retention-days: 30
+
+  # ==========================================================================
+  # License Compliance
+  # ==========================================================================
+  license-check:
+    name: 📜 License Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 📦 Install dependencies
+        working-directory: cofira-app
+        run: npm ci
+
+      - name: 📜 Check licenses
+        working-directory: cofira-app
+        run: |
+          npx license-checker --summary > licenses.txt
+          echo "## 📜 License Summary" >> $GITHUB_STEP_SUMMARY
+          cat licenses.txt >> $GITHUB_STEP_SUMMARY
+
+      - name: 📤 Upload license report
+        uses: actions/upload-artifact@v4
+        with:
+          name: license-report
+          path: cofira-app/licenses.txt
+          retention-days: 90

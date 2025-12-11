@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { OnboardingService } from '../../services/onboarding.service';
+import { OnboardingService } from '../../../services/onboarding.service';
 
 @Component({
   selector: 'app-onboarding-muscles',
@@ -41,7 +41,7 @@ export class OnboardingMuscles {
       .filter(value => value !== null);
 
     if (selectedMuscles && selectedMuscles.length > 0) {
-      this.onboardingService.onboardingData.update(data => ({
+      this.onboardingService.onboardingData.update((data: any) => ({
         ...data,
         muscles: selectedMuscles,
       }));
@@ -57,5 +57,11 @@ export class OnboardingMuscles {
   // Helper to get the FormArray as a FormArray of FormControls
   get musclesFormArray(): FormArray {
     return this.musclesForm.controls.muscles as FormArray;
+  }
+
+  // Helper to check if no muscles are selected
+  get hasSelectedMuscles(): boolean {
+    const muscles = this.musclesForm.value.muscles || [];
+    return muscles.some(m => m === true);
   }
 }

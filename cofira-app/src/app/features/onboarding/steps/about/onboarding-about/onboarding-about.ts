@@ -28,7 +28,13 @@ export class OnboardingAbout {
 
   onSubmit(): void {
     if (this.aboutForm.valid) {
-      this.onboardingService.updateAboutData(this.aboutForm.value as { gender: string, height: number, age: number });
+      const formValue = this.aboutForm.value;
+      const data = {
+        gender: formValue.gender!,
+        height: Number(formValue.height!),
+        age: Number(formValue.age!)
+      };
+      this.onboardingService.updateAboutData(data);
       console.log('Navigating to next onboarding step...');
       // In a real app, navigate to the next onboarding step
       // this.router.navigate(['/onboarding/nutrition']);

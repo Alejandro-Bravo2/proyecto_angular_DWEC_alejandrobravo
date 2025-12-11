@@ -2,6 +2,12 @@
 // COFIRA - Forms Component
 // ============================================================================
 
+@import '../settings/colors';
+@import '../settings/spacing';
+@import '../settings/typography';
+@import '../settings/radios';
+@import '../tools/mixins';
+
 .c-form {
   // Form Group (campo + label + error)
   &__group {
