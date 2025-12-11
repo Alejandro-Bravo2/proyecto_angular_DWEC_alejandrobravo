@@ -34,7 +34,7 @@ RUN gradle clean bootJar --no-daemon -x test
 # ============================================================================
 # STAGE 2: Production
 # ============================================================================
-FROM eclipse-temurin:17-jre-alpine AS production
+FROM eclipse-temurin:25-jre-alpine AS production
 
 # Install curl for healthcheck
 RUN apk add --no-cache curl
