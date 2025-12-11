@@ -22,7 +22,7 @@ LABEL version="1.0.0"
 COPY cofira-app/package*.json ./
 
 # Install dependencies
-RUN npm ci --silent
+RUN npm ci --legacy-peer-deps
 
 # Copy source code
 COPY cofira-app/ .
