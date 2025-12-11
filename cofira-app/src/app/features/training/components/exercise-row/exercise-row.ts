@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 interface Exercise {
   name: string;
@@ -11,10 +11,11 @@ interface Exercise {
 @Component({
   selector: 'app-exercise-row',
   standalone: true,
-  imports: [CommonModule], // Add CommonModule here
+  imports: [CommonModule],
   templateUrl: './exercise-row.html',
   styleUrl: './exercise-row.scss',
 })
 export class ExerciseRow {
-  @Input() exercise: Exercise | undefined;
+  // Using Angular 20 input signal
+  exercise = input<Exercise | undefined>(undefined);
 }

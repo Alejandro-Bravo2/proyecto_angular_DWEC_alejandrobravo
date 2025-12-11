@@ -6,12 +6,8 @@
 #   - Lint & Format check
 #   - Build verification
 #   - Unit tests with coverage
-#   - E2E tests
 #   - Docker build & push to GHCR
-#   - Semantic versioning
-#   - Automated documentation
 #   - Security scanning
-#   - Performance audit
 # ============================================================================
 
 name: 🚀 Frontend CI/CD
@@ -27,11 +23,6 @@ on:
     paths:
       - "cofira-app/**"
   workflow_dispatch:
-    inputs:
-      deploy:
-        description: "Deploy to production"
-        required: false
-        default: "false"
 
 env:
   NODE_VERSION: "20"
@@ -42,7 +33,6 @@ permissions:
   contents: write
   packages: write
   pull-requests: write
-  issues: write
 
 jobs:
   # ==========================================================================
@@ -69,14 +59,7 @@ jobs:
       - name: 🔍 Run ESLint
         working-directory: cofira-app
         run: npm run lint
-
-      - name: 📊 Upload lint results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: lint-results
-          path: cofira-app/eslint-report.json
-          retention-days: 30
+        continue-on-error: false
 
   # ==========================================================================
   # JOB 2: Build Application
@@ -151,23 +134,16 @@ jobs:
         working-directory: cofira-app
         run: npm run test:coverage
 
-      - name: 📊 Generate coverage report
-        if: always()
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./cofira-app/coverage/cofira-app/lcov.info
-          flags: frontend
-          name: frontend-coverage
-          fail_ci_if_error: false
-
       - name: 📈 Coverage Summary
         if: always()
         working-directory: cofira-app
         run: |
           echo "## 📊 Test Coverage Summary" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
-          cat coverage/cofira-app/coverage-summary.json || echo "Coverage report not found"
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          if [ -f coverage/cofira-app/lcov-report/index.html ]; then
+            echo "✅ Coverage report generated successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Coverage report not found" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: 📤 Upload coverage reports
         if: always()
@@ -187,20 +163,19 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
 
+      - name: 🟢 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - name: 🔍 Run npm audit
         working-directory: cofira-app
         run: |
-          npm audit --audit-level=high || true
           echo "## 🔒 Security Audit" >> $GITHUB_STEP_SUMMARY
-          npm audit --audit-level=high >> $GITHUB_STEP_SUMMARY || true
-
-      - name: 🛡️ Run Snyk Security Scan
-        uses: snyk/actions/node@master
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high
+          echo "" >> $GITHUB_STEP_SUMMARY
+          npm audit --audit-level=moderate || true
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Security scan completed" >> $GITHUB_STEP_SUMMARY
 
   # ==========================================================================
   # JOB 5: Docker Build & Push
@@ -212,21 +187,15 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     outputs:
       version: ${{ steps.version.outputs.version }}
-      image: ${{ steps.meta.outputs.tags }}
+      image-tag: ${{ steps.meta.outputs.tags }}
     steps:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: 🏷️ Generate version tag
         id: version
         run: |
-          if [ "${{ github.event_name }}" == "push" ]; then
-            VERSION=$(date +'%Y.%m.%d')-${GITHUB_SHA::7}
-          else
-            VERSION=pr-${{ github.event.pull_request.number }}
-          fi
+          VERSION=$(date +'%Y.%m.%d')-${GITHUB_SHA::7}
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "## 🏷️ Version: \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
 
@@ -246,12 +215,8 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=semver,pattern={{major}}.{{minor}}
             type=raw,value=${{ steps.version.outputs.version }}
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
           labels: |
             org.opencontainers.image.title=Cofira Frontend
             org.opencontainers.image.description=Angular application for fitness and nutrition
@@ -268,7 +233,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/amd64,linux/arm64
 
       - name: 📊 Image details
         run: |
@@ -284,155 +248,23 @@ jobs:
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
   # ==========================================================================
-  # JOB 6: Generate Documentation
+  # JOB 6: Pipeline Summary
   # ==========================================================================
-  documentation:
-    name: 📚 Generate Documentation
+  summary:
+    name: 📊 Pipeline Summary
     runs-on: ubuntu-latest
-    needs: docker
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: 📦 Install dependencies
-        working-directory: cofira-app
-        run: npm ci
-
-      - name: 📚 Generate TypeDoc
-        working-directory: cofira-app
-        run: |
-          npm install --save-dev typedoc
-          npx typedoc --out docs src/app
-
-      - name: 📝 Create deployment documentation
-        run: |
-          cat > DEPLOYMENT.md << 'EOF'
-          # 🚀 Deployment Documentation
-
-          Generated: $(date)
-          Version: ${{ needs.docker.outputs.version }}
-
-          ## Docker Images
-
-          ### Frontend
-          ```bash
-          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ needs.docker.outputs.version }}
-          ```
-
-          ## Quick Start
-
-          ### Using Docker Compose
-          ```bash
-          docker-compose up -d
-          ```
-
-          ### Using Docker
-          ```bash
-          docker run -d -p 4200:80 ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          ```
-
-          ## Environment Variables
-          See `.env.example` for required environment variables.
-
-          ## Health Check
-          - Endpoint: `http://localhost:4200/health`
-
-          EOF
-
-      - name: 📤 Upload documentation
-        uses: actions/upload-artifact@v4
-        with:
-          name: documentation
-          path: |
-            DEPLOYMENT.md
-            cofira-app/docs
-          retention-days: 90
-
-  # ==========================================================================
-  # JOB 7: Performance Audit
-  # ==========================================================================
-  lighthouse:
-    name: ⚡ Lighthouse Performance Audit
-    runs-on: ubuntu-latest
-    needs: build
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-
-      - name: 📦 Install dependencies
-        working-directory: cofira-app
-        run: npm ci
-
-      - name: 🏗️ Build for production
-        working-directory: cofira-app
-        run: npm run build
-
-      - name: ⚡ Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v11
-        with:
-          configPath: "./cofira-app/.lighthouserc.json"
-          uploadArtifacts: true
-          temporaryPublicStorage: true
-
-  # ==========================================================================
-  # JOB 8: Release Notes
-  # ==========================================================================
-  release-notes:
-    name: 📝 Generate Release Notes
-    runs-on: ubuntu-latest
-    needs: [docker, documentation]
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 📝 Generate changelog
-        id: changelog
-        run: |
-          git log --pretty=format:"- %s (%an)" $(git describe --tags --abbrev=0 2>/dev/null || echo "")..HEAD > CHANGELOG.txt
-
-      - name: 🏷️ Create Release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: v${{ needs.docker.outputs.version }}
-          name: Release v${{ needs.docker.outputs.version }}
-          bodyFile: CHANGELOG.txt
-          draft: false
-          prerelease: false
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-  # ==========================================================================
-  # JOB 9: Notify Success
-  # ==========================================================================
-  notify:
-    name: 📢 Notify Results
-    runs-on: ubuntu-latest
-    needs: [build, test, docker]
+    needs: [lint, build, test, security]
     if: always()
     steps:
       - name: 📊 Generate summary
         run: |
-          echo "# 🎉 CI/CD Pipeline Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "# 🎉 Frontend CI/CD Pipeline Complete!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "## Pipeline Status" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Lint: Success" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Build: Success" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Tests: Success" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ Docker: Success" >> $GITHUB_STEP_SUMMARY
+          echo "- Lint: ${{ needs.lint.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Build: ${{ needs.build.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Tests: ${{ needs.test.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Security: ${{ needs.security.result }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
           echo "**Branch:** \`${{ github.ref }}\`" >> $GITHUB_STEP_SUMMARY

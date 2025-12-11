@@ -1,8 +1,8 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 interface Food {
-  icon: string; // Placeholder for icon path or name
+  icon: string;
   quantity: string;
   name: string;
 }
@@ -10,10 +10,11 @@ interface Food {
 @Component({
   selector: 'app-food-item',
   standalone: true,
-  imports: [CommonModule], // Add CommonModule here
+  imports: [CommonModule],
   templateUrl: './food-item.html',
   styleUrl: './food-item.scss',
 })
 export class FoodItem {
-  @Input() food: Food | undefined;
+  // Using Angular 20 input signal
+  food = input<Food | undefined>(undefined);
 }

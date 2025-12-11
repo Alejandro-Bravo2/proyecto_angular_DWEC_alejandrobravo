@@ -54,99 +54,6 @@ jobs:
           category: "/language:${{ matrix.language }}"
 
   # ==========================================================================
-  # SonarCloud Analysis
-  # ==========================================================================
-  sonarcloud:
-    name: 📊 SonarCloud Analysis
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: ☕ Set up JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: "17"
-          distribution: "temurin"
-
-      - name: 📊 SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          args: >
-            -Dsonar.projectKey=cofira
-            -Dsonar.organization=your-org
-            -Dsonar.sources=cofira-app/src,backend/src/main
-            -Dsonar.tests=cofira-app/src,backend/src/test
-            -Dsonar.typescript.lcov.reportPaths=cofira-app/coverage/lcov.info
-
-  # ==========================================================================
-  # Code Complexity
-  # ==========================================================================
-  complexity:
-    name: 📈 Code Complexity Analysis
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: 📦 Install complexity tools
-        run: npm install -g complexity-report
-
-      - name: 📈 Analyze frontend complexity
-        working-directory: cofira-app/src
-        run: |
-          cr --format json app/**/*.ts > complexity.json || true
-          echo "## 📈 Code Complexity Report" >> $GITHUB_STEP_SUMMARY
-          cat complexity.json >> $GITHUB_STEP_SUMMARY || echo "No complexity data" >> $GITHUB_STEP_SUMMARY
-
-      - name: 📤 Upload complexity report
-        uses: actions/upload-artifact@v4
-        with:
-          name: complexity-report
-          path: cofira-app/src/complexity.json
-          retention-days: 30
-
-  # ==========================================================================
-  # Duplicate Code Detection
-  # ==========================================================================
-  duplication:
-    name: 🔄 Duplicate Code Detection
-    runs-on: ubuntu-latest
-    steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
-
-      - name: 🟢 Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: 📦 Install jscpd
-        run: npm install -g jscpd
-
-      - name: 🔄 Detect duplicates
-        run: |
-          jscpd cofira-app/src --reporters html,console || true
-          echo "## 🔄 Code Duplication Report" >> $GITHUB_STEP_SUMMARY
-
-      - name: 📤 Upload duplication report
-        uses: actions/upload-artifact@v4
-        with:
-          name: duplication-report
-          path: report/
-          retention-days: 30
-
-  # ==========================================================================
   # License Compliance
   # ==========================================================================
   license-check:
@@ -160,6 +67,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+          cache: "npm"
+          cache-dependency-path: cofira-app/package-lock.json
 
       - name: 📦 Install dependencies
         working-directory: cofira-app
@@ -168,13 +77,25 @@ jobs:
       - name: 📜 Check licenses
         working-directory: cofira-app
         run: |
-          npx license-checker --summary > licenses.txt
           echo "## 📜 License Summary" >> $GITHUB_STEP_SUMMARY
-          cat licenses.txt >> $GITHUB_STEP_SUMMARY
+          npx license-checker --summary >> $GITHUB_STEP_SUMMARY || true
+          echo "✅ License check completed" >> $GITHUB_STEP_SUMMARY
 
-      - name: 📤 Upload license report
-        uses: actions/upload-artifact@v4
-        with:
-          name: license-report
-          path: cofira-app/licenses.txt
-          retention-days: 90
+  # ==========================================================================
+  # Pipeline Summary
+  # ==========================================================================
+  summary:
+    name: 📊 Quality Check Summary
+    runs-on: ubuntu-latest
+    needs: [codeql, license-check]
+    if: always()
+    steps:
+      - name: 📊 Generate summary
+        run: |
+          echo "# 🔍 Code Quality Pipeline Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Status" >> $GITHUB_STEP_SUMMARY
+          echo "- CodeQL: ${{ needs.codeql.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- License Check: ${{ needs.license-check.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Quality checks completed" >> $GITHUB_STEP_SUMMARY

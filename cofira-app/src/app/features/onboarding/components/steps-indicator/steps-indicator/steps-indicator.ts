@@ -1,5 +1,5 @@
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Import CommonModule
+import { Component, input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 interface Step {
   index: number;
@@ -9,11 +9,12 @@ interface Step {
 @Component({
   selector: 'app-steps-indicator',
   standalone: true,
-  imports: [CommonModule], // Add CommonModule here
+  imports: [CommonModule],
   templateUrl: './steps-indicator.html',
   styleUrl: './steps-indicator.scss',
 })
 export class StepsIndicator {
-  @Input() steps: Step[] = [];
-  @Input() currentStep: number = 1;
+  // Using Angular 20 input signals
+  steps = input<Step[]>([]);
+  currentStep = input<number>(1);
 }
