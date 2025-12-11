@@ -19,13 +19,13 @@ LABEL description="Cofira Frontend - Angular Application"
 LABEL version="1.0.0"
 
 # Copy package files
-COPY package*.json ./
+COPY cofira-app/package*.json ./
 
 # Install dependencies
 RUN npm ci --silent
 
 # Copy source code
-COPY . .
+COPY cofira-app/ .
 
 # Build application for production
 RUN npm run build --configuration=production
@@ -39,7 +39,7 @@ FROM nginx:alpine AS production
 RUN apk add --no-cache curl
 
 # Copy custom nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+COPY cofira-app/nginx.conf /etc/nginx/nginx.conf
 
 # Copy built application from build stage
 COPY --from=build /app/dist/cofira-app/browser /usr/share/nginx/html
