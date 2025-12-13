@@ -2,10 +2,22 @@
   <header class="training-page__header">
     <h1>Tu Entrenamiento Semanal</h1>
   </header>
+
   @if (error()) {
-  <div class="error-message">{{ error() }}</div>
+    <div class="error-message">{{ error() }}</div>
   }
-  <app-weekly-table [exercises]="exercises()" />
-  <app-feedback-form />
-  <app-progress-card [workoutProgress]="workoutProgress()" />
+
+  @if (exercises().length === 0 && !isLoading() && !error()) {
+    <app-empty-state
+      icon="🏋️"
+      title="No hay ejercicios programados"
+      message="Aún no tienes ejercicios para esta semana. Comienza creando tu primera rutina de entrenamiento."
+      actionLabel="Crear rutina"
+      (actionClicked)="createRoutine()"
+    />
+  } @else {
+    <app-weekly-table [exercises]="exercises()" />
+    <app-feedback-form />
+    <app-progress-card [workoutProgress]="workoutProgress()" />
+  }
 </section>

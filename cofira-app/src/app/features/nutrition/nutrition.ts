@@ -1,11 +1,12 @@
 import { Component, signal, inject, OnInit } from '@angular/core';
 import { DailyMenu } from './components/daily-menu/daily-menu';
 import { NutritionService, DailyNutrition } from './services/nutrition.service';
+import { EmptyState } from '../../shared/components/ui/empty-state/empty-state';
 
 @Component({
   selector: 'app-nutrition',
   standalone: true,
-  imports: [DailyMenu],
+  imports: [DailyMenu, EmptyState],
   templateUrl: './nutrition.html',
   styleUrl: './nutrition.scss',
 })
@@ -57,5 +58,13 @@ export class Nutrition implements OnInit {
       return JSON.parse(user).id;
     }
     return null;
+  }
+
+  /**
+   * Método llamado desde el EmptyState para agregar una nueva comida
+   */
+  addMeal(): void {
+    console.log('Agregar nueva comida');
+    // TODO: Implementar lógica para abrir formulario de agregar comida
   }
 }

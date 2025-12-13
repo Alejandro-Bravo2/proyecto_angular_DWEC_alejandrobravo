@@ -53,6 +53,12 @@ public class UsuarioController implements UsuarioControllerApi {
         return ResponseEntity.ok(usuario);
     }
 
+    @GetMapping("/username")
+    public ResponseEntity<UsuarioDetalleDTO> obtenerUsuarioPorUsername(@RequestParam("username") String username) {
+        UsuarioDetalleDTO usuario = usuarioService.obtenerUsuarioByUsername(username);
+        return ResponseEntity.ok(usuario);
+    }
+
     @PostMapping
     public ResponseEntity<UsuarioDetalleDTO> crearUsuario(@RequestBody @Valid CrearUsuarioDTO crearUsuarioDTO) {
         UsuarioDetalleDTO nuevoUsuario = usuarioService.crearUsuario(crearUsuarioDTO);

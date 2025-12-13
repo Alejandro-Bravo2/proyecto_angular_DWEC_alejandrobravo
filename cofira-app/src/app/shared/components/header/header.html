@@ -23,8 +23,13 @@
     <!-- Actions -->
     <section class="header__actions">
       <!-- Theme Toggle -->
-      <button class="header__theme-toggle" (click)="toggleTheme()"
-        [attr.aria-label]="themeService.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'">
+      <button
+        class="header__theme-toggle"
+        (click)="toggleTheme()"
+        [attr.aria-label]="themeService.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+        [appTooltip]="themeService.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+        tooltipPosition="bottom"
+      >
         <span class="header__theme-icon">
           {{ themeService.isDark() ? '☀️' : '🌙' }}
         </span>
@@ -42,17 +47,33 @@
 
       <!-- Auth Buttons - Logged In -->
       @if (isLoggedIn) {
-      <a routerLink="/preferencias" class="c-button c-button--secondary c-button--small">
+      <a
+        routerLink="/preferencias"
+        class="c-button c-button--secondary c-button--small"
+        appTooltip="Ver y editar tu perfil"
+        tooltipPosition="bottom"
+      >
         Mi Cuenta
       </a>
-      <button (click)="logout()" class="c-button c-button--primary c-button--small">
+      <button
+        (click)="logout()"
+        class="c-button c-button--primary c-button--small"
+        appTooltip="Cerrar tu sesión"
+        tooltipPosition="bottom"
+      >
         Cerrar Sesión
       </button>
       }
 
       <!-- Mobile Menu Button -->
-      <button class="header__hamburger" (click)="toggleMobileMenu()" [attr.aria-expanded]="isMobileMenuOpen()"
-        aria-label="Menú de navegación">
+      <button
+        class="header__hamburger"
+        (click)="toggleMobileMenu()"
+        [attr.aria-expanded]="isMobileMenuOpen()"
+        aria-label="Menú de navegación"
+        appTooltip="Abrir menú"
+        tooltipPosition="bottom"
+      >
         <span class="header__hamburger-line"></span>
         <span class="header__hamburger-line"></span>
         <span class="header__hamburger-line"></span>

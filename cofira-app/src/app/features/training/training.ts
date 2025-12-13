@@ -3,11 +3,12 @@ import { WeeklyTable } from './components/weekly-table/weekly-table';
 import { FeedbackForm } from './components/feedback-form/feedback-form';
 import { ProgressCard } from './components/progress-card/progress-card';
 import { TrainingService, Exercise, WorkoutProgress } from './services/training.service';
+import { EmptyState } from '../../shared/components/ui/empty-state/empty-state';
 
 @Component({
   selector: 'app-training',
   standalone: true,
-  imports: [WeeklyTable, FeedbackForm, ProgressCard],
+  imports: [WeeklyTable, FeedbackForm, ProgressCard, EmptyState],
   templateUrl: './training.html',
   styleUrl: './training.scss',
 })
@@ -65,5 +66,13 @@ export class Training implements OnInit {
       return JSON.parse(user).id;
     }
     return null;
+  }
+
+  /**
+   * Método llamado desde el EmptyState para crear una nueva rutina
+   */
+  createRoutine(): void {
+    console.log('Crear nueva rutina de entrenamiento');
+    // TODO: Implementar lógica para abrir modal o navegar a formulario de creación de rutina
   }
 }

@@ -20,6 +20,7 @@ interface LoginRequest {
 
 interface RegisterRequest {
   nombre: string;
+  username: string;
   email: string;
   password: string;
 }
@@ -31,7 +32,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private readonly TOKEN_KEY = 'authToken';
   private readonly USER_KEY = 'currentUser';
-  private readonly API_URL = `${environment.apiUrl}/auth`;
+  private readonly API_URL = `${environment.apiUrl}/api/auth`;
 
   login(email: string, password: string): Observable<AuthResponse> {
     const loginRequest: LoginRequest = { email, password };
@@ -44,7 +45,12 @@ export class AuthService {
   }
 
   register(name: string, email: string, password: string): Observable<AuthResponse> {
-    const registerRequest: RegisterRequest = { nombre: name, email, password };
+    const registerRequest: RegisterRequest = {
+      nombre: name,
+      username: name, // Usar el mismo valor para username
+      email,
+      password,
+    };
     return this.http.post<AuthResponse>(`${this.API_URL}/register`, registerRequest).pipe(
       tap((response) => {
         this.saveToken(response.token);

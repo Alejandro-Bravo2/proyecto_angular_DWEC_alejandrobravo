@@ -50,6 +50,12 @@ public class UsuarioService {
         return convertirAUsuarioDetalleDTO(usuario);
     }
 
+    public UsuarioDetalleDTO obtenerUsuarioByUsername(String username) {
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado con username " + username));
+        return convertirAUsuarioDetalleDTO(usuario);
+    }
+
     public UsuarioDetalleDTO crearUsuario(CrearUsuarioDTO crearUsuarioDTO) {
         if (usuarioRepository.findByEmail(crearUsuarioDTO.getEmail()).isPresent()) {
             throw new RecursoDuplicadoException("El email " + crearUsuarioDTO.getEmail() + " ya está en uso.");

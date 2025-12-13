@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { OnboardingService } from '../../../services/onboarding.service';
+import { atLeastOneSelectedValidator } from '../../../../../shared/validators/form-array.validators';
 
 @Component({
   selector: 'app-onboarding-muscles',
@@ -13,7 +14,7 @@ import { OnboardingService } from '../../../services/onboarding.service';
 })
 export class OnboardingMuscles {
   musclesForm = new FormGroup({
-    muscles: new FormArray<FormControl>([]),
+    muscles: new FormArray<FormControl>([], [atLeastOneSelectedValidator()]),
   });
 
   muscleOptions = [

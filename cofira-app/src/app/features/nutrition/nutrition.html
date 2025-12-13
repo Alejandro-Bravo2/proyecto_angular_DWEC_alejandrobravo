@@ -2,9 +2,24 @@
   <header class="nutrition-page__header">
     <h1>Tu Menú Diario</h1>
   </header>
+
   @if (error()) {
-  <div class="error-message">{{ error() }}</div>
+    <div class="error-message">{{ error() }}</div>
   }
-  <app-daily-menu [dailyNutrition]="dailyNutrition()" [currentDate]="currentDate()"
-    (dateChanged)="onDateChanged($event)" />
+
+  @if (!dailyNutrition() && !isLoading() && !error()) {
+    <app-empty-state
+      icon="🍽️"
+      title="No hay comidas registradas"
+      message="Aún no has registrado ninguna comida para hoy. Empieza a llevar un registro de tu alimentación."
+      actionLabel="Agregar comida"
+      (actionClicked)="addMeal()"
+    />
+  } @else {
+    <app-daily-menu
+      [dailyNutrition]="dailyNutrition()"
+      [currentDate]="currentDate()"
+      (dateChanged)="onDateChanged($event)"
+    />
+  }
 </section>

@@ -1,9 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, retry, finalize } from 'rxjs/operators';
 import { LoadingService } from './loading.service';
 import { environment } from '../../../environments/environment';
+
+export interface HttpOptions {
+  params?: HttpParams | { [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean> };
+  headers?: { [header: string]: string | string[] };
+}
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +33,7 @@ Message: ${error.message}`;
     return throwError(() => new Error(errorMessage));
   }
 
-  private request<T>(method: string, endpoint: string, data?: any): Observable<T> {
+  private request<T>(method: string, endpoint: string, data?: any, options?: HttpOptions): Observable<T> {
     // Remove leading slash if present to avoid double slashes
     const cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
     // Check if endpoint is already a full URL
@@ -39,16 +44,16 @@ Message: ${error.message}`;
 
     switch (method.toLowerCase()) {
       case 'get':
-        requestObservable = this.http.get<T>(url);
+        requestObservable = this.http.get<T>(url, options);
         break;
       case 'post':
-        requestObservable = this.http.post<T>(url, data);
+        requestObservable = this.http.post<T>(url, data, options);
         break;
       case 'put':
-        requestObservable = this.http.put<T>(url, data);
+        requestObservable = this.http.put<T>(url, data, options);
         break;
       case 'delete':
-        requestObservable = this.http.delete<T>(url);
+        requestObservable = this.http.delete<T>(url, options);
         break;
       default:
         return throwError(() => new Error('Unsupported HTTP method'));
@@ -61,19 +66,19 @@ Message: ${error.message}`;
     );
   }
 
-  get<T>(endpoint: string): Observable<T> {
-    return this.request<T>('get', endpoint);
+  get<T>(endpoint: string, options?: HttpOptions): Observable<T> {
+    return this.request<T>('get', endpoint, undefined, options);
   }
 
-  post<T>(endpoint: string, data: any): Observable<T> {
-    return this.request<T>('post', endpoint, data);
+  post<T>(endpoint: string, data: any, options?: HttpOptions): Observable<T> {
+    return this.request<T>('post', endpoint, data, options);
   }
 
-  put<T>(endpoint: string, data: any): Observable<T> {
-    return this.request<T>('put', endpoint, data);
+  put<T>(endpoint: string, data: any, options?: HttpOptions): Observable<T> {
+    return this.request<T>('put', endpoint, data, options);
   }
 
-  delete<T>(endpoint: string): Observable<T> {
-    return this.request<T>('delete', endpoint);
+  delete<T>(endpoint: string, options?: HttpOptions): Observable<T> {
+    return this.request<T>('delete', endpoint, undefined, options);
   }
 }

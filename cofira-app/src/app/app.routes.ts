@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
+import { canDeactivateGuard } from './core/guards/can-deactivate.guard';
+import { trainingResolver } from './features/training/resolvers/training.resolver';
+import { nutritionResolver } from './features/nutrition/resolvers/nutrition.resolver';
 
 export const routes: Routes = [
   {
@@ -16,6 +19,7 @@ export const routes: Routes = [
   {
     path: 'register',
     loadComponent: () => import('./features/auth/register/register/register').then(m => m.Register),
+    canDeactivate: [canDeactivateGuard],
     data: { breadcrumb: 'Registro' }
   },
   {
@@ -27,12 +31,14 @@ export const routes: Routes = [
     path: 'entrenamiento',
     loadComponent: () => import('./features/training/training').then(m => m.Training),
     canActivate: [authGuard],
+    resolve: { exercises: trainingResolver },
     data: { breadcrumb: 'Entrenamiento' }
   },
   {
     path: 'alimentacion',
     loadComponent: () => import('./features/nutrition/nutrition').then(m => m.Nutrition),
     canActivate: [authGuard],
+    resolve: { foods: nutritionResolver },
     data: { breadcrumb: 'Alimentación' }
   },
   {

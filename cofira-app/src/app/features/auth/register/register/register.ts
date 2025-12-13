@@ -7,16 +7,18 @@ import { passwordMatchValidator } from '../../../../shared/validators/cross-fiel
 import { AsyncValidatorsService } from '../../../../shared/validators/async-validators.service';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { LoadingService } from '../../../../core/services/loading.service';
-import { ToastService } from '../../../../core/services/toast.service'; // Placeholder ToastService
+import { ToastService } from '../../../../core/services/toast.service';
+import { PasswordStrength } from '../../../../shared/components/ui/password-strength/password-strength';
+import { CanComponentDeactivate } from '../../../../core/guards/can-deactivate.guard';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, PasswordStrength],
   templateUrl: './register.html',
   styleUrl: './register.scss',
 })
-export class Register {
+export class Register implements CanComponentDeactivate {
   registerForm: FormGroup;
 
   constructor(
@@ -28,6 +30,7 @@ export class Register {
   ) {
     this.registerForm = new FormGroup({
       name: new FormControl('', [Validators.required]),
+      username: new FormControl('', [Validators.required, Validators.minLength(3)], [this.asyncValidatorsService.usernameUnique()]),
       email: new FormControl('', [Validators.required, Validators.email], [this.asyncValidatorsService.emailUnique()]),
       password: new FormControl('', [Validators.required, passwordStrengthValidator()]),
       confirmPassword: new FormControl('', [Validators.required]),
@@ -36,8 +39,8 @@ export class Register {
 
   onSubmit(): void {
     if (this.registerForm.valid) {
-      const { name, email, password } = this.registerForm.value;
-      if (name && email && password) {
+      const { name, username, email, password } = this.registerForm.value;
+      if (name && username && email && password) {
         this.loadingService.show();
         this.authService.register(name, email, password).subscribe({
           next: (response) => {
@@ -57,5 +60,18 @@ export class Register {
       console.log('Form is invalid');
       this.registerForm.markAllAsTouched();
     }
+  }
+
+  /**
+   * Implementación de CanComponentDeactivate
+   * Previene que el usuario salga si hay cambios sin guardar
+   */
+  canDeactivate(): boolean {
+    if (this.registerForm.dirty && !this.registerForm.value.email) {
+      return confirm(
+        '¿Estás seguro de que quieres salir?\n\nTienes cambios sin guardar en el formulario de registro.'
+      );
+    }
+    return true;
   }
 }

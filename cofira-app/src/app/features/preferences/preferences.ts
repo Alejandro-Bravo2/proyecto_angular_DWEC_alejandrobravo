@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchableTags } from '../../shared/components/ui/searchable-tags/searchable-tags/searchable-tags';
 import { PreferencesService } from './services/preferences.service';
+import { Tabs, TabPanel, Tab } from '../../shared/components/ui/tabs/tabs';
 
-interface Tag {
+interface TagOption {
   label: string;
   value: string;
 }
@@ -11,12 +12,21 @@ interface Tag {
 @Component({
   selector: 'app-preferences',
   standalone: true,
-  imports: [CommonModule, SearchableTags],
+  imports: [CommonModule, SearchableTags, Tabs, TabPanel],
   templateUrl: './preferences.html',
   styleUrl: './preferences.scss',
 })
 export class Preferences implements OnInit {
-  availableAllergies: Tag[] = [
+  // Tabs configuration
+  tabs: Tab[] = [
+    { id: 'nutrition', label: 'Alimentación' },
+    { id: 'account', label: 'Cuenta' },
+    { id: 'notifications', label: 'Notificaciones' }
+  ];
+
+  activeTab = signal('nutrition');
+
+  availableAllergies: TagOption[] = [
     { label: 'Lácteos', value: 'lacteos' },
     { label: 'Gluten', value: 'gluten' },
     { label: 'Frutos secos', value: 'frutos_secos' },
@@ -24,7 +34,7 @@ export class Preferences implements OnInit {
     { label: 'Soja', value: 'soja' },
   ];
 
-  availableIngredients: Tag[] = [
+  availableIngredients: TagOption[] = [
     { label: 'Pollo', value: 'pollo' },
     { label: 'Arroz', value: 'arroz' },
     { label: 'Aguacate', value: 'aguacate' },
@@ -38,19 +48,23 @@ export class Preferences implements OnInit {
     // Optionally load initial preferences from a backend or user profile
   }
 
-  onAllergyAdded(allergy: Tag): void {
+  onTabChanged(tabId: string): void {
+    this.activeTab.set(tabId);
+  }
+
+  onAllergyAdded(allergy: TagOption): void {
     this.preferencesService.addAllergy(allergy);
   }
 
-  onAllergyRemoved(allergy: Tag): void {
+  onAllergyRemoved(allergy: TagOption): void {
     this.preferencesService.removeAllergy(allergy);
   }
 
-  onFavoriteIngredientAdded(ingredient: Tag): void {
+  onFavoriteIngredientAdded(ingredient: TagOption): void {
     this.preferencesService.addFavoriteIngredient(ingredient);
   }
 
-  onFavoriteIngredientRemoved(ingredient: Tag): void {
+  onFavoriteIngredientRemoved(ingredient: TagOption): void {
     this.preferencesService.removeFavoriteIngredient(ingredient);
   }
 }
