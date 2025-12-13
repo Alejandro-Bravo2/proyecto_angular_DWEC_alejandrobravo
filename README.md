@@ -3262,12 +3262,6 @@ Seguir el formato [Conventional Commits](https://www.conventionalcommits.org/):
 
 ---
 
-## 📄 Licencia
-
-Este proyecto es privado y está desarrollado con fines educativos.
-
----
-
 ## 👥 Autores
 
 Desarrollado como proyecto académico para el módulo de Desarrollo Web en Entornos Cliente (DWEC).
