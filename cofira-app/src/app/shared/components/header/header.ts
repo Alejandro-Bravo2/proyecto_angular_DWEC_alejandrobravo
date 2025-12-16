@@ -37,8 +37,20 @@ export class Header {
   }
 
   logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/']);
-    this.closeMobileMenu();
+    this.authService.logout().subscribe({
+      next: () => {
+        this.router.navigate(['/']);
+        this.closeMobileMenu();
+      },
+      error: (err) => {
+        console.error('Error during logout', err);
+        // Aún así navegar y limpiar en caso de error del servidor
+        // Limpiar localStorage manualmente si el backend falla
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        this.router.navigate(['/']);
+        this.closeMobileMenu();
+      }
+    });
   }
 }

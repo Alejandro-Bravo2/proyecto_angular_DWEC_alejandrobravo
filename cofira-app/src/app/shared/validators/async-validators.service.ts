@@ -42,6 +42,10 @@ export class AsyncValidatorsService {
                 if (error.status === 404) {
                   return of(null);
                 }
+                // Connection error (status 0) - server not available
+                if (error.status === 0) {
+                  return of({ connectionError: true });
+                }
                 // Other errors, don't block validation
                 return of(null);
               })
@@ -79,6 +83,10 @@ export class AsyncValidatorsService {
                 // 404 means username doesn't exist (unique)
                 if (error.status === 404) {
                   return of(null);
+                }
+                // Connection error (status 0) - server not available
+                if (error.status === 0) {
+                  return of({ connectionError: true });
                 }
                 // Other errors, don't block validation
                 return of(null);

@@ -140,7 +140,53 @@ La aplicación implementa las mejores prácticas de desarrollo moderno con **Ang
 
 ## 🚀 Instalación
 
-### Prerrequisitos
+### Opción 1: Instalación con Docker (Recomendado) 🐳
+
+La forma más rápida y sencilla de ejecutar toda la aplicación es usando Docker Compose:
+
+**Prerrequisitos:**
+- Docker Desktop instalado y ejecutándose
+- 4GB de RAM disponible para Docker
+
+**Inicio rápido:**
+
+```bash
+# Opción A: Usando el script de inicio (recomendado)
+./start.sh
+
+# Opción B: Usando docker-compose directamente
+docker-compose up --build
+
+# Ejecutar en segundo plano
+docker-compose up --build -d
+```
+
+Esto levantará automáticamente:
+- ✅ PostgreSQL (puerto 5432)
+- ✅ PgAdmin (puerto 5050)
+- ✅ Backend Spring Boot (puerto 8080)
+- ✅ Frontend Angular (puerto 4200)
+
+**URLs de acceso:**
+- Frontend: http://localhost:4200
+- Backend API: http://localhost:8080
+- Swagger UI: http://localhost:8080/swagger-ui.html
+- PgAdmin: http://localhost:5050 (admin@admin.com / admin123)
+
+**Comandos útiles:**
+```bash
+./stop.sh              # Detener servicios (con opciones)
+docker-compose logs -f # Ver logs en tiempo real
+docker-compose ps      # Ver estado de servicios
+```
+
+📖 **[Ver guía completa de Docker →](DOCKER-README.md)**
+
+---
+
+### Opción 2: Instalación Manual
+
+**Prerrequisitos:**
 
 ```bash
 Node.js >= 18.x

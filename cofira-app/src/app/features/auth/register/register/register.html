@@ -34,6 +34,9 @@
             @if (registerForm.get('username')?.hasError('usernameTaken')) {
               Este nombre de usuario ya está en uso.
             }
+            @if (registerForm.get('username')?.hasError('connectionError')) {
+              No se pudo verificar la disponibilidad del nombre de usuario. Por favor, verifica tu conexión al servidor.
+            }
           </p>
         }
       </section>
@@ -54,6 +57,9 @@
             }
             @if (registerForm.get('email')?.hasError('emailTaken')) {
               Este email ya está en uso.
+            }
+            @if (registerForm.get('email')?.hasError('connectionError')) {
+              No se pudo verificar la disponibilidad del email. Por favor, verifica tu conexión al servidor.
             }
           </p>
         }
