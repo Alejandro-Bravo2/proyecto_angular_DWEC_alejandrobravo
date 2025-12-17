@@ -1,15 +1,12 @@
-@import '../../../../../styles/settings/colors';
-@import '../../../../../styles/settings/typography';
-@import '../../../../../styles/settings/spacing';
-@import '../../../../../styles/settings/radios';
-@import '../../../../../styles/tools/mixins';
+@import '../../../../../styles/00-settings/css-variables';
+@import '../../../../../styles/01-tools/mixins';
 
 .food-item {
   display: flex;
   align-items: center;
-  gap: $spacing-s;
-  padding: $spacing-xs 0;
-  border-bottom: 1px dashed var(--card-border);
+  gap: var(--spacing-size-s);
+  padding: var(--spacing-size-xs) 0;
+  border-bottom: 1px dashed var(--border-light);
 
   &:last-child {
     border-bottom: none;
@@ -19,8 +16,8 @@
     @include flex-center;
     width: 32px;
     height: 32px;
-    border-radius: $radius-circle;
-    background-color: var(--bg-primary);
+    border-radius: var(--radius-circle);
+    background-color: var(--bg-secondary);
     color: var(--text-secondary);
     margin: 0;
 
@@ -36,14 +33,14 @@
     justify-content: space-between;
     align-items: center;
     color: var(--text-primary);
-    font-size: $font-size-body;
+    font-size: var(--font-size-md);
   }
 
   &__quantity {
-    font-weight: $font-weight-medium;
+    font-weight: var(--font-weight-medium);
   }
 
   &__name {
-    margin-left: $spacing-s;
+    margin-left: var(--spacing-size-s);
   }
 }

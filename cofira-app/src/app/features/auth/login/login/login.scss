@@ -1,72 +1,87 @@
-@import '../../../../../styles/settings/colors';
-@import '../../../../../styles/settings/typography';
-@import '../../../../../styles/settings/spacing';
-@import '../../../../../styles/settings/radios';
-@import '../../../../../styles/settings/breakpoints';
-@import '../../../../../styles/tools/mixins';
-@import '../../../../../styles/components/_buttons.scss';
-@import '../../../../../styles/components/_forms.scss';
-@import '../../../../../styles/components/_cards.scss';
+@import '../../../../../styles/00-settings/css-variables';
+@import '../../../../../styles/01-tools/mixins';
 
 .login-page {
   @include flex-center;
-  min-height: calc(100vh - 80px); /* Adjust for header height */
-  padding: $spacing-l $spacing-m;
-  background-color: var(--bg-secondary); // Use a subtle background
+  min-height: calc(100vh - 72px);
+  padding: var(--spacing-size-l) var(--spacing-size-s);
+  background-color: var(--bg-secondary);
+
+  @include responsive('M') {
+    padding: var(--spacing-size-xl) var(--spacing-size-m);
+  }
 
   .login-card {
-    @include card; // Apply base card styles
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
     max-width: 450px;
     width: 100%;
-    padding: $spacing-xl;
+    padding: var(--spacing-size-l);
     text-align: center;
+    @include transition-base;
+
+    @include responsive('M') {
+      padding: var(--spacing-size-xxl);
+    }
+
+    &:hover {
+      border-color: var(--border-medium);
+    }
 
     &__header {
-      margin-bottom: $spacing-xl;
+      margin-bottom: var(--spacing-size-xxl);
+
       h1 {
-        font-family: $font-family-heading;
-        font-size: $font-size-h2;
+        @include tipografia-titulo;
+        font-size: var(--font-size-3xl);
         color: var(--text-primary);
-        margin-bottom: 0;
+        margin: 0;
       }
     }
 
     &__form {
-      margin-bottom: $spacing-l;
+      margin-bottom: var(--spacing-size-l);
+
       .c-form__group {
         text-align: left;
       }
+
       .c-form__label {
-        font-weight: $font-weight-medium;
+        font-weight: var(--font-weight-medium);
       }
     }
 
     &__submit {
-      margin-top: $spacing-m;
+      margin-top: var(--spacing-size-m);
       width: 100%;
     }
 
     &__footer {
-      border-top: 1px solid var(--card-border);
-      padding-top: $spacing-l;
+      border-top: 1px solid var(--border-light);
+      padding-top: var(--spacing-size-l);
+
       .login-card__link {
         display: block;
-        margin-bottom: $spacing-s;
-        color: $color-brand-primary;
+        margin-bottom: var(--spacing-size-s);
+        color: var(--text-primary);
         text-decoration: none;
-        @include transition(color);
+        font-weight: var(--font-weight-medium);
+        @include transition-base;
+
         &:hover {
-          color: $color-brand-primary-hover;
           text-decoration: underline;
         }
       }
+
       .login-card__register-text {
-        font-size: $font-size-body;
+        font-size: var(--font-size-md);
         color: var(--text-secondary);
+
         .login-card__link {
           display: inline;
           margin-bottom: 0;
-          margin-left: $spacing-xs;
+          margin-left: var(--spacing-size-xs);
         }
       }
     }

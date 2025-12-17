@@ -1,83 +1,190 @@
-@import '../../../../../styles/settings/colors';
-@import '../../../../../styles/settings/typography';
-@import '../../../../../styles/settings/spacing';
-@import '../../../../../styles/settings/breakpoints';
-@import '../../../../../styles/tools/mixins';
+@import '../../../../../styles/00-settings/css-variables';
+@import '../../../../../styles/01-tools/mixins';
 
-.hero-section {
+.hero {
   position: relative;
   width: 100%;
-  height: 600px; // Altura de ejemplo
-  background-image: url('https://via.placeholder.com/1500x600/000000/FFFFFF?text=Hero+Section+Background'); // Placeholder
-  background-size: cover;
-  background-position: center;
-  @include flex-center;
-  text-align: center;
-  color: $color-white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--bg-body);
+  overflow: hidden;
 
-  &::before {
-    content: '';
+  // 3D Canvas container
+  &__canvas {
     position: absolute;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba($color-black, 0.5); // Overlay oscuro
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
   }
 
+  // Content
   &__content {
     position: relative;
-    z-index: 1;
-    max-width: 800px;
-    padding: $spacing-m;
-
-    h1 {
-      font-family: $font-family-heading;
-      font-size: $font-size-h1;
-      font-weight: $font-weight-bold;
-      margin-bottom: $spacing-m;
-      color: $color-white;
-    }
-
-    p {
-      font-size: $font-size-h3;
-      margin-bottom: $spacing-xl;
-      color: $color-white;
-    }
+    z-index: 2;
+    text-align: center;
+    max-width: 900px;
+    padding: var(--spacing-size-xl);
+    @include animate-fade-up;
   }
 
+  // Title
+  &__title {
+    @include text-hero;
+    margin: 0 0 var(--spacing-size-m);
+    color: var(--text-primary);
+  }
+
+  &__title-highlight {
+    display: block;
+    color: var(--text-primary);
+  }
+
+  // Subtitle
+  &__subtitle {
+    @include text-subtitle;
+    margin: 0 0 var(--spacing-size-xxl);
+    color: var(--gris-texto);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  // Actions
   &__actions {
     display: flex;
-    gap: $spacing-s;
+    gap: var(--spacing-size-m);
     justify-content: center;
-    flex-wrap: wrap; // Asegura que los botones se envuelvan en pantallas pequeñas
+    flex-wrap: wrap;
   }
 
-  // Responsive adjustments
-  @include respond-to(m) {
-    height: 700px;
-    .hero-section__content {
-      h1 {
-        font-size: $font-size-h1; // Mantener el tamaño para desktop
-      }
-      p {
-        font-size: $font-size-h2;
-      }
+  // Scroll Indicator
+  &__scroll-indicator {
+    position: absolute;
+    bottom: var(--spacing-size-xl);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-size-xss);
+    z-index: 2;
+    opacity: 0;
+    animation: fadeIn var(--duration-slow) var(--ease-out) 1s forwards;
+  }
+
+  &__scroll-text {
+    font-family: var(--font-primary);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    letter-spacing: var(--letter-spacing-widest);
+    text-transform: uppercase;
+    color: var(--gris-texto);
+  }
+
+  &__scroll-line {
+    width: 1px;
+    height: 40px;
+    background-color: var(--text-primary);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+}
+
+// Botones minimalistas para hero
+.boton {
+  @include boton-base;
+  padding: var(--spacing-size-s) var(--spacing-size-xl);
+  font-size: var(--font-size-md);
+  letter-spacing: var(--letter-spacing-wide);
+
+  &--primario {
+    background-color: var(--text-primary);
+    color: var(--bg-body);
+    border: 1px solid var(--text-primary);
+
+    &:hover {
+      opacity: 0.85;
     }
   }
 
-  @include respond-to(l) {
-    height: 800px;
-    .hero-section__content {
-      h1 {
-        font-size: $font-size-h1;
-      }
-      p {
-        font-size: $font-size-h2;
-      }
+  &--secundario {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--text-primary);
+
+    &:hover {
+      background-color: var(--text-primary);
+      color: var(--bg-body);
     }
   }
 }
 
-// Import button styles for the c-button class
-@import '../../../../../styles/components/_buttons.scss';
+// Animation for scroll indicator
+@keyframes scrollPulse {
+  0%, 100% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleY(0.6);
+    opacity: 0.5;
+  }
+}
+
+// Responsive - Mobile First
+.hero {
+  &__title {
+    font-size: clamp(2rem, 7vw, 2.5rem);
+
+    @include responsive('M') {
+      font-size: clamp(3rem, 10vw, 5rem);
+    }
+  }
+
+  &__subtitle {
+    font-size: var(--font-size-md);
+
+    @include responsive('M') {
+      font-size: var(--font-size-xl);
+    }
+  }
+
+  &__content {
+    padding: var(--spacing-size-m);
+
+    @include responsive('M') {
+      padding: var(--spacing-size-xl);
+    }
+
+    @include responsive('L') {
+      max-width: 1000px;
+    }
+  }
+
+  &__actions {
+    flex-direction: column;
+    gap: var(--spacing-size-s);
+
+    @include responsive('s') {
+      flex-direction: row;
+      gap: var(--spacing-size-m);
+    }
+
+    @include responsive('L') {
+      gap: var(--spacing-size-l);
+    }
+  }
+
+  &__scroll-indicator {
+    display: none;
+
+    @include responsive('M') {
+      display: flex;
+    }
+  }
+}

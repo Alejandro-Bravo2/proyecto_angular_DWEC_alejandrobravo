@@ -1,11 +1,14 @@
 /*
-La capa Tools está diseñada exclusivamente para funciones y mixins reutilizables que sirven como herramientas genéricas para otras capas.
+La capa Tools contiene funciones y mixins reutilizables.
+Estilo: Minimalista Apple/Ferrari
 */
+
+@import '../00-settings/css-variables';
+
 
 /* ============================================
    FLEXBOX MIXINS
    ============================================ */
-
 
 // Centrado perfecto (horizontal y vertical)
 @mixin flex-center {
@@ -34,39 +37,210 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
   width: 100%;
 }
 
+// Flexbox en columna con gap opcional
+@mixin flex-columna($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+// Flexbox en fila con gap opcional
+@mixin flex-fila($gap: 0) {
+  display: flex;
+  flex-direction: row;
+  gap: $gap;
+}
+
 
 /* ============================================
-   FORM INPUT MIXINS
+   TRANSICIONES PREMIUM (Apple-like)
    ============================================ */
 
-// Mixin para inputs básicos
+// Transición rápida para micro-interacciones
+@mixin transition-fast($property: all) {
+  transition: $property var(--duration-fast) var(--ease-out);
+}
+
+// Transición base para la mayoría de elementos
+@mixin transition-base($property: all) {
+  transition: $property var(--duration-base) var(--ease-premium);
+}
+
+// Transición premium para elementos importantes
+@mixin transition-premium($property: all) {
+  transition: $property var(--duration-slow) var(--ease-premium);
+}
+
+// Transición dramática para hero elements
+@mixin transition-dramatic($property: all) {
+  transition: $property var(--duration-slowest) var(--ease-dramatic);
+}
+
+// Transición suave estandar (legacy)
+@mixin transicion-suave($propiedad: all) {
+  transition: $propiedad var(--duration-base) var(--ease-premium);
+}
+
+
+/* ============================================
+   EFECTOS VISUALES PREMIUM
+   ============================================ */
+
+// Efecto glassmorphism (Apple-style)
+@mixin glass-effect($blur: 20px, $opacity: 0.8) {
+  background: rgba(255, 255, 255, $opacity);
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+}
+
+// Efecto glassmorphism oscuro
+@mixin glass-effect-dark($blur: 20px, $opacity: 0.8) {
+  background: rgba(0, 0, 0, $opacity);
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+}
+
+// Efecto hover con elevación sutil
+@mixin hover-lift($distance: -4px) {
+  @include transition-premium(transform);
+
+  &:hover {
+    transform: translateY($distance);
+  }
+}
+
+// Efecto hover con escala sutil
+@mixin hover-scale($scale: 1.02) {
+  @include transition-premium(transform);
+
+  &:hover {
+    transform: scale($scale);
+  }
+}
+
+// Efecto hover con opacidad
+@mixin hover-fade($opacity: 0.8) {
+  @include transition-fast(opacity);
+
+  &:hover {
+    opacity: $opacity;
+  }
+}
+
+
+/* ============================================
+   TIPOGRAFIA PREMIUM
+   ============================================ */
+
+// Tipografía hero (títulos grandes)
+@mixin text-hero {
+  font-family: var(--font-secondary);
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--text-primary);
+}
+
+// Tipografía display
+@mixin text-display {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  letter-spacing: var(--letter-spacing-tight);
+  color: var(--text-primary);
+}
+
+// Tipografía headline
+@mixin text-headline {
+  font-family: var(--font-secondary);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-snug);
+  color: var(--text-primary);
+}
+
+// Tipografía subtítulo
+@mixin text-subtitle {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-light);
+  line-height: var(--line-height-relaxed);
+  color: var(--text-secondary);
+}
+
+// Tipografia para titulos (legacy)
+@mixin tipografia-titulo {
+  font-family: var(--font-secondary);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--line-height-tight);
+  color: var(--text-primary);
+}
+
+// Tipografia para textos (legacy)
+@mixin tipografia-texto {
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+}
+
+// Caption/etiqueta
+@mixin text-caption {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+
+/* ============================================
+   FORM INPUT MIXINS (Minimalista)
+   ============================================ */
+
+// Mixin para inputs básicos minimalistas
 @mixin input-base {
   width: 100%;
   padding: var(--input-padding-vertical) var(--input-padding-horizontal);
-  background-color: var(--blanco-normal);
+  background-color: var(--bg-input);
+  border: 1px solid transparent;
   border-radius: var(--radius-s);
   font-size: var(--font-size-md);
-  font-family: var(--font-secondary);
-  color: var(--text-light);
+  font-family: var(--font-primary);
+  color: var(--text-primary);
   outline: none;
-  transition: all var(--duration-fast);
+  @include transition-base;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:hover {
+    background-color: var(--gris-ligero);
+  }
+
+  &:focus {
+    border-color: var(--negro-normal);
+    background-color: var(--blanco-puro);
+  }
 }
 
 // Mixin para placeholder de inputs
 @mixin input-placeholder {
-  color: var(--negro-normal);
+  color: var(--text-muted);
 }
 
 // Mixin para estado focus de inputs
 @mixin input-focus {
-  background-color: var(--blanco-normal-hover);
-  box-shadow: var(--shadow-sm);
+  border-color: var(--negro-normal);
+  background-color: var(--blanco-puro);
 }
 
 // Mixin para estado hover de inputs
 @mixin input-hover {
-  background-color: var(--amarillo-normal-hover);
-  border-color: var(--negro-normal);
+  background-color: var(--gris-ligero);
 }
 
 
@@ -81,7 +255,7 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
   gap: var(--spacing-size-m);
   background-color: var(--form-background);
   padding: var(--form-padding);
-  border-radius: var(--radius-s);
+  border-radius: var(--radius-m);
   max-width: var(--form-max-width);
   margin: 0 auto;
   width: 100%;
@@ -90,45 +264,45 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
 // Mixin para inputs de formulario de contacto
 @mixin form-contact-input {
   background-color: var(--form-input-background);
-  color: var(--text-dark);
-  border: 2px solid transparent;
-  transition: all var(--duration-base);
+  color: var(--text-primary);
+  border: 1px solid transparent;
+  @include transition-base;
 
   &:focus {
-    border-color: var(--amarillo-normal);
-    background-color: var(--form-input-background);
+    border-color: var(--negro-normal);
+    background-color: var(--blanco-puro);
   }
 
   &:hover:not(:focus) {
-    background-color: var(--gris-dark);
+    background-color: var(--gris-ligero);
   }
 }
 
 // Mixin para labels de formulario
 @mixin form-label {
-  color: var(--blanco-normal);
-  font-size: var(--font-size-md);
-  font-weight: var(--font-weight-regular);
-  font-family: var(--font-secondary);
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-primary);
   margin-bottom: var(--spacing-size-xss);
 }
 
 // Mixin para botón de formulario
 @mixin form-button {
   width: 100%;
-  padding: var(--spacing-size-s);
-  background-color: var(--amarillo-normal);
-  color: var(--text-light);
+  padding: var(--spacing-size-s) var(--spacing-size-m);
+  background-color: var(--negro-normal);
+  color: var(--blanco-puro);
   border: none;
   border-radius: var(--radius-s);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-medium);
-  font-family: var(--font-secondary);
+  font-family: var(--font-primary);
   cursor: pointer;
-  transition: all var(--duration-base);
+  @include transition-base;
 
   &:hover:not(:disabled) {
-    background-color: var(--amarillo-dark-hover);
+    background-color: var(--negro-normal-hover);
   }
 
   &:disabled {
@@ -142,9 +316,6 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
    RESPONSIVE MIXINS
    ============================================ */
 
-// Mixin para media queries responsive
-// Uso: @include responsive('md') { width: 50%; }
-// Breakpoints: 'xs' (640px), 's' (768px), 'M' (1024px), 'L' (1280px)
 @mixin responsive($breakpoint) {
   @if $breakpoint == 'xs' {
     @media (min-width: $breakpoint-xs) {
@@ -162,73 +333,37 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
     @media (min-width: $breakpoint-L) {
       @content;
     }
+  } @else if $breakpoint == 'xl' {
+    @media (min-width: $breakpoint-xl) {
+      @content;
+    }
+  } @else if $breakpoint == '2xl' {
+    @media (min-width: $breakpoint-2xl) {
+      @content;
+    }
   }
 }
 
 
 /* ============================================
-   LAYOUT ADICIONALES
-   ============================================ */
-
-// Flexbox en columna con gap opcional
-// Uso: @include flex-columna(var(--spacing-size-m));
-@mixin flex-columna($gap: 0) {
-  display: flex;
-  flex-direction: column;
-  gap: $gap;
-}
-
-// Flexbox en fila con gap opcional
-// Uso: @include flex-fila(var(--spacing-size-m));
-@mixin flex-fila($gap: 0) {
-  display: flex;
-  flex-direction: row;
-  gap: $gap;
-}
-
-
-/* ============================================
-   TIPOGRAFIA MIXINS
-   ============================================ */
-
-// Tipografia para titulos (h1-h6)
-// Usa --font-secondary (Poppins)
-// Uso: @include tipografia-titulo;
-@mixin tipografia-titulo {
-  font-family: var(--font-secondary);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
-  color: var(--text-light);
-}
-
-// Tipografia para textos (p, span, etc)
-// Usa --font-primary (Montserrat)
-// Uso: @include tipografia-texto;
-@mixin tipografia-texto {
-  font-family: var(--font-primary);
-  font-weight: var(--font-weight-regular);
-  line-height: var(--line-height-normal);
-}
-
-
-/* ============================================
-   COMPONENTES BASE MIXINS
+   COMPONENTES BASE MIXINS (Minimalista)
    ============================================ */
 
 // Base para botones reutilizables
-// Uso: @include boton-base;
 @mixin boton-base {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--spacing-size-xss);
   font-family: var(--font-primary);
-  font-weight: var(--font-weight-semibold);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-md);
   border: none;
-  border-radius: var(--radius-m);
+  border-radius: var(--radius-s);
   cursor: pointer;
-  transition: all var(--duration-base) ease;
   text-decoration: none;
   user-select: none;
+  @include transition-base;
 
   &:disabled {
     opacity: 0.5;
@@ -237,22 +372,52 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
   }
 }
 
-// Base para tarjetas/cards
-// Uso: @include tarjeta-base;
+// Reset de botón (quitar estilos por defecto)
+@mixin boton-reset {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  outline: none;
+}
+
+// Alias en inglés para button-reset
+@mixin button-reset {
+  @include boton-reset;
+}
+
+// Base para tarjetas/cards (minimalista)
 @mixin tarjeta-base {
-  background-color: var(--gris-normal);
-  border-radius: var(--radius-s);
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-size-m);
-  transition: all var(--duration-base) ease;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m);
+  padding: var(--spacing-size-xl);
+  @include transition-base;
 
   &:hover {
-    box-shadow: var(--shadow-lg);
+    border-color: var(--border-medium);
+  }
+}
+
+// Tarjeta con elevación (para elementos destacados)
+@mixin tarjeta-elevada {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m);
+  padding: var(--spacing-size-xl);
+  box-shadow: var(--shadow-sm);
+  @include transition-base;
+
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
   }
 }
 
 // Base para alertas/notificaciones
-// Uso: @include alerta-base;
 @mixin alerta-base {
   display: flex;
   align-items: center;
@@ -261,6 +426,7 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
   border-radius: var(--radius-s);
   font-family: var(--font-primary);
   font-size: var(--font-size-md);
+  border: 1px solid var(--border-light);
 }
 
 
@@ -269,7 +435,6 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
    ============================================ */
 
 // Texto truncado con ellipsis
-// Uso: @include texto-truncado;
 @mixin texto-truncado {
   overflow: hidden;
   text-overflow: ellipsis;
@@ -277,7 +442,6 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
 }
 
 // Texto truncado multilínea
-// Uso: @include texto-truncado-lineas(3);
 @mixin texto-truncado-lineas($lineas: 2) {
   display: -webkit-box;
   -webkit-line-clamp: $lineas;
@@ -286,7 +450,6 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
 }
 
 // Centrar con position absolute
-// Uso: @include centrar-absoluto;
 @mixin centrar-absoluto {
   position: absolute;
   top: 50%;
@@ -294,14 +457,7 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
   transform: translate(-50%, -50%);
 }
 
-// Transicion suave estandar
-// Uso: @include transicion-suave;
-@mixin transicion-suave($propiedad: all) {
-  transition: $propiedad var(--duration-base) ease;
-}
-
 // Ocultar visualmente pero accesible para screen readers
-// Uso: @include sr-only;
 @mixin sr-only {
   position: absolute;
   width: 1px;
@@ -312,4 +468,104 @@ La capa Tools está diseñada exclusivamente para funciones y mixins reutilizabl
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+// Alias en inglés para visually-hidden
+@mixin visually-hidden {
+  @include sr-only;
+}
+
+// Container máximo con padding
+@mixin container($max-width: 1200px) {
+  width: 100%;
+  max-width: $max-width;
+  margin: 0 auto;
+  padding-left: var(--spacing-size-m);
+  padding-right: var(--spacing-size-m);
+}
+
+// Sección con spacing vertical
+@mixin section-spacing {
+  padding-top: var(--spacing-size-xxxxl);
+  padding-bottom: var(--spacing-size-xxxxl);
+}
+
+
+/* ============================================
+   ANIMACIONES PREMIUM
+   ============================================ */
+
+// Fade in desde abajo
+@mixin animate-fade-up {
+  animation: fadeUp var(--duration-slow) var(--ease-dramatic) forwards;
+}
+
+// Fade in
+@mixin animate-fade-in {
+  animation: fadeIn var(--duration-base) var(--ease-out) forwards;
+}
+
+// Scale in
+@mixin animate-scale-in {
+  animation: scaleIn var(--duration-base) var(--ease-bounce) forwards;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }

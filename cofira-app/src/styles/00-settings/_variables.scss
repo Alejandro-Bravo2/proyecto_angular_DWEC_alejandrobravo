@@ -1,7 +1,6 @@
 // ========================================
-// CSS CUSTOM PROPERTIES
-// Este archivo solo contiene CSS custom properties (--variable)
-// Las variables SCSS estan en _css-variables.scss
+// CSS CUSTOM PROPERTIES - MINIMALISTA
+// Estilo Apple/Ferrari - Blanco y Negro Puro
 // ========================================
 
 // Importar variables SCSS para poder usar interpolacion
@@ -9,14 +8,31 @@
 
 
 // ========================================
-// 1. CSS CUSTOM PROPERTIES - TEMA CLARO (por defecto)
+// CSS CUSTOM PROPERTIES - TEMA PRINCIPAL
 // ========================================
 
 :root {
 
   /* ============================================
-     COLORES - NEGRO
+     COLORES - BLANCO (Principal)
      ============================================ */
+  --blanco-puro: #{$blanco-puro};
+  --blanco-off: #{$blanco-off};
+  --blanco-sutil: #{$blanco-sutil};
+  --blanco-normal: #{$blanco-normal};
+  --blanco-normal-hover: #{$blanco-normal-hover};
+  --blanco-normal-active: #{$blanco-normal-active};
+  --blanco-dark: #{$blanco-dark};
+  --blanco-dark-hover: #{$blanco-dark-hover};
+  --blanco-dark-active: #{$blanco-dark-active};
+
+
+  /* ============================================
+     COLORES - NEGRO (Principal)
+     ============================================ */
+  --negro-puro: #{$negro-puro};
+  --negro-profundo: #{$negro-profundo};
+  --negro-suave: #{$negro-suave};
   --negro-normal: #{$negro-normal};
   --negro-normal-hover: #{$negro-normal-hover};
   --negro-normal-active: #{$negro-normal-active};
@@ -26,7 +42,23 @@
 
 
   /* ============================================
-     COLORES - AMARILLO
+     COLORES - GRIS (Escala Neutral)
+     ============================================ */
+  --gris-ultraligero: #{$gris-ultraligero};
+  --gris-ligero: #{$gris-ligero};
+  --gris-medio: #{$gris-medio};
+  --gris-texto: #{$gris-texto};
+  --gris-oscuro: #{$gris-oscuro};
+  --gris-normal: #{$gris-normal};
+  --gris-normal-hover: #{$gris-normal-hover};
+  --gris-normal-active: #{$gris-normal-active};
+  --gris-dark: #{$gris-dark};
+  --gris-dark-hover: #{$gris-dark-hover};
+  --gris-dark-active: #{$gris-dark-active};
+
+
+  /* ============================================
+     COLORES - LEGACY (Compatibilidad)
      ============================================ */
   --amarillo-normal: #{$amarillo-normal};
   --amarillo-normal-hover: #{$amarillo-normal-hover};
@@ -38,43 +70,41 @@
 
 
   /* ============================================
-     COLORES - BLANCO
-     ============================================ */
-  --blanco-normal: #{$blanco-normal};
-  --blanco-normal-hover: #{$blanco-normal-hover};
-  --blanco-normal-active: #{$blanco-normal-active};
-  --blanco-dark: #{$blanco-dark};
-  --blanco-dark-hover: #{$blanco-dark-hover};
-  --blanco-dark-active: #{$blanco-dark-active};
-
-
-  /* ============================================
-     COLORES - GRIS
-     ============================================ */
-  --gris-normal: #{$gris-normal};
-  --gris-normal-hover: #{$gris-normal-hover};
-  --gris-normal-active: #{$gris-normal-active};
-  --gris-dark: #{$gris-dark};
-  --gris-dark-hover: #{$gris-dark-hover};
-  --gris-dark-active: #{$gris-dark-active};
-
-
-  /* ============================================
      TEXTOS
      ============================================ */
   --text-light: #{$text-light};
   --text-dark: #{$text-dark};
+  --text-muted: #{$text-muted};
+  --text-subtle: #{$text-subtle};
 
 
   /* ============================================
      BACKGROUNDS
      ============================================ */
+  --background-primary: #{$background-primary};
+  --background-secondary: #{$background-secondary};
+  --background-tertiary: #{$background-tertiary};
   --background-light-gray: #{$background-light-gray};
+
+
+  /* ============================================
+     BORDERS
+     ============================================ */
+  --border-light: #{$border-light};
+  --border-medium: #{$border-medium};
+  --border-dark: #{$border-dark};
+  --border-solid: #{$border-solid};
 
 
   /* ============================================
      BOTONES
      ============================================ */
+  --button-primary: #{$button-primary};
+  --button-primary-hover: #{$button-primary-hover};
+  --button-primary-active: #{$button-primary-active};
+  --button-secondary: #{$button-secondary};
+  --button-secondary-hover: #{$button-secondary-hover};
+  --button-secondary-active: #{$button-secondary-active};
   --button-red: #{$button-red};
   --button-red-hover: #{$button-red-hover};
   --button-gray: #{$button-gray};
@@ -97,6 +127,8 @@
   --font-size-3xl: #{$font-size-3xl};
   --font-size-4xl: #{$font-size-4xl};
   --font-size-5xl: #{$font-size-5xl};
+  --font-size-6xl: #{$font-size-6xl};
+  --font-size-7xl: #{$font-size-7xl};
 
 
   /* ============================================
@@ -117,11 +149,15 @@
   /* ============================================
      BORDER RADIUS
      ============================================ */
+  --radius-none: #{$radius-none};
   --radius-xss: #{$radius-xss};
   --radius-xs: #{$radius-xs};
   --radius-s: #{$radius-s};
   --radius-m: #{$radius-m};
   --radius-l: #{$radius-l};
+  --radius-xl: #{$radius-xl};
+  --radius-pill: #{$radius-pill};
+  --radius-circle: #{$radius-circle};
 
 
   /* ============================================
@@ -129,6 +165,7 @@
      ============================================ */
   --font-primary: #{$font-primary};
   --font-secondary: #{$font-secondary};
+  --font-mono: #{$font-mono};
 
 
   /* ============================================
@@ -139,38 +176,64 @@
   --font-weight-medium: #{$font-weight-medium};
   --font-weight-semibold: #{$font-weight-semibold};
   --font-weight-bold: #{$font-weight-bold};
+  --font-weight-extrabold: #{$font-weight-extrabold};
 
 
   /* ============================================
      LINE HEIGHT
      ============================================ */
+  --line-height-none: #{$line-height-none};
   --line-height-tight: #{$line-height-tight};
+  --line-height-snug: #{$line-height-snug};
   --line-height-normal: #{$line-height-normal};
   --line-height-relaxed: #{$line-height-relaxed};
+  --line-height-loose: #{$line-height-loose};
 
 
   /* ============================================
-     SOMBRAS
+     LETTER SPACING
      ============================================ */
-  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-  --shadow-primary: 0 10px 15px -3px rgba(59, 130, 246, 0.3), 0 4px 6px -4px rgba(59, 130, 246, 0.3);
-  --shadow-success: 0 10px 15px -3px rgba(34, 197, 94, 0.3), 0 4px 6px -4px rgba(34, 197, 94, 0.3);
-  --shadow-danger: 0 10px 15px -3px rgba(239, 68, 68, 0.3), 0 4px 6px -4px rgba(239, 68, 68, 0.3);
+  --letter-spacing-tighter: #{$letter-spacing-tighter};
+  --letter-spacing-tight: #{$letter-spacing-tight};
+  --letter-spacing-normal: #{$letter-spacing-normal};
+  --letter-spacing-wide: #{$letter-spacing-wide};
+  --letter-spacing-wider: #{$letter-spacing-wider};
+  --letter-spacing-widest: #{$letter-spacing-widest};
 
 
   /* ============================================
-     DURACIONES
+     SOMBRAS (Sutiles y Elegantes)
      ============================================ */
+  --shadow-none: #{$shadow-none};
+  --shadow-xs: #{$shadow-xs};
+  --shadow-sm: #{$shadow-sm};
+  --shadow-md: #{$shadow-md};
+  --shadow-lg: #{$shadow-lg};
+  --shadow-xl: #{$shadow-xl};
+  --shadow-2xl: #{$shadow-2xl};
+
+
+  /* ============================================
+     DURACIONES (Premium Timing)
+     ============================================ */
+  --duration-instant: #{$duration-instant};
   --duration-fast: #{$duration-fast};
   --duration-base: #{$duration-base};
   --duration-slow: #{$duration-slow};
   --duration-slower: #{$duration-slower};
+  --duration-slowest: #{$duration-slowest};
+
+
+  /* ============================================
+     EASING (Premium Curves)
+     ============================================ */
+  --ease-linear: #{$ease-linear};
+  --ease-in: #{$ease-in};
+  --ease-out: #{$ease-out};
+  --ease-in-out: #{$ease-in-out};
+  --ease-premium: #{$ease-premium};
+  --ease-dramatic: #{$ease-dramatic};
+  --ease-bounce: #{$ease-bounce};
 
 
   /* ============================================
@@ -200,42 +263,130 @@
 
 
   /* ============================================
+     Z-INDEX
+     ============================================ */
+  --z-dropdown: #{$z-dropdown};
+  --z-sticky: #{$z-sticky};
+  --z-fixed: #{$z-fixed};
+  --z-modal-backdrop: #{$z-modal-backdrop};
+  --z-modal: #{$z-modal};
+  --z-popover: #{$z-popover};
+  --z-tooltip: #{$z-tooltip};
+  --z-toast: #{$z-toast};
+
+
+  /* ============================================
      VARIABLES SEMANTICAS - TEMA CLARO
      ============================================ */
-  --bg-body: #{$blanco-normal};
-  --bg-card: #{$blanco-normal};
-  --bg-card-alt: #{$blanco-normal-hover};
-  --bg-input: #{$blanco-normal};
-  --text-primary: #{$text-light};
-  --text-secondary: #{$gris-normal};
-  --text-muted: #{$blanco-dark-hover};
-  --border-color: #{$blanco-dark};
-  --border-color-light: #{$blanco-normal-hover};
+  --bg-body: #{$blanco-puro};
+  --bg-primary: #{$blanco-puro};
+  --bg-secondary: #{$blanco-off};
+  --bg-card: #{$blanco-puro};
+  --bg-card-alt: #{$blanco-off};
+  --bg-input: #{$gris-ultraligero};
+  --text-primary: #{$negro-puro};
+  --text-secondary: #{$gris-texto};
+  --border-color: #{$border-light};
+  --border-color-light: #{$border-light};
+
+
+  /* ============================================
+     FORMULARIO (Minimalista)
+     ============================================ */
+  --form-background: #{$blanco-puro};
+  --form-input-background: #{$gris-ultraligero};
+  --form-padding: var(--spacing-size-xl);
+  --form-max-width: 480px;
 }
 
 
 // ========================================
-// 2. TEMA OSCURO
+// TEMA OSCURO (Coherente y Completo)
 // ========================================
 
-body.modo-oscuro {
-  /* Variables semanticas - Tema Oscuro */
-  --bg-body: #{$gris-dark};
-  --bg-card: #{$gris-normal};
-  --bg-card-alt: #{$gris-dark-hover};
-  --bg-input: #{$gris-normal};
-  --text-primary: #{$text-dark};
-  --text-secondary: #{$blanco-dark};
-  --text-muted: #{$blanco-dark-hover};
-  --border-color: #{$gris-normal-hover};
-  --border-color-light: #{$gris-dark-hover};
+[data-theme="dark"] {
+  // Fondos principales - usar variables semánticas
+  --bg-body: #{$negro-puro};
+  --bg-primary: #{$negro-puro};
+  --bg-secondary: #{$negro-suave};
+  --bg-tertiary: #252525;
+  --bg-card: #{$negro-suave};
+  --bg-card-alt: #252525;
+  --bg-input: #333333;
 
-  /* Inversion de colores base para compatibilidad */
-  --blanco-normal: #{$gris-normal};
-  --blanco-normal-hover: #{$gris-normal-hover};
-  --blanco-normal-active: #{$gris-normal-active};
-  --negro-normal: #{$blanco-normal};
-  --negro-normal-hover: #{$blanco-normal-hover};
-  --text-light: #{$text-dark};
-  --text-dark: #{$text-light};
+  // Textos
+  --text-primary: #{$blanco-puro};
+  --text-secondary: #a1a1a1;
+  --text-muted: #737373;
+  --text-light: #{$blanco-puro};
+  --text-dark: #{$negro-puro};
+  --text-subtle: #525252;
+
+  // Bordes - más visibles en dark mode
+  --border-light: rgba(255, 255, 255, 0.12);
+  --border-medium: rgba(255, 255, 255, 0.2);
+  --border-dark: rgba(255, 255, 255, 0.3);
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-color-light: rgba(255, 255, 255, 0.08);
+  --card-border: rgba(255, 255, 255, 0.12);
+
+  // Colores principales - NO INVERTIR, usar semánticos
+  // Mantener blanco y negro como colores reales
+  --blanco-puro: #{$blanco-puro};
+  --negro-puro: #{$negro-puro};
+  --blanco-normal: #{$blanco-puro};
+  --blanco-normal-hover: #{$blanco-off};
+  --negro-normal: #{$negro-puro};
+  --negro-normal-hover: #{$negro-suave};
+  --negro-suave: #{$negro-suave};
+
+  // Grises adaptados para dark mode
+  --gris-ultraligero: #333333;
+  --gris-ligero: #404040;
+  --gris-medio: #a1a1a1;
+  --gris-normal: #525252;
+  --gris-dark: #404040;
+  --gris-texto: #a1a1a1;
+  --gris-oscuro: #737373;
+
+  // Formularios
+  --form-background: #{$negro-suave};
+  --form-input-background: #333333;
+
+  // Botones - mantener coherencia
+  --button-primary: #{$blanco-puro};
+  --button-primary-hover: #{$blanco-off};
+  --button-primary-active: #e5e5e5;
+  --button-secondary: transparent;
+  --button-secondary-hover: rgba(255, 255, 255, 0.1);
+  --button-secondary-active: rgba(255, 255, 255, 0.15);
+
+  // Backgrounds legacy
+  --background-primary: #{$negro-puro};
+  --background-secondary: #{$negro-suave};
+  --background-tertiary: #252525;
+  --background-light-gray: #333333;
+
+  // Sombras para dark mode
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+
+  // Glass effect background (para el header)
+  --glass-bg: rgba(10, 10, 10, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+// Variables adicionales para light mode
+:root {
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --card-border: rgba(0, 0, 0, 0.06);
+  --bg-tertiary: #{$gris-ultraligero};
+  --focus-ring: rgba(10, 10, 10, 0.08);
+}
+
+// Focus ring para dark mode
+[data-theme="dark"] {
+  --focus-ring: rgba(255, 255, 255, 0.15);
 }

@@ -1,26 +1,25 @@
 @import '../../../../styles/00-settings/css-variables';
 @import '../../../../styles/01-tools/mixins';
-@import '../../../../styles/05-components/navegacion';
 @import '../../../../styles/05-components/boton';
 
-// El header usa la clase .header que internamente hereda estilos de .navegacion
+// Header Minimalista con Glassmorphism
 .header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  height: 80px;
-  background-color: var(--gris-normal);
-  color: var(--text-dark);
-  z-index: 100;
-  box-shadow: var(--shadow-md);
-  border-bottom: 1px solid var(--gris-dark);
-  transition: background-color var(--duration-base);
+  height: 72px;
+  z-index: var(--z-fixed);
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--glass-border);
+  @include transition-base;
 
   &__inner {
     @include flex-between;
-    height: 80px;
-    padding: 0 var(--spacing-size-m);
+    height: 72px;
+    padding: 0 var(--spacing-size-l);
     max-width: 1400px;
     margin: 0 auto;
   }
@@ -28,12 +27,14 @@
   &__logo {
     @include tipografia-titulo;
     font-size: var(--font-size-xl);
-    color: var(--amarillo-normal);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
     text-decoration: none;
-    transition: color var(--duration-fast);
+    letter-spacing: var(--letter-spacing-tight);
+    @include transition-fast;
 
     &:hover {
-      color: var(--amarillo-normal-hover);
+      opacity: 0.7;
     }
   }
 
@@ -43,7 +44,7 @@
 
       @include responsive('M') {
         display: flex;
-        gap: var(--spacing-size-l);
+        gap: var(--spacing-size-xl);
       }
     }
 
@@ -51,14 +52,16 @@
       display: flex;
       flex-direction: column;
       position: absolute;
-      top: 80px;
+      top: 72px;
       left: 0;
       right: 0;
-      background-color: var(--gris-dark);
-      padding: var(--spacing-size-m);
-      gap: var(--spacing-size-s);
-      box-shadow: var(--shadow-md);
-      animation: slideInDown 300ms ease-out;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      padding: var(--spacing-size-l);
+      gap: var(--spacing-size-xs);
+      border-bottom: 1px solid var(--glass-border);
+      animation: slideInDown var(--duration-base) var(--ease-out);
 
       @include responsive('M') {
         display: none;
@@ -68,37 +71,57 @@
 
   &__nav-link {
     @include tipografia-texto;
-    color: var(--text-dark);
+    color: var(--gris-texto);
     font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-sm);
     text-decoration: none;
-    padding: var(--spacing-size-xss) var(--spacing-size-s);
-    border-radius: var(--radius-xss);
-    transition: all var(--duration-fast);
+    padding: var(--spacing-size-xss) 0;
+    position: relative;
+    @include transition-base;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background-color: var(--text-primary);
+      transition: width var(--duration-base) var(--ease-premium);
+    }
 
     &:hover {
-      background-color: var(--gris-dark);
-      color: var(--amarillo-normal);
+      color: var(--text-primary);
+
+      &::after {
+        width: 100%;
+      }
     }
 
     &--active {
-      color: var(--amarillo-normal);
-      background-color: rgba(255, 211, 0, 0.1);
+      color: var(--text-primary);
       font-weight: var(--font-weight-semibold);
+
+      &::after {
+        width: 100%;
+      }
     }
 
     &--logout {
       background: none;
       border: none;
       font-family: var(--font-primary);
-      font-size: inherit;
-      font-weight: inherit;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
       text-align: left;
       cursor: pointer;
       width: 100%;
       color: var(--button-red);
+      padding: var(--spacing-size-xs) 0;
+      @include transition-base;
 
       &:hover {
-        background-color: rgba(255, 52, 52, 0.1);
+        opacity: 0.7;
       }
     }
   }
@@ -110,48 +133,53 @@
   }
 
   &__theme-toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    @include boton-reset;
+    @include flex-center;
     width: 40px;
     height: 40px;
-    border: none;
-    border-radius: var(--radius-xss);
-    background-color: var(--gris-dark);
-    color: var(--text-dark);
-    cursor: pointer;
-    transition: background-color var(--duration-fast);
+    border-radius: var(--radius-circle);
+    background-color: transparent;
+    color: var(--text-primary);
+    @include transition-base;
 
     &:hover {
-      background-color: var(--gris-dark-hover);
+      background-color: var(--bg-tertiary);
     }
   }
 
   &__theme-icon {
-    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    display: block;
+    @include transition-base;
   }
 
   &__hamburger {
+    @include boton-reset;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
-    width: 32px;
-    height: 32px;
-    padding: 4px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    border-radius: var(--radius-s);
+    @include transition-base;
 
     @include responsive('M') {
       display: none;
     }
 
+    &:hover {
+      background-color: var(--bg-tertiary);
+    }
+
     &-line {
       width: 100%;
-      height: 3px;
-      background-color: var(--text-dark);
-      border-radius: 2px;
-      transition: all var(--duration-fast);
+      height: 2px;
+      background-color: var(--text-primary);
+      border-radius: 1px;
+      @include transition-base;
     }
 
     &[aria-expanded='true'] {
@@ -163,15 +191,17 @@
           opacity: 0;
         }
         &:nth-child(3) {
-          transform: rotate(-45deg) translate(7px, -7px);
+          transform: rotate(-45deg) translate(5px, -5px);
         }
       }
     }
   }
 
-  // Ocultar botones en móvil, mostrar en desktop
+  // Botones en el header
   .boton {
     display: none;
+    font-size: var(--font-size-sm);
+    padding: var(--spacing-size-xss) var(--spacing-size-m);
 
     @include responsive('M') {
       display: inline-flex;
@@ -182,11 +212,17 @@
 // Animación para el menú móvil
 @keyframes slideInDown {
   from {
-    transform: translateY(-20px);
+    transform: translateY(-10px);
     opacity: 0;
   }
   to {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+// Estado de scroll (añadir con JS cuando se hace scroll)
+.header--scrolled {
+  @include glass-effect(30px, 0.95);
+  box-shadow: var(--shadow-sm);
 }

@@ -1,21 +1,17 @@
-@import '../../../../../styles/settings/colors';
-@import '../../../../../styles/settings/typography';
-@import '../../../../../styles/settings/spacing';
-@import '../../../../../styles/settings/radios';
-@import '../../../../../styles/tools/mixins';
-@import '../../../../../styles/components/_buttons.scss';
+@import '../../../../../styles/00-settings/css-variables';
+@import '../../../../../styles/01-tools/mixins';
 
 .meal-section {
   background-color: var(--bg-secondary);
-  padding: $spacing-m;
-  border-radius: $radius-m;
-  box-shadow: var(--shadow);
+  padding: var(--spacing-size-l);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
   color: var(--text-primary);
 
   h3 {
-    font-family: $font-family-heading;
-    font-size: $font-size-h4;
-    margin-bottom: $spacing-m;
+    @include tipografia-titulo;
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-size-m);
     color: var(--text-primary);
   }
 
@@ -26,9 +22,9 @@
   }
 
   &__footer {
-    border-top: 1px solid var(--card-border);
-    padding-top: $spacing-m;
-    margin-top: $spacing-m;
+    border-top: 1px solid var(--border-light);
+    padding-top: var(--spacing-size-m);
+    margin-top: var(--spacing-size-m);
     text-align: right;
   }
 
@@ -37,13 +33,13 @@
     @include flex-center;
     width: 32px;
     height: 32px;
-    border-radius: $radius-circle;
+    border-radius: var(--radius-circle);
     color: var(--text-secondary);
     background-color: transparent;
-    @include transition(all);
+    @include transition-base;
 
     &:hover {
-      background-color: var(--card-border);
+      background-color: var(--border-light);
       color: var(--text-primary);
     }
   }

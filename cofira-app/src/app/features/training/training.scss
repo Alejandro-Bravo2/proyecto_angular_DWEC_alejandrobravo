@@ -1,20 +1,20 @@
-@import '../../../styles/settings/colors';
-@import '../../../styles/settings/typography';
-@import '../../../styles/settings/spacing';
+@import '../../../styles/00-settings/css-variables';
+@import '../../../styles/01-tools/mixins';
 
 .training-page {
-  padding: $spacing-l $spacing-m;
+  @include section-spacing;
   max-width: 1200px;
   margin: 0 auto;
+  padding-left: var(--spacing-size-m);
+  padding-right: var(--spacing-size-m);
 
   &__header {
-    margin-bottom: $spacing-xl;
+    margin-bottom: var(--spacing-size-xxl);
     text-align: center;
 
     h1 {
-      font-family: $font-family-heading;
-      font-size: $font-size-h2;
-      color: var(--text-primary);
+      @include text-display;
+      margin: 0;
     }
   }
 }

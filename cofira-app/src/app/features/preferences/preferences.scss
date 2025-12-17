@@ -1,81 +1,81 @@
-@import '../../../styles/settings/colors';
-@import '../../../styles/settings/typography';
-@import '../../../styles/settings/spacing';
-@import '../../../styles/settings/breakpoints';
+@import '../../../styles/00-settings/css-variables';
+@import '../../../styles/01-tools/mixins';
 
 .preferences-page {
-  padding: $spacing-l $spacing-m;
+  @include section-spacing;
   max-width: 1200px;
   margin: 0 auto;
+  padding-left: var(--spacing-size-m);
+  padding-right: var(--spacing-size-m);
 
   &__header {
-    margin-bottom: $spacing-xl;
+    margin-bottom: var(--spacing-size-xxl);
     text-align: center;
 
     h1 {
-      font-family: $font-family-heading;
-      font-size: $font-size-h2;
-      color: var(--text-primary);
+      @include text-display;
+      margin: 0 0 var(--spacing-size-s);
     }
 
     p {
-      font-size: $font-size-body;
+      font-size: var(--font-size-md);
       color: var(--text-secondary);
       margin-bottom: 0;
     }
   }
 
   &__section {
-    margin-bottom: $spacing-xxl;
+    margin-bottom: var(--spacing-size-xxxl);
+
     h2 {
-      font-family: $font-family-heading;
-      font-size: $font-size-h3;
+      @include tipografia-titulo;
+      font-size: var(--font-size-2xl);
       text-align: center;
-      margin-bottom: $spacing-m;
+      margin-bottom: var(--spacing-size-m);
       color: var(--text-primary);
     }
   }
 
   &__description {
-    font-size: $font-size-small;
+    font-size: var(--font-size-sm);
     color: var(--text-secondary);
     text-align: center;
-    margin-bottom: $spacing-l;
+    margin-bottom: var(--spacing-size-l);
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
   }
 
   &__placeholder {
-    background: var(--background-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: $spacing-l;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-size-xl);
     max-width: 500px;
     margin: 0 auto;
 
     p {
-      font-size: $font-size-body;
+      font-size: var(--font-size-md);
       color: var(--text-primary);
-      margin-bottom: $spacing-m;
+      margin-bottom: var(--spacing-size-m);
       display: flex;
       align-items: center;
-      gap: $spacing-s;
+      gap: var(--spacing-size-s);
     }
 
     button {
-      margin-top: $spacing-m;
+      margin-top: var(--spacing-size-m);
     }
   }
 
   &__checkbox {
     display: flex;
     align-items: center;
-    gap: $spacing-s;
-    font-size: $font-size-body;
+    gap: var(--spacing-size-s);
+    font-size: var(--font-size-md);
     color: var(--text-primary);
     cursor: pointer;
-    margin-bottom: $spacing-m;
+    margin-bottom: var(--spacing-size-m);
     user-select: none;
 
     &:last-child {
@@ -86,11 +86,11 @@
       width: 18px;
       height: 18px;
       cursor: pointer;
-      accent-color: var(--primary-color);
+      accent-color: var(--negro-puro);
     }
 
     &:hover {
-      color: var(--primary-color);
+      color: var(--negro-puro);
     }
   }
 }

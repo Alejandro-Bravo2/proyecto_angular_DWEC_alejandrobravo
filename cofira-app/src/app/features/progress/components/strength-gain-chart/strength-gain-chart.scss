@@ -1,42 +1,54 @@
-@import '../../../../../styles/settings/colors';
-@import '../../../../../styles/settings/typography';
-@import '../../../../../styles/settings/spacing';
-@import '../../../../../styles/settings/radios';
-@import '../../../../../styles/settings/breakpoints';
-@import '../../../../../styles/tools/mixins';
-@import '../../../../../styles/components/_cards.scss';
-@import '../../../../../styles/components/_forms.scss'; // For select styling
+@import '../../../../../styles/00-settings/css-variables';
+@import '../../../../../styles/01-tools/mixins';
 
 .strength-gain-chart {
-  @include card; // Apply base card styles
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-size-xl);
   text-align: center;
+  @include transition-base;
+
+  &:hover {
+    border-color: var(--border-medium);
+  }
 
   &__header {
     @include flex-between;
-    margin-bottom: $spacing-m;
-    flex-wrap: wrap; // Allow items to wrap on smaller screens
-    gap: $spacing-s;
+    margin-bottom: var(--spacing-size-l);
+    flex-wrap: wrap;
+    gap: var(--spacing-size-s);
 
     h3 {
-      font-family: $font-family-heading;
-      font-size: $font-size-h3;
+      @include tipografia-titulo;
+      font-size: var(--font-size-2xl);
       margin: 0;
       color: var(--text-primary);
     }
   }
 
   &__dropdown {
-    @extend .c-form__input; // Use form input styles
+    background-color: var(--gris-ultraligero);
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    padding: var(--spacing-size-xs) var(--spacing-size-s);
+    font-size: var(--font-size-md);
+    color: var(--text-primary);
     width: auto;
     min-width: 180px;
-    padding: $spacing-xs $spacing-s; // Adjust padding for dropdown
+    @include transition-base;
+
+    &:focus {
+      outline: none;
+      border-color: var(--negro-puro);
+    }
   }
 
   &__body {
     img {
       max-width: 100%;
       height: auto;
-      display: block; // Remove extra space below image
+      display: block;
       margin: 0 auto;
     }
   }

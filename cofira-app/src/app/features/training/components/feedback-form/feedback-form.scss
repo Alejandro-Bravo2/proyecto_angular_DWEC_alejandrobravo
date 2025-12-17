@@ -1,24 +1,19 @@
-@import '../../../../../styles/settings/colors';
-@import '../../../../../styles/settings/typography';
-@import '../../../../../styles/settings/spacing';
-@import '../../../../../styles/settings/breakpoints';
-@import '../../../../../styles/tools/mixins';
-@import '../../../../../styles/components/_buttons.scss';
-@import '../../../../../styles/components/_forms.scss';
+@import '../../../../../styles/00-settings/css-variables';
+@import '../../../../../styles/01-tools/mixins';
 
 .feedback-form {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  padding: $spacing-xl;
-  border-radius: $radius-m;
-  box-shadow: var(--shadow);
+  padding: var(--spacing-size-xxl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
   max-width: 800px;
-  margin: $spacing-xl auto;
+  margin: var(--spacing-size-xl) auto;
 
   h2 {
-    font-family: $font-family-heading;
-    font-size: $font-size-h3;
-    margin-bottom: $spacing-xl;
+    @include tipografia-titulo;
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-size-xl);
     text-align: center;
     color: var(--text-primary);
   }
@@ -26,22 +21,21 @@
   .c-form {
     display: flex;
     flex-direction: column;
-    gap: $spacing-m;
+    gap: var(--spacing-size-m);
   }
 
   &__actions {
     display: flex;
     justify-content: flex-end;
-    gap: $spacing-s;
-    margin-top: $spacing-m;
+    gap: var(--spacing-size-s);
+    margin-top: var(--spacing-size-m);
 
-    @include respond-to(s) {
+    @include responsive('s') {
       justify-content: center;
     }
   }
 
-  // Responsive adjustments
-  @include respond-to(s) {
-    padding: $spacing-xl $spacing-m;
+  @include responsive('s') {
+    padding: var(--spacing-size-xl) var(--spacing-size-m);
   }
 }

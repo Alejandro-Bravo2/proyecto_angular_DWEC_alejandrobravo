@@ -1,9 +1,10 @@
 // ============================================================================
-// COFIRA APP - Sistema de Estilos ITCSS + BEM
+// COFIRA APP - Sistema de Estilos Minimalista
 // ============================================================================
 // Arquitectura: ITCSS (Inverted Triangle CSS)
 // Nomenclatura: BEM en español
-// Variables: CSS Custom Properties + SCSS
+// Estilo: Minimalista Apple/Ferrari
+// Colores: Blanco puro + Negro puro
 // ============================================================================
 
 // ============================================================================
@@ -54,21 +55,107 @@
 @import 'styles/06-utilities/utilities';
 
 // ============================================================================
-// Configuración global adicional
+// Configuración global adicional - Minimalista
 // ============================================================================
+
+// Import Inter font
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 // Smooth scrolling
 html {
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-// Selection color
+// Body base styles
+body {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-md);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary);
+  background-color: var(--bg-body);
+  min-height: 100vh;
+}
+
+// Selection color - Minimalista (negro/blanco invertido)
 ::selection {
-  background-color: var(--amarillo-normal);
-  color: var(--negro-normal);
+  background-color: var(--negro-puro);
+  color: var(--blanco-puro);
 }
 
 ::-moz-selection {
-  background-color: var(--amarillo-normal);
-  color: var(--negro-normal);
+  background-color: var(--negro-puro);
+  color: var(--blanco-puro);
+}
+
+// Focus styles - Minimalista
+*:focus-visible {
+  outline: 2px solid var(--negro-puro);
+  outline-offset: 2px;
+}
+
+// Remove default focus outline for mouse users
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+// Scrollbar minimalista (webkit)
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--gris-ultraligero);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gris-medio);
+  border-radius: 4px;
+
+  &:hover {
+    background: var(--gris-oscuro);
+  }
+}
+
+// Firefox scrollbar
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gris-medio) var(--gris-ultraligero);
+}
+
+// Disable text selection on interactive elements
+button,
+[role="button"] {
+  user-select: none;
+}
+
+// Print styles
+@media print {
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Main layout adjustment for fixed header
+.app-main {
+  padding-top: 72px; // Header height
 }

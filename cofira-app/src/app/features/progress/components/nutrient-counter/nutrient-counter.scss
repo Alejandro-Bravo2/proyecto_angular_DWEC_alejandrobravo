@@ -1,21 +1,26 @@
-@import '../../../../../styles/settings/colors';
-@import '../../../../../styles/settings/typography';
-@import '../../../../../styles/settings/spacing';
-@import '../../../../../styles/settings/radios';
-@import '../../../../../styles/settings/breakpoints';
-@import '../../../../../styles/tools/mixins';
-@import '../../../../../styles/components/_cards.scss';
+@import '../../../../../styles/00-settings/css-variables';
+@import '../../../../../styles/01-tools/mixins';
 
 .nutrient-counter {
-  @include card; // Apply base card styles
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-size-xl);
   text-align: center;
+  @include transition-base;
+
+  &:hover {
+    border-color: var(--border-medium);
+  }
 
   &__header {
-    margin-bottom: $spacing-m;
+    margin-bottom: var(--spacing-size-l);
+
     h3 {
-      font-family: $font-family-heading;
-      font-size: $font-size-h3;
+      @include tipografia-titulo;
+      font-size: var(--font-size-2xl);
       color: var(--text-primary);
+      margin: 0;
     }
   }
 
@@ -23,9 +28,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: $spacing-xl;
+    gap: var(--spacing-size-xl);
 
-    @include respond-to(m) {
+    @include responsive('M') {
       flex-direction: row;
       justify-content: center;
       text-align: left;
@@ -34,6 +39,7 @@
 
   &__chart {
     flex-shrink: 0;
+
     img {
       max-width: 150px;
       height: auto;
@@ -42,32 +48,37 @@
 
   &__details {
     flex-grow: 1;
+
     h4 {
-      font-family: $font-family-base;
-      font-size: $font-size-h4;
-      margin-bottom: $spacing-s;
+      @include tipografia-texto;
+      font-size: var(--font-size-xl);
+      margin-bottom: var(--spacing-size-s);
       color: var(--text-primary);
     }
+
     ul {
       list-style: none;
       padding: 0;
-      margin-bottom: $spacing-m;
+      margin-bottom: var(--spacing-size-m);
+
       li {
-        font-size: $font-size-body;
+        font-size: var(--font-size-md);
         color: var(--text-secondary);
-        padding: $spacing-xs 0;
+        padding: var(--spacing-size-xs) 0;
         display: flex;
         justify-content: space-between;
+
         .u-text-brand {
-          font-weight: $font-weight-semibold;
+          font-weight: var(--font-weight-semibold);
+          color: var(--negro-puro);
         }
       }
     }
   }
 
   &__calories {
-    font-size: $font-size-h4;
-    font-weight: $font-weight-bold;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
     color: var(--text-primary);
   }
 }

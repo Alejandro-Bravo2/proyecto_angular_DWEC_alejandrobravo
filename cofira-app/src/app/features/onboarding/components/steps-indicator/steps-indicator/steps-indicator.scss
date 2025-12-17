@@ -1,18 +1,14 @@
-@import '../../../../../../styles/settings/colors';
-@import '../../../../../../styles/settings/typography';
-@import '../../../../../../styles/settings/spacing';
-@import '../../../../../../styles/settings/radios';
-@import '../../../../../../styles/settings/breakpoints';
-@import '../../../../../../styles/tools/mixins';
+@import '../../../../../../styles/00-settings/css-variables';
+@import '../../../../../../styles/01-tools/mixins';
 
 .steps-indicator {
-  margin-bottom: $spacing-xl; // Space below the indicator
+  margin-bottom: var(--spacing-size-xl);
   width: 100%;
 
   &__list {
     display: flex;
     justify-content: center;
-    gap: $spacing-m; // Space between steps
+    gap: var(--spacing-size-m);
     list-style: none;
     padding: 0;
     margin: 0;
@@ -22,34 +18,35 @@
     @include flex-center;
     width: 40px;
     height: 40px;
-    border-radius: $radius-circle;
-    border: 2px solid var(--card-border);
+    border-radius: var(--radius-circle);
+    border: 2px solid var(--border-light);
     background-color: var(--bg-secondary);
     color: var(--text-secondary);
-    font-weight: $font-weight-bold;
-    @include transition(all);
+    font-weight: var(--font-weight-bold);
+    @include transition-base;
 
     &--active {
-      border-color: $color-brand-primary;
-      background-color: $color-brand-primary;
-      color: $color-black;
+      border-color: var(--negro-puro);
+      background-color: var(--negro-puro);
+      color: var(--blanco-puro);
     }
   }
 
   &__number {
-    font-size: $font-size-body;
+    font-size: var(--font-size-md);
   }
 
-  // Responsive adjustments for smaller screens, reduce gap/size if needed
-  @include respond-to(s) {
+  @include responsive('s') {
     &__list {
-      gap: $spacing-s;
+      gap: var(--spacing-size-s);
     }
+
     &__item {
       width: 32px;
       height: 32px;
+
       .steps-indicator__number {
-        font-size: $font-size-small;
+        font-size: var(--font-size-sm);
       }
     }
   }

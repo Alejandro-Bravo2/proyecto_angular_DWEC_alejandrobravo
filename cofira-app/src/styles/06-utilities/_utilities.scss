@@ -333,3 +333,163 @@
 .margen-xs {
   margin: var(--spacing-size-xs);
 }
+
+
+/* ============================================
+   LEGACY CLASS ALIASES
+   Compatibilidad con clases antiguas (c-form, c-button, c-card)
+   ============================================ */
+
+/* --------------------------------------------
+   C-FORM (Alias para formulario)
+   -------------------------------------------- */
+
+.c-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-size-m);
+  width: 100%;
+}
+
+.c-form__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-size-xss);
+}
+
+.c-form__label {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-size-xss);
+}
+
+.c-form__input {
+  width: 100%;
+  padding: var(--spacing-size-s) var(--spacing-size-m);
+  background-color: var(--bg-input, var(--bg-tertiary));
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-s);
+  font-size: var(--font-size-md);
+  font-family: var(--font-primary);
+  color: var(--text-primary);
+  outline: none;
+  transition: all var(--duration-base) var(--ease-premium);
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+
+  &:hover:not(:focus) {
+    border-color: var(--border-medium);
+  }
+
+  &:focus {
+    border-color: var(--text-primary);
+    background-color: var(--bg-card);
+    box-shadow: 0 0 0 3px var(--focus-ring, rgba(10, 10, 10, 0.05));
+  }
+
+  &--error {
+    border-color: var(--button-red) !important;
+    background-color: rgba(220, 38, 38, 0.02);
+  }
+}
+
+.c-form__error {
+  font-size: var(--font-size-sm);
+  color: var(--button-red);
+  margin-top: var(--spacing-size-xss);
+}
+
+.c-form__hint {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin-top: var(--spacing-size-xss);
+}
+
+/* --------------------------------------------
+   C-BUTTON (Alias para boton)
+   -------------------------------------------- */
+
+.c-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-size-xss);
+  font-family: var(--font-primary);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-md);
+  border: none;
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  text-decoration: none;
+  user-select: none;
+  padding: var(--spacing-size-s) var(--spacing-size-l);
+  transition: all var(--duration-base) var(--ease-premium);
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.c-button--primary {
+  background-color: var(--text-primary);
+  color: var(--bg-body);
+  border: 1px solid var(--text-primary);
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+  }
+}
+
+.c-button--secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--text-primary);
+
+  &:hover:not(:disabled) {
+    background-color: var(--text-primary);
+    color: var(--bg-body);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+  }
+}
+
+.c-button--large {
+  padding: var(--spacing-size-s) var(--spacing-size-xl);
+  font-size: var(--font-size-lg);
+}
+
+.c-button--small {
+  padding: var(--spacing-size-xss) var(--spacing-size-s);
+  font-size: var(--font-size-sm);
+}
+
+/* --------------------------------------------
+   C-CARD (Alias para tarjeta)
+   -------------------------------------------- */
+
+.c-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-m);
+  padding: var(--spacing-size-xl);
+  transition: all var(--duration-base) var(--ease-premium);
+}

@@ -1,27 +1,24 @@
-@import '../../../../../styles/settings/colors';
-@import '../../../../../styles/settings/typography';
-@import '../../../../../styles/settings/spacing';
-@import '../../../../../styles/settings/breakpoints';
-@import '../../../../../styles/tools/mixins';
-@import '../../../../../styles/components/_buttons.scss';
+@import '../../../../../styles/00-settings/css-variables';
+@import '../../../../../styles/01-tools/mixins';
 
 .daily-menu {
-  padding: $spacing-m;
+  padding: var(--spacing-size-l);
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  border-radius: $radius-m;
-  box-shadow: var(--shadow);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
   max-width: 800px;
   margin: 0 auto;
 
   &__header {
     @include flex-between;
-    margin-bottom: $spacing-xl;
-    padding-bottom: $spacing-s;
-    border-bottom: 1px solid var(--card-border);
+    margin-bottom: var(--spacing-size-xl);
+    padding-bottom: var(--spacing-size-s);
+    border-bottom: 1px solid var(--border-light);
 
     h2 {
-      font-size: $font-size-h3;
+      @include tipografia-titulo;
+      font-size: var(--font-size-2xl);
       margin: 0;
       color: var(--text-primary);
     }
@@ -31,9 +28,9 @@
       @include flex-center;
       width: 40px;
       height: 40px;
-      border-radius: $radius-circle;
+      border-radius: var(--radius-circle);
       color: var(--text-secondary);
-      @include transition(all);
+      @include transition-base;
 
       &:hover {
         background-color: var(--bg-secondary);
@@ -45,11 +42,10 @@
   &__sections {
     display: flex;
     flex-direction: column;
-    gap: $spacing-l;
+    gap: var(--spacing-size-l);
   }
 
-  // Responsive adjustments
-  @include respond-to(m) {
-    padding: $spacing-xl;
+  @include responsive('M') {
+    padding: var(--spacing-size-xl);
   }
 }

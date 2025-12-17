@@ -14,23 +14,19 @@
 // ============================================================================
 
 .c-accordion-item {
-  background-color: var(--bg-primary);
-  border: 1px solid var(--card-border);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 0.5rem;
   overflow: hidden;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: var(--text-secondary);
+    border-color: var(--border-medium);
   }
 
   &--open {
     border-color: var(--text-primary);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-    [data-theme='dark'] & {
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    }
+    box-shadow: var(--shadow-md);
   }
 }
 

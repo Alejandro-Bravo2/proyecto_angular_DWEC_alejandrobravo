@@ -1,34 +1,28 @@
-@import '../../../../../../styles/settings/colors';
-@import '../../../../../../styles/settings/typography';
-@import '../../../../../../styles/settings/spacing';
-@import '../../../../../../styles/settings/radios';
-@import '../../../../../../styles/settings/breakpoints';
-@import '../../../../../../styles/tools/mixins';
-@import '../../../../../../styles/components/_buttons.scss';
-@import '../../../../../../styles/components/_forms.scss';
+@import '../../../../../../styles/00-settings/css-variables';
+@import '../../../../../../styles/01-tools/mixins';
 
 .onboarding-pricing {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  padding: $spacing-xl;
-  border-radius: $radius-l;
-  box-shadow: var(--shadow);
+  padding: var(--spacing-size-xxl);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
   max-width: 600px;
-  margin: $spacing-xl auto;
+  margin: var(--spacing-size-xl) auto;
 
   &__header {
     text-align: center;
-    margin-bottom: $spacing-xl;
+    margin-bottom: var(--spacing-size-xxl);
 
     h1 {
-      font-family: $font-family-heading;
-      font-size: $font-size-h2;
-      margin-bottom: $spacing-s;
+      @include tipografia-titulo;
+      font-size: var(--font-size-3xl);
+      margin-bottom: var(--spacing-size-s);
       color: var(--text-primary);
     }
 
     p {
-      font-size: $font-size-body;
+      font-size: var(--font-size-md);
       color: var(--text-secondary);
     }
   }
@@ -36,13 +30,13 @@
   &__options {
     display: flex;
     flex-direction: column;
-    gap: $spacing-s;
+    gap: var(--spacing-size-s);
 
     .c-button {
       width: 100%;
     }
 
-    @include respond-to(s) {
+    @include responsive('s') {
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: center;
@@ -50,7 +44,7 @@
   }
 
   &__footer {
-    margin-top: $spacing-xl;
+    margin-top: var(--spacing-size-xl);
     text-align: center;
   }
 }
