@@ -1,57 +1,54 @@
-@import '../../../../../../styles/settings/colors';
-@import '../../../../../../styles/settings/typography';
-@import '../../../../../../styles/settings/spacing';
-@import '../../../../../../styles/settings/radios';
-@import '../../../../../../styles/settings/breakpoints';
-@import '../../../../../../styles/tools/mixins';
-@import '../../../../../../styles/components/_buttons.scss';
-@import '../../../../../../styles/components/_forms.scss';
-@import '../../../../../../styles/components/_cards.scss';
+@import '../../../../../../styles/00-settings/css-variables';
+@import '../../../../../../styles/01-tools/mixins';
+@import '../../../../../../styles/05-components/boton';
+@import '../../../../../../styles/05-components/formulario';
+@import '../../../../../../styles/05-components/tarjeta';
 
 .dynamic-form-array-example {
-  @include card;
-  padding: $spacing-xl;
+  @include tarjeta-base;
+  padding: var(--spacing-size-xl);
   max-width: 600px;
-  margin: $spacing-xl auto;
+  margin: var(--spacing-size-xl) auto;
 
   &__header {
-    margin-bottom: $spacing-xl;
+    margin-bottom: var(--spacing-size-xl);
     text-align: center;
 
     h1 {
-      font-family: $font-family-heading;
-      font-size: $font-size-h2;
-      margin-bottom: $spacing-xs;
-      color: var(--text-primary);
+      @include tipografia-titulo;
+      font-size: var(--font-size-2xl);
+      margin-bottom: var(--spacing-size-xss);
+      color: var(--text-dark);
     }
 
     p {
-      font-size: $font-size-body;
-      color: var(--text-secondary);
+      @include tipografia-texto;
+      font-size: var(--font-size-md);
+      color: var(--text-dark);
     }
   }
 
   &__phone-input-group {
     display: flex;
-    gap: $spacing-s;
+    gap: var(--spacing-size-s);
     align-items: center;
 
-    .c-form__input {
+    .formulario__campo {
       flex-grow: 1;
     }
 
-    .c-button--ghost {
-      color: $color-error;
+    .boton--fantasma {
+      color: var(--button-red);
     }
   }
 
   &__footer {
-    margin-top: $spacing-xl;
+    margin-top: var(--spacing-size-xl);
     text-align: center;
-    border-top: 1px solid var(--card-border);
-    padding-top: $spacing-m;
+    border-top: 1px solid var(--gris-dark);
+    padding-top: var(--spacing-size-m);
 
-    .c-button {
+    .boton {
       width: 100%;
     }
   }

@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost';
-type ButtonSize = 'small' | 'large';
+type ButtonVariant = 'primario' | 'secundario' | 'fantasma' | 'peligro';
+type ButtonSize = 'pequeno' | 'mediano' | 'grande';
 type ButtonType = 'button' | 'submit' | 'reset';
 
 @Component({
@@ -13,8 +13,9 @@ type ButtonType = 'button' | 'submit' | 'reset';
   styleUrl: './button.scss',
 })
 export class Button {
-  @Input() variant: ButtonVariant = 'primary';
-  @Input() size: ButtonSize | '' = '';
+  @Input() variant: ButtonVariant = 'primario';
+  @Input() size: ButtonSize = 'mediano';
+  @Input() completo: boolean = false;
   @Input() disabled: boolean = false;
   @Input() type: ButtonType = 'button';
 
@@ -28,11 +29,14 @@ export class Button {
 
   get buttonClasses(): Record<string, boolean> {
     return {
-      'c-button--primary': this.variant === 'primary',
-      'c-button--secondary': this.variant === 'secondary',
-      'c-button--ghost': this.variant === 'ghost',
-      'c-button--small': this.size === 'small',
-      'c-button--large': this.size === 'large',
+      'boton--primario': this.variant === 'primario',
+      'boton--secundario': this.variant === 'secundario',
+      'boton--fantasma': this.variant === 'fantasma',
+      'boton--peligro': this.variant === 'peligro',
+      'boton--pequeno': this.size === 'pequeno',
+      'boton--mediano': this.size === 'mediano',
+      'boton--grande': this.size === 'grande',
+      'boton--completo': this.completo,
     };
   }
 }

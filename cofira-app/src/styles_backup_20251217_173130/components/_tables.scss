@@ -1,0 +1,403 @@
+// ============================================================================
+// COFIRA - Tables Component
+// ============================================================================
+// IMPORTANTE: Usa CSS custom properties
+// Incluye alias en español para nomenclatura BEM
+// ============================================================================
+
+.c-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card-bg);
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+  font-family: var(--font-primary);
+
+  // Header
+  &__header {
+    background-color: var(--bg-secondary);
+  }
+
+  &__header-cell {
+    padding: var(--spacing-s) var(--spacing-m);
+    text-align: left;
+    font-family: var(--font-primary);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--card-border);
+
+    // Sortable
+    &--sortable {
+      cursor: pointer;
+      user-select: none;
+      @include transition(all);
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      &::after {
+        content: '↕';
+        margin-left: var(--spacing-xs);
+        opacity: 0.5;
+      }
+
+      &--asc::after {
+        content: '↑';
+        opacity: 1;
+      }
+
+      &--desc::after {
+        content: '↓';
+        opacity: 1;
+      }
+    }
+  }
+
+  // Body
+  &__row {
+    border-bottom: 1px solid var(--card-border);
+    @include transition(background-color);
+
+    &:hover {
+      background-color: var(--bg-secondary);
+    }
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    // States
+    &--selected {
+      background-color: rgba(253, 185, 19, 0.1);
+    }
+
+    &--disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+  }
+
+  &__cell {
+    padding: var(--spacing-s) var(--spacing-m);
+    color: var(--text-primary);
+    font-family: var(--font-primary);
+    font-size: var(--font-size-base);
+    vertical-align: middle;
+
+    // Alineación
+    &--center {
+      text-align: center;
+    }
+
+    &--right {
+      text-align: right;
+    }
+
+    // Compact
+    &--compact {
+      padding: var(--spacing-xs) var(--spacing-s);
+    }
+
+    // Wrap control
+    &--nowrap {
+      white-space: nowrap;
+    }
+
+    &--truncate {
+      max-width: 200px;
+      @include truncate;
+    }
+  }
+
+  // ========================================
+  // Variants
+  // ========================================
+
+  // Striped rows
+  &--striped {
+    .c-table__row:nth-child(even) {
+      background-color: var(--bg-secondary);
+    }
+  }
+
+  // Bordered
+  &--bordered {
+    border: 1px solid var(--card-border);
+
+    .c-table__header-cell,
+    .c-table__cell {
+      border-right: 1px solid var(--card-border);
+
+      &:last-child {
+        border-right: none;
+      }
+    }
+  }
+
+  // Compact
+  &--compact {
+    .c-table__header-cell,
+    .c-table__cell {
+      padding: var(--spacing-xs) var(--spacing-s);
+      font-size: var(--font-size-sm);
+    }
+  }
+
+  // Hoverable rows
+  &--hoverable {
+    .c-table__row {
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgba(253, 185, 19, 0.05);
+      }
+    }
+  }
+
+  // Fixed layout
+  &--fixed {
+    table-layout: fixed;
+  }
+
+  // ========================================
+  // Responsive Table (stacked en mobile)
+  // ========================================
+
+  &--responsive {
+    @media (max-width: $breakpoint-m) {
+      display: block;
+      overflow-x: auto;
+
+      thead {
+        display: none;
+      }
+
+      tbody,
+      tr,
+      td {
+        display: block;
+      }
+
+      tr {
+        margin-bottom: var(--spacing-m);
+        border: 1px solid var(--card-border);
+        border-radius: var(--radius-xs);
+        padding: var(--spacing-s);
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+
+      td {
+        padding: var(--spacing-xs) 0;
+        border-bottom: none;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+
+        &::before {
+          content: attr(data-label);
+          position: absolute;
+          left: 0;
+          width: 45%;
+          padding-right: var(--spacing-s);
+          font-weight: var(--font-weight-semibold);
+          text-align: left;
+          color: var(--text-secondary);
+        }
+
+        &:last-child {
+          padding-bottom: 0;
+        }
+      }
+    }
+  }
+
+  // Scroll horizontal en mobile (alternativa)
+  &--scrollable {
+    @media (max-width: $breakpoint-m) {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+      @include custom-scrollbar;
+    }
+  }
+}
+
+// Table container (con scroll)
+.c-table-container {
+  width: 100%;
+  overflow-x: auto;
+  @include custom-scrollbar;
+
+  &--shadow {
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-xs);
+  }
+}
+
+// Table actions (botones en tabla)
+.c-table-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  justify-content: flex-end;
+
+  .c-button {
+    padding: var(--spacing-3xs) var(--spacing-xs);
+    font-size: var(--font-size-sm);
+  }
+}
+
+// Table pagination
+.c-table-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--spacing-m);
+  padding-top: var(--spacing-m);
+  border-top: 1px solid var(--card-border);
+
+  @media (max-width: $breakpoint-s) {
+    flex-direction: column;
+    gap: var(--spacing-s);
+    text-align: center;
+  }
+
+  &__info {
+    color: var(--text-secondary);
+    font-family: var(--font-primary);
+    font-size: var(--font-size-sm);
+  }
+
+  &__controls {
+    display: flex;
+    gap: var(--spacing-xs);
+  }
+}
+
+// ============================================================================
+// ALIAS EN ESPAÑOL (Nomenclatura BEM)
+// ============================================================================
+
+// Bloque: Tabla
+.tabla {
+  @extend .c-table;
+}
+
+// Elementos
+.tabla__cabecera {
+  @extend .c-table__header;
+}
+
+.tabla__celda-cabecera {
+  @extend .c-table__header-cell;
+}
+
+.tabla__celda-cabecera--ordenable {
+  @extend .c-table__header-cell--sortable;
+}
+
+.tabla__celda-cabecera--ordenable--asc {
+  @extend .c-table__header-cell--sortable--asc;
+}
+
+.tabla__celda-cabecera--ordenable--desc {
+  @extend .c-table__header-cell--sortable--desc;
+}
+
+.tabla__fila {
+  @extend .c-table__row;
+}
+
+.tabla__fila--seleccionada {
+  @extend .c-table__row--selected;
+}
+
+.tabla__fila--deshabilitada {
+  @extend .c-table__row--disabled;
+}
+
+.tabla__celda {
+  @extend .c-table__cell;
+}
+
+.tabla__celda--centro {
+  @extend .c-table__cell--center;
+}
+
+.tabla__celda--derecha {
+  @extend .c-table__cell--right;
+}
+
+.tabla__celda--compacta {
+  @extend .c-table__cell--compact;
+}
+
+.tabla__celda--sin-ajuste {
+  @extend .c-table__cell--nowrap;
+}
+
+.tabla__celda--truncar {
+  @extend .c-table__cell--truncate;
+}
+
+// Modificadores
+.tabla--rayada {
+  @extend .c-table--striped;
+}
+
+.tabla--con-borde {
+  @extend .c-table--bordered;
+}
+
+.tabla--compacta {
+  @extend .c-table--compact;
+}
+
+.tabla--interactiva {
+  @extend .c-table--hoverable;
+}
+
+.tabla--fija {
+  @extend .c-table--fixed;
+}
+
+.tabla--adaptable {
+  @extend .c-table--responsive;
+}
+
+.tabla--desplazable {
+  @extend .c-table--scrollable;
+}
+
+// Contenedor de tabla
+.contenedor-tabla {
+  @extend .c-table-container;
+}
+
+.contenedor-tabla--con-sombra {
+  @extend .c-table-container--shadow;
+}
+
+// Acciones de tabla
+.acciones-tabla {
+  @extend .c-table-actions;
+}
+
+// Paginación de tabla
+.paginacion-tabla {
+  @extend .c-table-pagination;
+}
+
+.paginacion-tabla__info {
+  @extend .c-table-pagination__info;
+}
+
+.paginacion-tabla__controles {
+  @extend .c-table-pagination__controls;
+}

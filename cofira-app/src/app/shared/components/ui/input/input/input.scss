@@ -1,6 +1,4 @@
-@import '../../../../../../styles/components/_forms.scss';
+@import '../../../../../../styles/05-components/formulario';
 
-// Component specific styles if any, extending the c-form__input styles
-.c-form__input {
-  // No specific styles here as all styling comes from _forms.scss and ngClass
-}
+// Los estilos vienen completamente del archivo _formulario.scss
+// No se necesitan estilos adicionales específicos del componente

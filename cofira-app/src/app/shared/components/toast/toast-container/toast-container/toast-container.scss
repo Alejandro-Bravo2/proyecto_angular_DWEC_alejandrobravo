@@ -1,83 +1,80 @@
-@import '../../../../../../styles/settings/colors';
-@import '../../../../../../styles/settings/typography';
-@import '../../../../../../styles/settings/spacing';
-@import '../../../../../../styles/settings/radios';
-@import '../../../../../../styles/tools/mixins';
+@import '../../../../../../styles/00-settings/css-variables';
+@import '../../../../../../styles/01-tools/mixins';
+@import '../../../../../../styles/05-components/alerta';
 
 .toast-container {
   position: fixed;
-  top: $spacing-xl; // Position from top
-  right: $spacing-xl; // Position from right
-  z-index: 10000; // Ensure it's above everything
+  top: var(--spacing-size-xl);
+  right: var(--spacing-size-xl);
+  z-index: 10000;
   display: flex;
   flex-direction: column;
-  gap: $spacing-s; // Space between toasts
-  max-width: 350px; // Max width for toasts
+  gap: var(--spacing-size-s);
+  max-width: 350px;
 }
 
 .toast {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  padding: $spacing-m;
-  border-radius: $radius-m;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: var(--gris-normal);
+  color: var(--text-dark);
+  padding: var(--spacing-size-m);
+  border-radius: var(--radius-xss);
+  box-shadow: var(--shadow-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: $spacing-m;
-  animation: fadeIn 0.3s ease-out, slideInRight 0.3s ease-out; // Entrance animation
-  @include transition(transform);
+  gap: var(--spacing-size-m);
+  animation: fadeIn var(--duration-base) ease-out, slideInRight var(--duration-base) ease-out;
+  transition: transform var(--duration-fast);
 
   &__message {
     flex-grow: 1;
-    font-size: $font-size-body;
+    font-size: var(--font-size-md);
+    font-family: var(--font-primary);
     margin: 0;
   }
 
   &__dismiss-button {
-    @include button-reset;
+    @include boton-reset;
     @include flex-center;
     width: 24px;
     height: 24px;
-    border-radius: $radius-circle;
-    color: var(--text-secondary);
+    border-radius: var(--radius-circle);
+    color: var(--text-dark);
+    cursor: pointer;
     &:hover {
-      background-color: var(--bg-secondary);
-      color: var(--text-primary);
+      background-color: var(--gris-dark);
     }
   }
 
-  // Type-specific styles
   &--success {
-    border-left: 5px solid $color-success;
+    border-left: 5px solid var(--amarillo-normal);
     .toast__message {
-      color: $color-success;
+      color: var(--text-dark);
     }
   }
 
   &--error {
-    border-left: 5px solid $color-error;
+    border-left: 5px solid var(--button-red);
     .toast__message {
-      color: $color-error;
+      color: var(--text-dark);
     }
   }
 
   &--info {
-    border-left: 5px solid $color-info;
+    border-left: 5px solid var(--gris-dark);
     .toast__message {
-      color: $color-info;
+      color: var(--text-dark);
     }
   }
 
   &--warning {
-    border-left: 5px solid $color-warning;
+    border-left: 5px solid var(--amarillo-dark);
     .toast__message {
-      color: $color-warning;
+      color: var(--text-dark);
     }
   }
 }
 
-// Keyframe animations (already defined in global styles.scss, but good to have here for reference or local overrides)
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }

@@ -1,0 +1,24 @@
+// ============================================================================
+// COFIRA - List Elements
+// ============================================================================
+// IMPORTANTE: Las listas usan --font-primary (Montserrat)
+// ============================================================================
+
+ul, ol {
+  font-family: var(--font-primary);
+  margin: 0 0 var(--spacing-m) 0;
+  padding-left: var(--spacing-l);
+}
+
+li {
+  font-family: var(--font-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+// Listas sin estilo (para navegación, etc.)
+ul[class],
+ol[class] {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}

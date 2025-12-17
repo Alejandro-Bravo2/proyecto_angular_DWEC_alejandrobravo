@@ -1,0 +1,278 @@
+/* ============================================
+   04-LAYOUT: Estructura de página
+   Sistema de contenedores y layout principal
+   ============================================ */
+
+@import '../01-tools/mixins';
+
+/* --------------------------------------------
+   CONTENEDOR PRINCIPAL
+   Contenedor centrado con ancho máximo
+   -------------------------------------------- */
+
+.o-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-size-m);
+
+  @include responsive('M') {
+    padding: 0 var(--spacing-size-l);
+  }
+
+  @include responsive('L') {
+    padding: 0 var(--spacing-size-xl);
+  }
+}
+
+// Variantes de contenedor
+.o-container--pequeno {
+  max-width: 800px;
+}
+
+.o-container--mediano {
+  max-width: 1000px;
+}
+
+.o-container--grande {
+  max-width: 1600px;
+}
+
+.o-container--completo {
+  max-width: 100%;
+  padding: 0;
+}
+
+
+/* --------------------------------------------
+   WRAPPER PRINCIPAL
+   Contenedor para el layout de página completo
+   -------------------------------------------- */
+
+.o-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.o-wrapper__header {
+  flex-shrink: 0;
+}
+
+.o-wrapper__main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.o-wrapper__footer {
+  flex-shrink: 0;
+  margin-top: auto;
+}
+
+
+/* --------------------------------------------
+   SECCIÓN DE PÁGINA
+   Secciones con espaciado consistente
+   -------------------------------------------- */
+
+.o-seccion {
+  padding: var(--spacing-size-xl) 0;
+
+  @include responsive('M') {
+    padding: var(--spacing-size-2xl) 0;
+  }
+
+  @include responsive('L') {
+    padding: var(--spacing-size-3xl) 0;
+  }
+}
+
+// Modificadores de espaciado
+.o-seccion--sin-padding {
+  padding: 0;
+}
+
+.o-seccion--padding-pequeno {
+  padding: var(--spacing-size-m) 0;
+}
+
+.o-seccion--padding-grande {
+  padding: var(--spacing-size-3xl) 0;
+
+  @include responsive('L') {
+    padding: var(--spacing-size-4xl) 0;
+  }
+}
+
+
+/* --------------------------------------------
+   COLUMNAS FLEXIBLES
+   Sistema flexible de columnas
+   -------------------------------------------- */
+
+.o-columnas {
+  display: flex;
+  gap: var(--spacing-size-m);
+  flex-wrap: wrap;
+
+  @include responsive('M') {
+    gap: var(--spacing-size-l);
+  }
+}
+
+// Auto: Las columnas se distribuyen automáticamente
+.o-columnas--auto {
+  & > * {
+    flex: 1 1 0;
+    min-width: 250px;
+  }
+}
+
+// Dos columnas
+.o-columnas--2 {
+  & > * {
+    flex: 1 1 calc(50% - var(--spacing-size-m));
+    min-width: 250px;
+  }
+}
+
+// Tres columnas
+.o-columnas--3 {
+  & > * {
+    flex: 1 1 calc(33.333% - var(--spacing-size-m));
+    min-width: 200px;
+  }
+}
+
+// Cuatro columnas
+.o-columnas--4 {
+  & > * {
+    flex: 1 1 calc(25% - var(--spacing-size-m));
+    min-width: 200px;
+  }
+}
+
+
+/* --------------------------------------------
+   SIDEBAR LAYOUT
+   Layout con barra lateral
+   -------------------------------------------- */
+
+.o-sidebar-layout {
+  display: flex;
+  gap: var(--spacing-size-l);
+  flex-wrap: wrap;
+}
+
+.o-sidebar-layout__sidebar {
+  flex: 0 0 250px;
+  min-width: 250px;
+
+  @include responsive('M') {
+    flex: 0 0 300px;
+  }
+}
+
+.o-sidebar-layout__contenido {
+  flex: 1;
+  min-width: 300px;
+}
+
+// Sidebar a la derecha
+.o-sidebar-layout--derecha {
+  flex-direction: row-reverse;
+}
+
+
+/* --------------------------------------------
+   STACK VERTICAL
+   Apila elementos verticalmente con espaciado
+   -------------------------------------------- */
+
+.o-stack {
+  @include flex-columna(var(--spacing-size-m));
+}
+
+.o-stack--pequeno {
+  @include flex-columna(var(--spacing-size-s));
+}
+
+.o-stack--grande {
+  @include flex-columna(var(--spacing-size-l));
+}
+
+.o-stack--xl {
+  @include flex-columna(var(--spacing-size-xl));
+}
+
+
+/* --------------------------------------------
+   CLUSTER
+   Agrupa elementos horizontalmente
+   -------------------------------------------- */
+
+.o-cluster {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-size-s);
+  align-items: center;
+}
+
+.o-cluster--pequeno {
+  gap: var(--spacing-size-xss);
+}
+
+.o-cluster--mediano {
+  gap: var(--spacing-size-m);
+}
+
+.o-cluster--grande {
+  gap: var(--spacing-size-l);
+}
+
+// Alineaciones
+.o-cluster--inicio {
+  justify-content: flex-start;
+}
+
+.o-cluster--centro {
+  justify-content: center;
+}
+
+.o-cluster--fin {
+  justify-content: flex-end;
+}
+
+.o-cluster--espacio-entre {
+  justify-content: space-between;
+}
+
+
+/* --------------------------------------------
+   HERO SECTION
+   Sección hero/banner principal
+   -------------------------------------------- */
+
+.o-hero {
+  display: flex;
+  align-items: center;
+  min-height: 500px;
+  padding: var(--spacing-size-2xl) 0;
+  background-color: var(--gris-dark);
+  color: var(--text-dark);
+
+  @include responsive('M') {
+    min-height: 600px;
+    padding: var(--spacing-size-3xl) 0;
+  }
+}
+
+.o-hero--completo {
+  min-height: 100vh;
+}
+
+.o-hero--pequeno {
+  min-height: 300px;
+  padding: var(--spacing-size-xl) 0;
+}

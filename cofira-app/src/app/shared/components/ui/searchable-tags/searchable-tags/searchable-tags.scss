@@ -1,23 +1,19 @@
-@import '../../../../../../styles/settings/colors';
-@import '../../../../../../styles/settings/typography';
-@import '../../../../../../styles/settings/spacing';
-@import '../../../../../../styles/settings/radios';
-@import '../../../../../../styles/settings/breakpoints';
-@import '../../../../../../styles/tools/mixins';
-@import '../../../../../../styles/components/_buttons.scss';
-@import '../../../../../../styles/components/_forms.scss';
+@import '../../../../../../styles/00-settings/css-variables';
+@import '../../../../../../styles/01-tools/mixins';
+@import '../../../../../../styles/05-components/boton';
+@import '../../../../../../styles/05-components/formulario';
 
 .searchable-tags {
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  padding: $spacing-m;
-  border-radius: $radius-m;
-  box-shadow: var(--shadow);
+  background-color: var(--gris-normal);
+  color: var(--text-dark);
+  padding: var(--spacing-size-m);
+  border-radius: var(--radius-xss);
+  box-shadow: var(--shadow-md);
   max-width: 600px;
   margin: 0 auto;
 
   &__header {
-    margin-bottom: $spacing-m;
+    margin-bottom: var(--spacing-size-m);
     input {
       width: 100%;
     }
@@ -27,47 +23,49 @@
   &__suggestions {
     display: flex;
     flex-wrap: wrap;
-    gap: $spacing-xs;
-    margin-bottom: $spacing-m; // Space between sections
+    gap: var(--spacing-size-xss);
+    margin-bottom: var(--spacing-size-m);
   }
 
   .tag {
     display: inline-flex;
     align-items: center;
-    padding: $spacing-xs $spacing-s;
-    border-radius: $radius-pill;
-    font-size: $font-size-small;
-    font-weight: $font-weight-medium;
+    padding: var(--spacing-size-xss) var(--spacing-size-s);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    font-family: var(--font-primary);
 
     button {
-      @include button-reset;
-      margin-left: $spacing-xs;
-      font-weight: $font-weight-bold;
+      @include boton-reset;
+      margin-left: var(--spacing-size-xss);
+      font-weight: var(--font-weight-bold);
       color: inherit;
+      cursor: pointer;
     }
 
     &--red {
-      background-color: rgba($color-error, 0.1);
-      color: $color-error;
+      background-color: rgba(255, 52, 52, 0.1);
+      color: var(--button-red);
     }
 
     &--yellow {
-      background-color: rgba($color-brand-primary, 0.1);
-      color: $color-brand-primary;
+      background-color: rgba(255, 211, 0, 0.1);
+      color: var(--amarillo-normal);
     }
   }
 
   &__suggestions {
-    .c-button {
-      padding: $spacing-xs $spacing-s;
-      border-radius: $radius-pill;
-      font-size: $font-size-small;
-      font-weight: $font-weight-regular;
-      border: 1px solid var(--card-border); // Outline for ghost buttons
-      color: var(--text-secondary); // Ghost button text color
+    .boton {
+      padding: var(--spacing-size-xss) var(--spacing-size-s);
+      border-radius: var(--radius-pill);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-regular);
+      border: 1px solid var(--gris-dark);
+      color: var(--text-dark);
+
       &:hover {
-        background-color: var(--bg-secondary);
-        color: var(--text-primary);
+        background-color: var(--gris-dark);
       }
     }
   }

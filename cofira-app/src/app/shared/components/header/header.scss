@@ -1,50 +1,49 @@
-@import '../../../../styles/settings/_colors';
-@import '../../../../styles/settings/_typography';
-@import '../../../../styles/settings/_spacing';
-@import '../../../../styles/settings/_radios';
-@import '../../../../styles/settings/_breakpoints';
-@import '../../../../styles/tools/_mixins';
+@import '../../../../styles/00-settings/css-variables';
+@import '../../../../styles/01-tools/mixins';
+@import '../../../../styles/05-components/navegacion';
+@import '../../../../styles/05-components/boton';
 
+// El header usa la clase .header que internamente hereda estilos de .navegacion
 .header {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 80px;
-  background-color: var(--card-bg); // Use theme variable
-  color: var(--text-primary);
+  background-color: var(--gris-normal);
+  color: var(--text-dark);
   z-index: 100;
-  box-shadow: var(--shadow);
-  border-bottom: 1px solid var(--card-border);
-  @include transition(background-color, 300ms);
+  box-shadow: var(--shadow-md);
+  border-bottom: 1px solid var(--gris-dark);
+  transition: background-color var(--duration-base);
 
   &__inner {
     @include flex-between;
     height: 80px;
-    padding: 0 $spacing-m; // From o-container
-    max-width: $container-xxl;
+    padding: 0 var(--spacing-size-m);
+    max-width: 1400px;
     margin: 0 auto;
   }
 
   &__logo {
-    font-family: $font-family-heading;
-    font-size: $font-size-h3;
-    font-weight: $font-weight-bold;
-    color: $color-brand-primary;
+    @include tipografia-titulo;
+    font-size: var(--font-size-xl);
+    color: var(--amarillo-normal);
     text-decoration: none;
-    @include transition(color);
+    transition: color var(--duration-fast);
 
     &:hover {
-      color: $color-brand-primary-hover;
+      color: var(--amarillo-normal-hover);
     }
   }
 
   &__nav {
     &--desktop {
       display: none;
-      @include respond-to(m) {
+
+      @include responsive('M') {
         display: flex;
-        gap: $spacing-l;
+        gap: var(--spacing-size-l);
       }
     }
 
@@ -55,48 +54,51 @@
       top: 80px;
       left: 0;
       right: 0;
-      background-color: var(--bg-primary);
-      padding: $spacing-m;
-      gap: $spacing-s;
-      box-shadow: var(--shadow);
+      background-color: var(--gris-dark);
+      padding: var(--spacing-size-m);
+      gap: var(--spacing-size-s);
+      box-shadow: var(--shadow-md);
       animation: slideInDown 300ms ease-out;
 
-      @include respond-to(m) {
+      @include responsive('M') {
         display: none;
       }
     }
   }
 
   &__nav-link {
-    color: var(--text-primary);
-    font-weight: $font-weight-medium;
+    @include tipografia-texto;
+    color: var(--text-dark);
+    font-weight: var(--font-weight-medium);
     text-decoration: none;
-    padding: $spacing-xs $spacing-s;
-    border-radius: $radius-xs;
-    @include transition(all);
+    padding: var(--spacing-size-xss) var(--spacing-size-s);
+    border-radius: var(--radius-xss);
+    transition: all var(--duration-fast);
 
     &:hover {
-      background-color: var(--bg-secondary);
+      background-color: var(--gris-dark);
+      color: var(--amarillo-normal);
     }
 
     &--active {
-      color: $color-brand-primary;
-      background-color: rgba($color-brand-primary, 0.1);
+      color: var(--amarillo-normal);
+      background-color: rgba(255, 211, 0, 0.1);
+      font-weight: var(--font-weight-semibold);
     }
 
     &--logout {
       background: none;
       border: none;
-      font-family: inherit;
+      font-family: var(--font-primary);
       font-size: inherit;
       font-weight: inherit;
       text-align: left;
       cursor: pointer;
       width: 100%;
-      color: $color-error;
+      color: var(--button-red);
 
       &:hover {
-        background-color: rgba($color-error, 0.1);
+        background-color: rgba(255, 52, 52, 0.1);
       }
     }
   }
@@ -104,21 +106,24 @@
   &__actions {
     display: flex;
     align-items: center;
-    gap: $spacing-s;
+    gap: var(--spacing-size-s);
   }
 
   &__theme-toggle {
-    @include button-reset;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 40px;
     height: 40px;
-    @include flex-center;
-    border-radius: $radius-xs;
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
-    @include transition(background-color);
+    border: none;
+    border-radius: var(--radius-xss);
+    background-color: var(--gris-dark);
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: background-color var(--duration-fast);
 
     &:hover {
-      background-color: var(--card-border);
+      background-color: var(--gris-dark-hover);
     }
   }
 
@@ -127,24 +132,26 @@
   }
 
   &__hamburger {
-    @include button-reset;
     display: flex;
     flex-direction: column;
     justify-content: space-around;
     width: 32px;
     height: 32px;
     padding: 4px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
 
-    @include respond-to(m) {
+    @include responsive('M') {
       display: none;
     }
 
     &-line {
       width: 100%;
       height: 3px;
-      background-color: var(--text-primary);
+      background-color: var(--text-dark);
       border-radius: 2px;
-      @include transition(all);
+      transition: all var(--duration-fast);
     }
 
     &[aria-expanded='true'] {
@@ -162,14 +169,24 @@
     }
   }
 
-  .c-button {
+  // Ocultar botones en móvil, mostrar en desktop
+  .boton {
     display: none;
 
-    @include respond-to(m) {
+    @include responsive('M') {
       display: inline-flex;
     }
   }
 }
 
-// Import button styles to be used in the template
-@import '../../../../styles/components/_buttons.scss';
+// Animación para el menú móvil
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

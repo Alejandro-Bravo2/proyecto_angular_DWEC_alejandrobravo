@@ -1,17 +1,17 @@
-<section class="c-form__group">
-  <label *ngIf="label" [for]="label" class="c-form__label">{{ label }}</label>
+<section class="formulario__grupo">
+  <label *ngIf="label" [for]="label" class="formulario__etiqueta">{{ label }}</label>
   <input
     [id]="label"
     [type]="type"
     [placeholder]="placeholder"
-    class="c-form__input"
+    class="formulario__campo"
     [formControl]="control"
     [disabled]="_isDisabled"
     (blur)="onBlur()"
-    [ngClass]="{'c-form__input--error': control?.invalid && control?.touched}"
+    [ngClass]="{'formulario__campo--error': control?.invalid && control?.touched}"
   >
   @if (control?.invalid && control?.touched) {
-    <p class="c-form__error">
+    <p class="formulario__error">
       @if (control?.hasError('required')) {
         {{ label || 'Este campo' }} es obligatorio.
       }

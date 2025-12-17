@@ -1,0 +1,184 @@
+// ========================================
+// VARIABLES SCSS (Fuente unica de verdad)
+// Este archivo solo contiene variables SCSS ($variable)
+// Las CSS custom properties estan en _variables.scss
+// ========================================
+
+
+// ========================================
+// COLORES - NEGRO
+// ========================================
+$negro-normal: #110e10;
+$negro-normal-hover: #0f0d0e;
+$negro-normal-active: #0e0b0d;
+$negro-dark: #0d0b0c;
+$negro-dark-hover: #0a080a;
+$negro-dark-active: #080607;
+
+
+// ========================================
+// COLORES - AMARILLO
+// ========================================
+$amarillo-normal: #ffd300;
+$amarillo-normal-hover: #e6be00;
+$amarillo-normal-active: #cca900;
+$amarillo-dark: #bf9e00;
+$amarillo-dark-hover: #997f00;
+$amarillo-dark-active: #735f00;
+$amarillo-darker: #594A00;
+
+
+// ========================================
+// COLORES - BLANCO
+// ========================================
+$blanco-normal: #f5f5f5;
+$blanco-normal-hover: #dddddd;
+$blanco-normal-active: #c4c4c4;
+$blanco-dark: #b8b8b8;
+$blanco-dark-hover: #939393;
+$blanco-dark-active: #6e6e6e;
+
+
+// ========================================
+// COLORES - GRIS
+// ========================================
+$gris-normal: #3f454c;
+$gris-normal-hover: #393e44;
+$gris-normal-active: #32373d;
+$gris-dark: #2f3439;
+$gris-dark-hover: #26292e;
+$gris-dark-active: #1c1f22;
+
+
+// ========================================
+// TEXTOS
+// ========================================
+$text-light: #110e10;
+$text-dark: #f5f5f5;
+
+
+// ========================================
+// BACKGROUNDS
+// ========================================
+$background-light-gray: #3F454C;
+
+
+// ========================================
+// BOTONES
+// ========================================
+$button-red: #FF3434;
+$button-red-hover: #910505;
+$button-gray: #3f454c;
+$button-gray-hover: #2f3439;
+$button-yellow: #FFD300;
+$button-yellow-hover: #594A00;
+$button-darker: #32373D;
+$button-darker-hover: #26292E;
+
+
+// ========================================
+// TIPOGRAFIA - Tamanios
+// ========================================
+$font-size-xs: 0.64rem;
+$font-size-sm: 0.8rem;
+$font-size-md: 1rem;
+$font-size-lg: 1.25rem;
+$font-size-xl: 1.563rem;
+$font-size-2xl: 1.953rem;
+$font-size-3xl: 2.441rem;
+$font-size-4xl: 3.052rem;
+$font-size-5xl: 3.815rem;
+
+
+// ========================================
+// ESPACIADO
+// ========================================
+$spacing-size-xss: 0.5rem;
+$spacing-size-xs: 1.1875rem;
+$spacing-size-s: 1.3125rem;
+$spacing-size-m: 1.5625rem;
+$spacing-size-l: 2.0625rem;
+$spacing-size-xl: 2.1875rem;
+$spacing-size-xxl: 2.5rem;
+$spacing-size-xxxl: 5.625rem;
+$spacing-size-xxxxl: 7.75rem;
+$spacing-size-xxxxxl: 8.75rem;
+
+
+// ========================================
+// BORDER RADIUS
+// ========================================
+$radius-xss: 0.5rem;
+$radius-xs: 1.1875rem;
+$radius-s: 1.3125rem;
+$radius-m: 2.5rem;
+$radius-l: 5.625rem;
+
+
+// ========================================
+// FUENTES
+// ========================================
+$font-primary: 'Montserrat', sans-serif;
+$font-secondary: 'Poppins', sans-serif;
+
+
+// ========================================
+// PESOS TIPOGRAFICOS
+// ========================================
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+
+// ========================================
+// LINE HEIGHT
+// ========================================
+$line-height-tight: 1.2;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.75;
+
+
+// ========================================
+// DURACIONES
+// ========================================
+$duration-fast: 150ms;
+$duration-base: 300ms;
+$duration-slow: 500ms;
+$duration-slower: 700ms;
+
+
+// ========================================
+// BORDES
+// ========================================
+$border-width-fino: 1px;
+$border-width-normal: 2px;
+$border-width-grueso: 3px;
+
+
+// ========================================
+// FORM INPUTS
+// ========================================
+$input-padding-vertical: 0.875rem;
+$input-padding-horizontal: 1.25rem;
+$input-margin-bottom: 0.25rem;
+
+
+// ========================================
+// TAMANIOS BOTONES
+// ========================================
+$width-estandar: 17rem;
+$width-grande: 21rem;
+$width-mediano: 9.125rem;
+$width-pequenio: 11rem;
+$width-muy-pequenio: 6.75rem;
+
+
+// ========================================
+// BREAKPOINTS
+// ========================================
+$breakpoint-xs: 640px;
+$breakpoint-s: 768px;
+$breakpoint-M: 1024px;
+$breakpoint-L: 1280px;

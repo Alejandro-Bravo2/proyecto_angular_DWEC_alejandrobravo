@@ -1,0 +1,66 @@
+.flex__basico {
+  display: flex;
+  margin: 0 auto;
+  padding: 0 var(--spacing-size-xs);
+}
+
+
+// Grid con columnas
+.grid {
+  display: grid;
+  gap: var(--spacing-4);
+  width: 100%;
+}
+
+// Sistema de columnas (2, 3, 4, 6, 12)
+.grid__cols__2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid__cols__3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid__cols__4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.grid__cols__6 {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+
+// Columnas que ocupan múltiples espacios
+.col__span__1 {
+  grid-column: span 1;
+}
+
+.col__span__2 {
+  grid-column: span 2;
+}
+
+.col__span__3 {
+  grid-column: span 3;
+}
+
+.col__span__4 {
+  grid-column: span 4;
+}
+
+.col__span__6 {
+  grid-column: span 6;
+}
+
+.col__span__12 {
+  grid-column: span 12;
+}
+
+// Responsive: en móvil todo a 1 columna
+@media (max-width: 768px) {
+  .grid__cols__2,
+  .grid__cols__3,
+  .grid__cols__4,
+  .grid__cols__6 {
+    grid-template-columns: 1fr;
+  }
+}

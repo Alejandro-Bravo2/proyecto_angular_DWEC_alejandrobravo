@@ -1,0 +1,33 @@
+// ============================================================================
+// COFIRA - Link Elements
+// ============================================================================
+// IMPORTANTE: Los enlaces usan --font-primary (Montserrat)
+// ============================================================================
+
+a {
+  font-family: var(--font-primary);
+  color: var(--color-brand-primary);
+  text-decoration: none;
+  @include transition(color);
+
+  &:hover {
+    color: var(--color-brand-primary-hover);
+  }
+
+  &:active {
+    color: var(--color-brand-primary-active);
+  }
+
+  @include focus-visible;
+}
+
+// Link dentro de texto (con subrayado)
+p a,
+li a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    text-decoration-thickness: 2px;
+  }
+}

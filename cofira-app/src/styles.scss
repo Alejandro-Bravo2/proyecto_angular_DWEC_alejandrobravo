@@ -1,389 +1,74 @@
 // ============================================================================
-// COFIRA - Main Styles (ITCSS Architecture)
+// COFIRA APP - Sistema de Estilos ITCSS + BEM
 // ============================================================================
-// Sistema de diseño completo para aplicación de entrenamiento y nutrición
-// Arquitectura ITCSS: Inverted Triangle CSS
-// ============================================================================
-
-// ============================================================================
-// SETTINGS - Variables, mapas, configuración global
-// ============================================================================
-@import 'styles/settings/colors';
-@import 'styles/settings/typography';
-@import 'styles/settings/spacing';
-@import 'styles/settings/radios';
-@import 'styles/settings/breakpoints';
-
-// ============================================================================
-// TOOLS - Mixins, funciones, helpers
-// ============================================================================
-@import 'styles/tools/mixins';
-@import 'styles/tools/functions';
-
-// ============================================================================
-// GENERIC - Resets, normalize, box-sizing
-// ============================================================================
-@import 'styles/generic/reset';
-
-// ============================================================================
-// ELEMENTS - Estilos de elementos HTML sin clases
-// ============================================================================
-@import 'styles/elements/body';
-@import 'styles/elements/headings';
-@import 'styles/elements/links';
-
-// ============================================================================
-// OBJECTS - Patrones de layout sin decoración (OOCSS)
-// ============================================================================
-@import 'styles/objects/container';
-@import 'styles/objects/grid';
-
-// ============================================================================
-// COMPONENTS - Componentes específicos de UI
-// ============================================================================
-@import 'styles/components/buttons';
-@import 'styles/components/forms';
-@import 'styles/components/cards';
-@import 'styles/components/modals';
-@import 'styles/components/tables';
-@import 'styles/components/tooltip';
-
-// ============================================================================
-// UTILITIES - Clases de utilidad, overrides (!important)
-// ============================================================================
-@import 'styles/utilities/spacing';
-@import 'styles/utilities/text';
-@import 'styles/utilities/display';
-
-// ============================================================================
-// GLOBAL OVERRIDES & ANIMATIONS
+// Arquitectura: ITCSS (Inverted Triangle CSS)
+// Nomenclatura: BEM en español
+// Variables: CSS Custom Properties + SCSS
 // ============================================================================
 
-// Smooth Scrolling
+// ============================================================================
+// 00 - SETTINGS: Variables globales, configuración
+// ============================================================================
+@import 'styles/00-settings/css-variables';      // Variables SCSS (fuente única de verdad)
+@import 'styles/00-settings/variables';          // CSS Custom Properties
+
+// ============================================================================
+// 01 - TOOLS: Mixins, funciones, herramientas
+// ============================================================================
+@import 'styles/01-tools/mixins';
+
+// ============================================================================
+// 02 - GENERIC: Resets, normalize
+// ============================================================================
+@import 'styles/02-generic/reset';
+
+// ============================================================================
+// 03 - ELEMENTS: Estilos de elementos HTML base
+// ============================================================================
+@import 'styles/03-elements/elements';
+@import 'styles/03-elements/typography';
+@import 'styles/03-elements/links';
+@import 'styles/03-elements/buttons';
+@import 'styles/03-elements/forms';
+@import 'styles/03-elements/lists';
+
+// ============================================================================
+// 04 - LAYOUT: Estructura de página (grid, container)
+// ============================================================================
+@import 'styles/04-layout/layout';
+@import 'styles/04-layout/grid';
+
+// ============================================================================
+// 05 - COMPONENTS: Componentes reutilizables (BEM en español)
+// ============================================================================
+@import 'styles/05-components/boton';
+@import 'styles/05-components/formulario';
+@import 'styles/05-components/inputs';
+@import 'styles/05-components/tarjeta';
+@import 'styles/05-components/navegacion';
+@import 'styles/05-components/alerta';
+
+// ============================================================================
+// 06 - UTILITIES: Clases de utilidad (helpers)
+// ============================================================================
+@import 'styles/06-utilities/utilities';
+
+// ============================================================================
+// Configuración global adicional
+// ============================================================================
+
+// Smooth scrolling
 html {
   scroll-behavior: smooth;
 }
 
-// Focus Styles Globales
-:focus {
-  outline: none;
-}
-
-:focus-visible {
-  outline: 2px solid $color-brand-primary;
-  outline-offset: 2px;
-}
-
-// Selection Color
+// Selection color
 ::selection {
-  background-color: $color-brand-primary;
-  color: $color-black;
+  background-color: var(--amarillo-normal);
+  color: var(--negro-normal);
 }
 
 ::-moz-selection {
-  background-color: $color-brand-primary;
-  color: $color-black;
+  background-color: var(--amarillo-normal);
+  color: var(--negro-normal);
 }
-
-// ============================================================================
-// ANIMATIONS & KEYFRAMES
-// ============================================================================
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes slideInUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideInDown {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideInLeft {
-  from {
-    transform: translateX(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@keyframes shake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  10%, 30%, 50%, 70%, 90% {
-    transform: translateX(-10px);
-  }
-  20%, 40%, 60%, 80% {
-    transform: translateX(10px);
-  }
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-// ============================================================================
-// ANIMATION UTILITY CLASSES
-// ============================================================================
-
-.u-animate {
-  &-fade-in {
-    animation: fadeIn 300ms ease-in-out;
-  }
-
-  &-fade-out {
-    animation: fadeOut 300ms ease-in-out;
-  }
-
-  &-slide-in-up {
-    animation: slideInUp 300ms ease-out;
-  }
-
-  &-slide-in-down {
-    animation: slideInDown 300ms ease-out;
-  }
-
-  &-slide-in-left {
-    animation: slideInLeft 300ms ease-out;
-  }
-
-  &-slide-in-right {
-    animation: slideInRight 300ms ease-out;
-  }
-
-  &-scale-in {
-    animation: scaleIn 300ms ease-out;
-  }
-
-  &-spin {
-    animation: spin 1s linear infinite;
-  }
-
-  &-pulse {
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  &-shake {
-    animation: shake 0.5s ease-in-out;
-  }
-
-  &-bounce {
-    animation: bounce 1s ease-in-out infinite;
-  }
-}
-
-// Animation Delays
-@for $i from 1 through 10 {
-  .u-animate-delay-#{$i} {
-    animation-delay: #{$i * 100}ms;
-  }
-}
-
-// Animation Durations
-.u-animate {
-  &-fast {
-    animation-duration: 150ms;
-  }
-
-  &-normal {
-    animation-duration: 300ms;
-  }
-
-  &-slow {
-    animation-duration: 500ms;
-  }
-}
-
-// ============================================================================
-// BACKGROUND UTILITIES
-// ============================================================================
-
-.u-bg {
-  &-primary { background-color: var(--bg-primary) !important; }
-  &-secondary { background-color: var(--bg-secondary) !important; }
-  &-tertiary { background-color: var(--bg-tertiary) !important; }
-  &-brand { background-color: $color-brand-primary !important; }
-  &-dark { background-color: $color-dark-primary !important; }
-  &-white { background-color: $color-white !important; }
-  &-black { background-color: $color-black !important; }
-  &-success { background-color: $color-success !important; }
-  &-error { background-color: $color-error !important; }
-  &-warning { background-color: $color-warning !important; }
-  &-info { background-color: $color-info !important; }
-  &-transparent { background-color: transparent !important; }
-}
-
-// ============================================================================
-// BORDER UTILITIES
-// ============================================================================
-
-.u-border {
-  border: 1px solid var(--card-border) !important;
-
-  &-0 { border: none !important; }
-  &-2 { border-width: 2px !important; }
-
-  &-top { border-top: 1px solid var(--card-border) !important; }
-  &-bottom { border-bottom: 1px solid var(--card-border) !important; }
-  &-left { border-left: 1px solid var(--card-border) !important; }
-  &-right { border-right: 1px solid var(--card-border) !important; }
-
-  &-brand { border-color: $color-brand-primary !important; }
-  &-error { border-color: $color-error !important; }
-  &-success { border-color: $color-success !important; }
-}
-
-// Border Radius
-.u-rounded {
-  &-none { border-radius: 0 !important; }
-  &-xss { border-radius: $radius-xss !important; }
-  &-xs { border-radius: $radius-xs !important; }
-  &-s { border-radius: $radius-s !important; }
-  &-m { border-radius: $radius-m !important; }
-  &-l { border-radius: $radius-l !important; }
-  &-xl { border-radius: $radius-xl !important; }
-  &-full { border-radius: $radius-circle !important; }
-  &-pill { border-radius: $radius-pill !important; }
-}
-
-// ============================================================================
-// SHADOW UTILITIES
-// ============================================================================
-
-.u-shadow {
-  &-none { box-shadow: none !important; }
-  &-sm { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05) !important; }
-  &-md { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important; }
-  &-lg { box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15) !important; }
-  &-xl { box-shadow: 0 20px 25px rgba(0, 0, 0, 0.2) !important; }
-}
-
-// ============================================================================
-// PRINT STYLES
-// ============================================================================
-
-@media print {
-  // Ocultar elementos no imprimibles
-  .no-print,
-  .c-button,
-  header,
-  footer,
-  nav {
-    display: none !important;
-  }
-
-  // Optimizar para impresión
-  * {
-    background: transparent !important;
-    color: #000 !important;
-    box-shadow: none !important;
-    text-shadow: none !important;
-  }
-
-  a,
-  a:visited {
-    text-decoration: underline !important;
-  }
-
-  // Mostrar URLs de links
-  a[href]::after {
-    content: ' (' attr(href) ')';
-  }
-
-  // Evitar saltos de página dentro de elementos
-  pre,
-  blockquote,
-  tr,
-  img,
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    page-break-inside: avoid;
-  }
-}
-
-// ============================================================================
-// END OF STYLES
-// ============================================================================

@@ -1,49 +1,47 @@
-@import '../../../../styles/settings/colors';
-@import '../../../../styles/settings/typography';
-@import '../../../../styles/settings/spacing';
-@import '../../../../styles/settings/breakpoints';
-@import '../../../../styles/tools/mixins';
+@import '../../../../styles/00-settings/css-variables';
+@import '../../../../styles/01-tools/mixins';
+@import '../../../../styles/05-components/navegacion';
 
 .footer {
-  background-color: $color-dark-tertiary;
-  color: $color-gray-medium;
-  padding: $spacing-xxl 0;
+  background-color: var(--gris-dark);
+  color: var(--text-dark);
+  padding: var(--spacing-size-2xl) 0;
 
   &__container {
     display: grid;
     grid-template-columns: 1fr;
-    gap: $spacing-xl;
+    gap: var(--spacing-size-xl);
 
-    @include respond-to(m) {
+    @include responsive('M') {
       grid-template-columns: 1fr 1.5fr;
-      gap: $spacing-xxl;
+      gap: var(--spacing-size-2xl);
     }
   }
 
   &__brand {
-    font-family: $font-family-heading;
-    font-weight: $font-weight-bold;
-    font-size: $font-size-h3;
-    color: $color-brand-primary;
-    margin-bottom: $spacing-s;
+    @include tipografia-titulo;
+    font-size: var(--font-size-2xl);
+    color: var(--amarillo-normal);
+    margin-bottom: var(--spacing-size-s);
   }
 
   &__description {
-    font-size: $font-size-body;
-    line-height: $line-height-relaxed;
-    margin-bottom: $spacing-m;
+    @include tipografia-texto;
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-relaxed);
+    margin-bottom: var(--spacing-size-m);
     max-width: 350px;
   }
 
   &__social {
     display: flex;
-    gap: $spacing-s;
+    gap: var(--spacing-size-s);
   }
 
   &__social-link {
-    color: $color-gray-medium;
+    color: var(--text-dark);
     display: inline-block;
-    @include transition(color);
+    transition: color var(--duration-fast);
 
     svg {
       width: 24px;
@@ -51,26 +49,26 @@
     }
 
     &:hover {
-      color: $color-white;
+      color: var(--amarillo-normal);
     }
   }
 
   &__links {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-xl;
+    gap: var(--spacing-size-xl);
 
-    @include respond-to(s) {
+    @include responsive('s') {
       grid-template-columns: repeat(3, 1fr);
     }
   }
 
   &__links-title {
-    font-family: $font-family-base; // Titles in footer are usually not main headings
-    font-weight: $font-weight-semibold;
-    font-size: $font-size-body;
-    color: $color-white;
-    margin-bottom: $spacing-m;
+    @include tipografia-texto;
+    font-weight: var(--font-weight-semibold);
+    font-size: var(--font-size-md);
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-size-m);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
@@ -81,15 +79,16 @@
     margin: 0;
 
     li {
-      margin-bottom: $spacing-s;
+      margin-bottom: var(--spacing-size-s);
 
       a {
+        @include tipografia-texto;
         text-decoration: none;
-        color: $color-gray-medium;
-        @include transition(color);
+        color: var(--text-dark);
+        transition: color var(--duration-fast);
 
         &:hover {
-          color: $color-white;
+          color: var(--amarillo-normal);
           text-decoration: underline;
         }
       }
@@ -97,16 +96,16 @@
   }
 
   &__bottom {
-    margin-top: $spacing-xl;
-    padding-top: $spacing-m;
-    border-top: 1px solid $color-dark-secondary;
+    margin-top: var(--spacing-size-xl);
+    padding-top: var(--spacing-size-m);
+    border-top: 1px solid var(--gris-normal);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: $spacing-s;
-    font-size: $font-size-small;
-    color: $color-gray-dark;
+    gap: var(--spacing-size-s);
+    font-size: var(--font-size-sm);
+    color: var(--blanco-dark);
 
     p {
       margin: 0;
@@ -115,21 +114,18 @@
 
   &__bottom-links {
     display: flex;
-    gap: $spacing-m;
+    gap: var(--spacing-size-m);
     flex-wrap: wrap;
 
     a {
       text-decoration: none;
-      color: $color-gray-dark;
-      @include transition(color);
+      color: var(--blanco-dark);
+      transition: color var(--duration-fast);
 
       &:hover {
-        color: $color-white;
+        color: var(--amarillo-normal);
         text-decoration: underline;
       }
     }
   }
 }
-
-// Need to import the object class for container
-@import '../../../../styles/objects/container';

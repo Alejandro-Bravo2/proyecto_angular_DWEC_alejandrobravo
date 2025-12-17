@@ -1,8 +1,5 @@
-@import '../../../../../styles/settings/colors';
-@import '../../../../../styles/settings/spacing';
-@import '../../../../../styles/settings/radios';
-@import '../../../../../styles/tools/mixins';
-@import '../../../../../styles/components/_modals.scss'; // Import modal base styles
+@import '../../../../../styles/00-settings/css-variables';
+@import '../../../../../styles/01-tools/mixins';
 
 .c-modal__overlay {
   position: fixed;
@@ -10,11 +7,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: $color-overlay;
+  background-color: rgba(17, 14, 16, 0.8);
   @include flex-center;
   z-index: 1000;
-  padding: $spacing-m;
-  animation: fadeIn 0.3s ease-out;
+  padding: var(--spacing-size-m);
+  animation: fadeIn var(--duration-base) ease-out;
 }
 
 .c-modal__content {
@@ -23,9 +20,29 @@
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
-  background-color: var(--card-bg);
-  border-radius: $radius-m;
-  padding: $spacing-l;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-  animation: slideInUp 0.3s ease-out;
+  background-color: var(--gris-normal);
+  border-radius: var(--radius-xss);
+  padding: var(--spacing-size-l);
+  box-shadow: var(--shadow-xl);
+  animation: slideInUp var(--duration-base) ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

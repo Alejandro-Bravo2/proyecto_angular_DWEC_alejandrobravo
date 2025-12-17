@@ -37,10 +37,10 @@
 
       <!-- Auth Buttons - Not Logged In -->
       @if (!isLoggedIn) {
-      <a routerLink="/register" class="c-button c-button--primary c-button--small">
+      <a routerLink="/register" class="boton boton--primario boton--pequeno">
         Inscríbete
       </a>
-      <a routerLink="/login" class="c-button c-button--secondary c-button--small">
+      <a routerLink="/login" class="boton boton--secundario boton--pequeno">
         Iniciar Sesión
       </a>
       }
@@ -49,7 +49,7 @@
       @if (isLoggedIn) {
       <a
         routerLink="/preferencias"
-        class="c-button c-button--secondary c-button--small"
+        class="boton boton--secundario boton--pequeno"
         appTooltip="Ver y editar tu perfil"
         tooltipPosition="bottom"
       >
@@ -57,7 +57,7 @@
       </a>
       <button
         (click)="logout()"
-        class="c-button c-button--primary c-button--small"
+        class="boton boton--primario boton--pequeno"
         appTooltip="Cerrar tu sesión"
         tooltipPosition="bottom"
       >

@@ -1,0 +1,44 @@
+// ============================================================================
+// COFIRA - Form Elements
+// ============================================================================
+// IMPORTANTE: Todos los elementos de formulario usan --font-primary (Montserrat)
+// ============================================================================
+
+// Inputs, textarea, select
+input,
+textarea,
+select {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+}
+
+// Labels
+label {
+  font-family: var(--font-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  display: block;
+  margin-bottom: var(--spacing-xs);
+}
+
+// Buttons
+button {
+  font-family: var(--font-primary);
+  cursor: pointer;
+}
+
+// Fieldset
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+// Legend (es un título, usa --font-secondary)
+legend {
+  @include tipografia-titulo;
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-m);
+}

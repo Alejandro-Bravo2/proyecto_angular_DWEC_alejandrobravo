@@ -1,4 +1,4 @@
-<section class="c-checkbox">
+<section class="formulario__checkbox">
   <input
     type="checkbox"
     [id]="id"
@@ -7,10 +7,11 @@
     [disabled]="_isDisabled"
     (change)="onToggle($event)"
     (blur)="onBlur()"
+    class="formulario__checkbox-input"
   >
-  <label *ngIf="label" [for]="id">{{ label }}</label>
+  <label *ngIf="label" [for]="id" class="formulario__checkbox-texto">{{ label }}</label>
   @if (control?.invalid && control?.touched) {
-    <p class="c-form__error">
+    <p class="formulario__error">
       @if (control?.hasError('required')) {
         {{ label || 'Este campo' }} es obligatorio.
       }

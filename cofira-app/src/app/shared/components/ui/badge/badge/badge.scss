@@ -1,25 +1,24 @@
-@import '../../../../../../styles/settings/colors';
-@import '../../../../../../styles/settings/typography';
-@import '../../../../../../styles/settings/spacing';
-@import '../../../../../../styles/settings/radios';
-@import '../../../../../../styles/tools/mixins';
+@import '../../../../../../styles/00-settings/css-variables';
+@import '../../../../../../styles/01-tools/mixins';
 
 .badge {
   display: inline-flex;
   align-items: center;
-  padding: $spacing-xs $spacing-s;
-  border-radius: $radius-pill;
-  font-size: $font-size-small;
-  font-weight: $font-weight-medium;
+  padding: var(--spacing-size-xss) var(--spacing-size-s);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-family: var(--font-primary);
 
   &__close-button {
-    @include button-reset;
+    @include boton-reset;
     @include flex-center;
-    margin-left: $spacing-xs;
+    margin-left: var(--spacing-size-xss);
     width: 20px;
     height: 20px;
-    border-radius: $radius-circle;
+    border-radius: var(--radius-circle);
     color: inherit;
+    cursor: pointer;
     &:hover {
       background-color: rgba(0, 0, 0, 0.1);
     }
@@ -27,27 +26,27 @@
 
   // Color variants
   &--red {
-    background-color: rgba($color-error, 0.1);
-    color: $color-error;
+    background-color: rgba(255, 52, 52, 0.1);
+    color: var(--button-red);
   }
 
   &--yellow {
-    background-color: rgba($color-brand-primary, 0.1);
-    color: $color-brand-primary;
+    background-color: rgba(255, 211, 0, 0.1);
+    color: var(--amarillo-normal);
   }
 
   &--blue {
-    background-color: rgba($color-info, 0.1);
-    color: $color-info;
+    background-color: rgba(33, 150, 243, 0.1);
+    color: #2196F3;
   }
 
   &--green {
-    background-color: rgba($color-success, 0.1);
-    color: $color-success;
+    background-color: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
   }
 
   &--gray {
-    background-color: var(--bg-secondary);
-    color: var(--text-secondary);
+    background-color: var(--gris-dark);
+    color: var(--text-dark);
   }
 }
