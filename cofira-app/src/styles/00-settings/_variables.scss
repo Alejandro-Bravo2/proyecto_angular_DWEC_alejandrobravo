@@ -297,88 +297,11 @@
   --form-input-background: #{$gris-ultraligero};
   --form-padding: var(--spacing-size-xl);
   --form-max-width: 480px;
-}
 
 
-// ========================================
-// TEMA OSCURO (Coherente y Completo)
-// ========================================
-
-[data-theme="dark"] {
-  // Fondos principales - usar variables semánticas
-  --bg-body: #{$negro-puro};
-  --bg-primary: #{$negro-puro};
-  --bg-secondary: #{$negro-suave};
-  --bg-tertiary: #252525;
-  --bg-card: #{$negro-suave};
-  --bg-card-alt: #252525;
-  --bg-input: #333333;
-
-  // Textos
-  --text-primary: #{$blanco-puro};
-  --text-secondary: #a1a1a1;
-  --text-muted: #737373;
-  --text-light: #{$blanco-puro};
-  --text-dark: #{$negro-puro};
-  --text-subtle: #525252;
-
-  // Bordes - más visibles en dark mode
-  --border-light: rgba(255, 255, 255, 0.12);
-  --border-medium: rgba(255, 255, 255, 0.2);
-  --border-dark: rgba(255, 255, 255, 0.3);
-  --border-color: rgba(255, 255, 255, 0.12);
-  --border-color-light: rgba(255, 255, 255, 0.08);
-  --card-border: rgba(255, 255, 255, 0.12);
-
-  // Colores principales - NO INVERTIR, usar semánticos
-  // Mantener blanco y negro como colores reales
-  --blanco-puro: #{$blanco-puro};
-  --negro-puro: #{$negro-puro};
-  --blanco-normal: #{$blanco-puro};
-  --blanco-normal-hover: #{$blanco-off};
-  --negro-normal: #{$negro-puro};
-  --negro-normal-hover: #{$negro-suave};
-  --negro-suave: #{$negro-suave};
-
-  // Grises adaptados para dark mode
-  --gris-ultraligero: #333333;
-  --gris-ligero: #404040;
-  --gris-medio: #a1a1a1;
-  --gris-normal: #525252;
-  --gris-dark: #404040;
-  --gris-texto: #a1a1a1;
-  --gris-oscuro: #737373;
-
-  // Formularios
-  --form-background: #{$negro-suave};
-  --form-input-background: #333333;
-
-  // Botones - mantener coherencia
-  --button-primary: #{$blanco-puro};
-  --button-primary-hover: #{$blanco-off};
-  --button-primary-active: #e5e5e5;
-  --button-secondary: transparent;
-  --button-secondary-hover: rgba(255, 255, 255, 0.1);
-  --button-secondary-active: rgba(255, 255, 255, 0.15);
-
-  // Backgrounds legacy
-  --background-primary: #{$negro-puro};
-  --background-secondary: #{$negro-suave};
-  --background-tertiary: #252525;
-  --background-light-gray: #333333;
-
-  // Sombras para dark mode
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
-
-  // Glass effect background (para el header)
-  --glass-bg: rgba(10, 10, 10, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.1);
-}
-
-// Variables adicionales para light mode
-:root {
+  /* ============================================
+     GLASS EFFECT & EXTRAS (Tema Claro)
+     ============================================ */
   --glass-bg: rgba(255, 255, 255, 0.9);
   --glass-border: rgba(0, 0, 0, 0.06);
   --card-border: rgba(0, 0, 0, 0.06);
@@ -386,7 +309,82 @@
   --focus-ring: rgba(10, 10, 10, 0.08);
 }
 
-// Focus ring para dark mode
+
+// ========================================
+// TEMA OSCURO (Elegante estilo Apple)
+// ========================================
+
 [data-theme="dark"] {
+  // Fondos principales - tonos oscuros elegantes
+  --bg-body: #000000;
+  --bg-primary: #000000;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #1a1a1a;
+  --bg-card: #0f0f0f;
+  --bg-card-alt: #1a1a1a;
+  --bg-input: #1a1a1a;
+
+  // Textos - MUY VISIBLES en dark mode
+  --text-primary: #ffffff;
+  --text-secondary: #d1d1d6;
+  --text-muted: #a1a1a6;
+  --text-light: #ffffff;
+  --text-dark: #000000;
+  --text-subtle: #8e8e93;
+
+  // Bordes - más visibles
+  --border-light: rgba(255, 255, 255, 0.12);
+  --border-medium: rgba(255, 255, 255, 0.18);
+  --border-dark: rgba(255, 255, 255, 0.25);
+  --border-color: rgba(255, 255, 255, 0.15);
+  --border-color-light: rgba(255, 255, 255, 0.1);
+  --card-border: rgba(255, 255, 255, 0.15);
+
+  // Colores principales
+  --blanco-puro: #ffffff;
+  --negro-puro: #000000;
+  --blanco-normal: #ffffff;
+  --blanco-normal-hover: #f0f0f0;
+  --negro-normal: #000000;
+  --negro-normal-hover: #0f0f0f;
+  --negro-suave: #0f0f0f;
+
+  // Grises adaptados - MÁS CLAROS para visibilidad
+  --gris-ultraligero: #1a1a1a;
+  --gris-ligero: #2a2a2a;
+  --gris-medio: #d1d1d6;
+  --gris-normal: #3a3a3a;
+  --gris-dark: #2a2a2a;
+  --gris-texto: #e0e0e0;
+  --gris-oscuro: #a1a1a6;
+
+  // Formularios
+  --form-background: #0f0f0f;
+  --form-input-background: #1a1a1a;
+
+  // Botones - elegantes y claros
+  --button-primary: #ffffff;
+  --button-primary-hover: #f0f0f0;
+  --button-primary-active: #e0e0e0;
+  --button-secondary: transparent;
+  --button-secondary-hover: rgba(255, 255, 255, 0.1);
+  --button-secondary-active: rgba(255, 255, 255, 0.15);
+
+  // Backgrounds legacy
+  --background-primary: #000000;
+  --background-secondary: #0f0f0f;
+  --background-tertiary: #1a1a1a;
+  --background-light-gray: #2a2a2a;
+
+  // Sombras para dark mode - sutiles
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 12px 24px rgba(0, 0, 0, 0.6);
+
+  // Glass effect - header OSCURO con elementos MUY VISIBLES
+  --glass-bg: rgba(0, 0, 0, 0.92);
+  --glass-border: rgba(255, 255, 255, 0.2);
+
+  // Focus ring para dark mode
   --focus-ring: rgba(255, 255, 255, 0.15);
 }

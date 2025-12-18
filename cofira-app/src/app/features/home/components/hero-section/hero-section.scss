@@ -12,7 +12,7 @@
   background-color: var(--bg-body);
   overflow: hidden;
 
-  // 3D Canvas container
+  // 3D Canvas container - posicionado para complementar el contenido
   &__canvas {
     position: absolute;
     top: 0;
@@ -21,9 +21,10 @@
     height: 100%;
     z-index: 1;
     pointer-events: none;
+    opacity: 0.85;
   }
 
-  // Content
+  // Content - con backdrop sutil para legibilidad
   &__content {
     position: relative;
     z-index: 2;
@@ -31,6 +32,24 @@
     max-width: 900px;
     padding: var(--spacing-size-xl);
     @include animate-fade-up;
+
+    // Gradiente radial sutil para mejor contraste con el 3D
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 120%;
+      height: 120%;
+      background: radial-gradient(
+        ellipse at center,
+        var(--bg-body) 0%,
+        transparent 70%
+      );
+      z-index: -1;
+      pointer-events: none;
+    }
   }
 
   // Title
