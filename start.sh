@@ -57,17 +57,17 @@ case $option in
         echo -e "${BLUE}🚀 Iniciando servicios con logs en tiempo real...${NC}"
         echo -e "${YELLOW}Presiona Ctrl+C para detener los servicios${NC}"
         echo ""
-        docker-compose up --build
+        docker compose up --build
         ;;
     2)
         echo -e "${BLUE}🚀 Iniciando servicios en segundo plano...${NC}"
-        docker-compose up --build -d
+        docker compose up --build -d
 
         echo ""
         echo -e "${GREEN}✅ Servicios iniciados correctamente${NC}"
         echo ""
         echo -e "${BLUE}📋 Estado de los servicios:${NC}"
-        docker-compose ps
+        docker compose ps
 
         echo ""
         echo -e "${GREEN}🌐 URLs de acceso:${NC}"
