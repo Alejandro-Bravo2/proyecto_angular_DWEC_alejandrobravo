@@ -2908,6 +2908,602 @@ export class UserService extends AdvancedHttpService {
 
 ---
 
+#### 5.8 Catalogo Detallado de Endpoints
+
+A continuacion se listan todos los endpoints REST consumidos por la aplicacion, organizados por servicio.
+
+##### AuthService
+
+| Metodo | URL | Descripcion | Metodo en servicio |
+|--------|-----|-------------|-------------------|
+| POST | `/api/auth/login` | Autenticacion de usuario con credenciales | `login()` |
+| POST | `/api/auth/register` | Registro de nuevo usuario | `register()` |
+| POST | `/api/auth/refresh` | Renovar token JWT expirado | `refreshToken()` |
+| GET | `/api/auth/profile` | Obtener datos del usuario autenticado | `getCurrentUser()` |
+
+##### TrainingService
+
+| Metodo | URL | Descripcion | Metodo en servicio |
+|--------|-----|-------------|-------------------|
+| POST | `/api/training/generate` | Generar workouts personalizados con IA | `generateAIWorkouts()` |
+| GET | `/api/training/workouts` | Listar workouts con filtros opcionales | `getWorkouts()` |
+| GET | `/api/training/workouts/:id` | Obtener un workout por su ID | `getWorkout()` |
+| POST | `/api/training/workouts/:id/complete` | Marcar workout como completado | `completeWorkout()` |
+| DELETE | `/api/training/workouts/:id` | Eliminar un workout | `deleteWorkout()` |
+| POST | `/api/training/workouts` | Crear workout personalizado | `createCustomWorkout()` |
+| GET | `/api/training/schedule` | Obtener horario semanal de workouts | `getWeeklySchedule()` |
+| GET | `/rutinas-ejercicio` | Listar rutinas de ejercicio (legacy) | `listarRutinas()` |
+| GET | `/ejercicios` | Listar todos los ejercicios disponibles | `listarEjercicios()` |
+| GET | `/ejercicios/:id` | Obtener ejercicio por ID | `obtenerEjercicio()` |
+
+##### NutritionService
+
+| Metodo | URL | Descripcion | Metodo en servicio |
+|--------|-----|-------------|-------------------|
+| GET | `/api/rutinas-alimentacion` | Listar rutinas de alimentacion | `listarRutinas()` |
+| GET | `/api/rutinas-alimentacion/:id` | Obtener rutina por ID | `obtenerRutina()` |
+| POST | `/api/rutinas-alimentacion` | Crear nueva rutina de alimentacion | `crearRutina()` |
+| DELETE | `/api/rutinas-alimentacion/:id` | Eliminar rutina de alimentacion | `eliminarRutina()` |
+| GET | `/api/alimentos` | Listar alimentos disponibles | `listarAlimentos()` |
+| GET | `/api/alimentos/:id` | Obtener alimento por ID | `obtenerAlimento()` |
+
+##### OnboardingService
+
+| Metodo | URL | Descripcion | Metodo en servicio |
+|--------|-----|-------------|-------------------|
+| POST | `/api/onboarding/complete` | Completar proceso de onboarding | `completeOnboarding()` |
+
+---
+
+#### 5.9 Interfaces de Datos
+
+Las respuestas de la API estan tipadas con interfaces TypeScript para garantizar consistencia y autocompletado.
+
+##### Autenticacion
+
+```typescript
+// Respuesta del servidor tras login/registro
+interface AuthResponse {
+  token: string;
+  type: string;
+  id: number;
+  username: string;
+  email: string;
+  rol: string;
+  isOnboarded: boolean;
+}
+
+// Peticion de login
+interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+// Peticion de registro
+interface RegisterRequest {
+  nombre: string;
+  username: string;
+  email: string;
+  password: string;
+}
+
+// Usuario en el cliente
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  avatarUrl?: string;
+  isOnboarded: boolean;
+  onboarding?: UserOnboarding;
+}
+```
+
+##### Entrenamiento
+
+```typescript
+// Workout generado por IA
+interface GeneratedWorkout {
+  id: string;
+  name: string;
+  description?: string;
+  duration: number;
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD' | 'EXTREME';
+  muscleGroups: string[];
+  workoutType: 'STRENGTH' | 'CARDIO' | 'HIIT' | 'FLEXIBILITY' | 'MIXED' | 'CUSTOM';
+  exercises: GeneratedExercise[];
+  scheduledFor?: string;
+  completedAt?: string;
+  isCompleted: boolean;
+  isAiGenerated: boolean;
+}
+
+// Ejercicio dentro de un workout
+interface GeneratedExercise {
+  id: string;
+  name: string;
+  description?: string;
+  sets: number;
+  reps: string;
+  restSeconds: number;
+  muscleGroup?: string;
+  equipmentNeeded?: string;
+  order: number;
+  isCompleted: boolean;
+}
+
+// Horario semanal de workouts
+interface WeeklySchedule {
+  weekStart: string;
+  weekEnd: string;
+  schedule: Record<string, GeneratedWorkout[]>;
+  totalWorkouts: number;
+  completedWorkouts: number;
+}
+
+// Peticion para generar workouts
+interface GenerateWorkoutsRequest {
+  muscleGroupFocus?: string[];
+  weekStartDate?: string;
+}
+
+// DTOs legacy para compatibilidad
+interface RutinaEjercicioDTO {
+  id: number;
+  fechaInicio: string;
+  diasEjercicio: DiaEjercicioDTO[];
+}
+
+interface EjerciciosDTO {
+  id: number;
+  nombreEjercicio: string;
+  series: number;
+  repeticiones: number;
+  tiempoDescansoSegundos: number;
+  descripcion: string;
+  grupoMuscular: string;
+}
+```
+
+##### Nutricion
+
+```typescript
+// Rutina de alimentacion del backend
+interface RutinaAlimentacionDTO {
+  id: number;
+  fechaInicio: string;
+  diasAlimentacion: DiaAlimentacionDTO[];
+}
+
+interface DiaAlimentacionDTO {
+  id: number;
+  diaSemana: string;
+  desayuno: ComidaDTO | null;
+  almuerzo: ComidaDTO | null;
+  comida: ComidaDTO | null;
+  merienda: ComidaDTO | null;
+  cena: ComidaDTO | null;
+}
+
+interface ComidaDTO {
+  id: number;
+  alimentos: string[];
+}
+
+interface AlimentoDTO {
+  id: number;
+  nombre: string;
+  ingredientes: string[];
+}
+
+// Modelo de nutricion diaria (frontend)
+interface DailyNutrition {
+  date: string;
+  meals: Meal[];
+  totalCalories: number;
+  totalProtein: number;
+  totalCarbs: number;
+  totalFat: number;
+  totalFiber: number;
+  waterIntake: number;
+  calorieGoal: number;
+}
+
+interface Meal {
+  id: string;
+  userId: string;
+  date: string;
+  mealType: 'breakfast' | 'lunch' | 'dinner' | 'snack';
+  foods: FoodItem[];
+  totalCalories: number;
+  totalProtein: number;
+  totalCarbs: number;
+  totalFat: number;
+  totalFiber: number;
+}
+
+interface FoodItem {
+  icon: string;
+  quantity: string;
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+}
+```
+
+##### Onboarding
+
+```typescript
+// Peticion de onboarding con datos del usuario
+interface OnboardingRequest {
+  gender: 'MALE' | 'FEMALE' | 'OTHER';
+  birthDate: string;
+  heightCm: number;
+  currentWeightKg: number;
+  targetWeightKg?: number;
+  activityLevel: 'SEDENTARY' | 'LIGHTLY_ACTIVE' | 'MODERATELY_ACTIVE' | 'VERY_ACTIVE' | 'EXTRA_ACTIVE';
+  workType: 'OFFICE_DESK' | 'STANDING' | 'PHYSICAL_LABOR';
+  sleepHoursAverage?: number;
+  primaryGoal: 'LOSE_WEIGHT' | 'GAIN_MUSCLE' | 'MAINTAIN' | 'IMPROVE_HEALTH';
+  fitnessLevel: string;
+  trainingDaysPerWeek: number;
+  sessionDurationMinutes?: number;
+  preferredTrainingTime?: string;
+  dietType: string;
+  mealsPerDay?: number;
+  allergies?: string[];
+  injuries?: string[];
+  equipment?: string[];
+  medicalConditions?: string[];
+}
+
+// Respuesta del servidor con objetivos nutricionales calculados
+interface OnboardingResponse {
+  userId: number;
+  message: string;
+  isOnboarded: boolean;
+  onboardingCompletedAt: string;
+  nutritionTargets: NutritionTargets;
+}
+
+interface NutritionTargets {
+  calculatedBMR: number;
+  calculatedTDEE: number;
+  dailyCalories: number;
+  proteinGrams: number;
+  carbsGrams: number;
+  fatGrams: number;
+  fiberGrams: number;
+}
+```
+
+---
+
+#### 5.10 Estados de Carga y Error en UI
+
+Los componentes gestionan estados de carga, error y vacio mediante signals de Angular para una experiencia de usuario fluida.
+
+##### Patron de estados con signals
+
+```typescript
+export class DataComponent {
+  // Estados reactivos
+  readonly isLoading = signal(false);
+  readonly error = signal<string | null>(null);
+  readonly data = signal<DataType | null>(null);
+
+  // Computed para detectar estado vacio
+  readonly isEmpty = computed(() =>
+    !this.data() && !this.isLoading() && !this.error()
+  );
+
+  // Computed para verificar si hay datos
+  readonly hasData = computed(() => {
+    const items = this.data();
+    return items && items.length > 0;
+  });
+
+  loadData(): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.dataService.getData().pipe(
+      retry({ count: 2, delay: 1000 }),
+      catchError(err => {
+        this.error.set('Error al cargar los datos');
+        return of(null);
+      }),
+      finalize(() => this.isLoading.set(false))
+    ).subscribe(data => this.data.set(data));
+  }
+}
+```
+
+##### Template con manejo de estados
+
+```html
+<!-- Estado de carga -->
+@if (isLoading()) {
+  <div class="loading-container">
+    <app-loading-spinner />
+    <p>Cargando datos...</p>
+  </div>
+}
+
+<!-- Estado de error -->
+@if (error() && !isLoading()) {
+  <div class="error-container">
+    <p class="error-message">{{ error() }}</p>
+    <button class="c-button c-button--primary" (click)="loadData()">
+      Reintentar
+    </button>
+  </div>
+}
+
+<!-- Estado vacio -->
+@if (isEmpty()) {
+  <app-empty-state
+    title="Sin datos disponibles"
+    message="No se encontraron resultados para mostrar."
+    actionLabel="Crear nuevo"
+    (actionClicked)="onCreate()"
+  />
+}
+
+<!-- Estado con datos -->
+@if (hasData()) {
+  <ul class="data-list">
+    @for (item of data(); track item.id) {
+      <li>{{ item.name }}</li>
+    }
+  </ul>
+}
+```
+
+##### Feedback de exito con ToastService
+
+```typescript
+saveData(): void {
+  this.isSaving.set(true);
+
+  this.dataService.save(this.form.value).subscribe({
+    next: () => {
+      this.isSaving.set(false);
+      this.toastService.success('Datos guardados correctamente');
+      this.router.navigate(['/lista']);
+    },
+    error: () => {
+      this.isSaving.set(false);
+      this.toastService.error('Error al guardar los datos');
+    }
+  });
+}
+```
+
+##### Ejemplo real: Componente Nutrition
+
+El componente de nutricion implementa todos estos estados:
+
+```typescript
+export class Nutrition {
+  private nutritionService = inject(NutritionService);
+  private toastService = inject(ToastService);
+
+  readonly isLoading = signal(false);
+  readonly isLoadingGoals = signal(true);
+  readonly error = signal<string | null>(null);
+  readonly dailyNutrition = signal<DailyNutrition | null>(null);
+
+  readonly isEmpty = computed(() =>
+    !this.dailyNutrition() && !this.isLoading() && !this.error()
+  );
+
+  readonly hasMeals = computed(() => {
+    const nutrition = this.dailyNutrition();
+    return nutrition && nutrition.meals.length > 0;
+  });
+
+  private loadNutritionData(): void {
+    this.isLoading.set(true);
+    this.error.set(null);
+
+    this.nutritionService.getDailyNutrition(userId, this.currentDate()).pipe(
+      retry({ count: 2, delay: 1000 }),
+      catchError(() => of(this.getEmptyDailyNutrition())),
+      finalize(() => this.isLoading.set(false))
+    ).subscribe({
+      next: (data) => this.dailyNutrition.set(data)
+    });
+  }
+
+  onFoodAdded(food: FoodAnalysis): void {
+    this.toastService.success(`${food.name} agregado al diario`);
+    this.loadNutritionData();
+  }
+}
+```
+
+---
+
+#### 5.11 Estrategia de Manejo de Errores
+
+La aplicacion implementa un sistema de manejo de errores en capas que garantiza una experiencia de usuario consistente.
+
+##### Flujo de errores
+
+```
+Backend (error HTTP)
+    |
+    v
+Error Interceptor (errorInterceptor)
+    |-- Captura el error
+    |-- Genera mensaje segun codigo HTTP
+    |-- Muestra toast de notificacion
+    |-- Redirige si es necesario (401)
+    |
+    v
+Servicio (catchError opcional)
+    |-- Puede transformar o manejar errores especificos
+    |
+    v
+Componente (subscribe error callback)
+    |-- Actualiza estado de error local
+    |-- Muestra UI de error si corresponde
+```
+
+##### Codigos HTTP y comportamientos
+
+| Codigo | Descripcion | Accion del interceptor | Toast |
+|--------|-------------|------------------------|-------|
+| 0 | Sin conexion al servidor | Mostrar mensaje de conexion | Si |
+| 401 | No autorizado / Token expirado | Redirigir a `/login` | Si |
+| 403 | Sin permisos para la accion | Notificar al usuario | Si |
+| 404 | Recurso no encontrado | Notificar al usuario | Condicional |
+| 409 | Conflicto (recurso duplicado) | Notificar al usuario | Condicional |
+| 500 | Error interno del servidor | Notificar al usuario | Si |
+
+##### Implementacion del Error Interceptor
+
+```typescript
+export const errorInterceptor: HttpInterceptorFn = (req, next) => {
+  const toastService = inject(ToastService);
+  const router = inject(Router);
+
+  return next(req).pipe(
+    catchError((error: HttpErrorResponse) => {
+      // Casos especiales que no muestran toast
+      const isAsyncValidator = req.url.includes('/check-');
+      const isLogout = req.url.includes('/logout');
+
+      if (isAsyncValidator && error.status === 404) {
+        return throwError(() => error);
+      }
+
+      if (isLogout && (error.status === 409 || error.status === 500)) {
+        return throwError(() => error);
+      }
+
+      // Manejo por codigo de estado
+      let errorMessage = 'Ha ocurrido un error inesperado.';
+
+      switch (error.status) {
+        case 0:
+          errorMessage = 'No se pudo conectar con el servidor. Verifica tu conexion.';
+          break;
+        case 401:
+          errorMessage = 'Sesion expirada. Por favor, inicia sesion nuevamente.';
+          router.navigate(['/login']);
+          break;
+        case 403:
+          errorMessage = 'No tienes permisos para realizar esta accion.';
+          break;
+        case 404:
+          errorMessage = 'El recurso solicitado no fue encontrado.';
+          break;
+        case 409:
+          errorMessage = 'Conflicto: El recurso ya existe o esta en uso.';
+          break;
+        case 500:
+          errorMessage = 'Error interno del servidor. Intenta mas tarde.';
+          break;
+      }
+
+      toastService.error(errorMessage);
+      return throwError(() => new Error(errorMessage));
+    })
+  );
+};
+```
+
+##### Retry Logic en BaseHttpService
+
+El servicio base aplica reintentos automaticos para manejar fallos temporales:
+
+```typescript
+export abstract class BaseHttpService {
+  protected http = inject(HttpClient);
+
+  protected get<T>(url: string, options?: HttpOptions): Observable<T> {
+    return this.http.get<T>(this.buildUrl(url), options).pipe(
+      retry(2), // 2 reintentos antes de fallar
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse): Observable<never> {
+    let errorMessage = 'Ocurrio un error desconocido';
+
+    if (error.error instanceof ErrorEvent) {
+      // Error del lado del cliente (red, etc.)
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Error del lado del servidor
+      errorMessage = `Codigo: ${error.status}, Mensaje: ${error.message}`;
+    }
+
+    console.error('[HTTP Error]', errorMessage);
+    return throwError(() => new Error(errorMessage));
+  }
+}
+```
+
+##### Retry con backoff en componentes criticos
+
+Para operaciones importantes, los componentes pueden aplicar retry adicional con delay exponencial:
+
+```typescript
+loadCriticalData(): void {
+  this.dataService.getData().pipe(
+    retry({
+      count: 3,
+      delay: (error, retryCount) => {
+        // Backoff exponencial: 1s, 2s, 4s
+        const delayMs = Math.pow(2, retryCount - 1) * 1000;
+        console.log(`Reintento ${retryCount} en ${delayMs}ms`);
+        return timer(delayMs);
+      }
+    }),
+    catchError(err => {
+      this.error.set('No se pudo cargar los datos despues de varios intentos');
+      return of(null);
+    })
+  ).subscribe(data => this.data.set(data));
+}
+```
+
+##### Manejo de errores en formularios
+
+Los formularios muestran errores de validacion del backend:
+
+```typescript
+onSubmit(): void {
+  this.isSubmitting.set(true);
+  this.serverError.set(null);
+
+  this.authService.register(this.form.value).subscribe({
+    next: () => {
+      this.router.navigate(['/login']);
+    },
+    error: (err) => {
+      this.isSubmitting.set(false);
+
+      // Errores especificos del backend
+      if (err.status === 409) {
+        this.serverError.set('El usuario o email ya existe');
+      } else if (err.status === 400) {
+        this.serverError.set('Datos invalidos. Revisa el formulario.');
+      } else {
+        this.serverError.set('Error al registrar. Intenta mas tarde.');
+      }
+    }
+  });
+}
+```
+
+---
+
 ## Testing
 
 ### Configuración de Testing
