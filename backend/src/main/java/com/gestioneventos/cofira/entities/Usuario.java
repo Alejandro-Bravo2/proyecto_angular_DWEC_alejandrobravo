@@ -47,6 +47,12 @@ public class Usuario {
     @Builder.Default
     private Rol rol = Rol.USER;
 
+    @Builder.Default
+    private Boolean isOnboarded = false;
+
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserProfile userProfile;
+
     private Integer edad;
     private Double peso;
     private Double altura;

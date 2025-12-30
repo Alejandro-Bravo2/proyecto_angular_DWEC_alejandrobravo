@@ -15,6 +15,7 @@
     h1 {
       @include text-display;
       margin: 0;
+      color: var(--text-primary);
     }
   }
 
@@ -24,7 +25,21 @@
     gap: var(--spacing-size-xl);
 
     @include responsive('M') {
-      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @include responsive('L') {
+      grid-template-columns: repeat(2, 1fr);
     }
   }
+}
+
+.error-message {
+  background-color: rgba(231, 76, 60, 0.1);
+  border: 1px solid #e74c3c;
+  color: #e74c3c;
+  padding: var(--spacing-size-m);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-size-l);
+  text-align: center;
 }

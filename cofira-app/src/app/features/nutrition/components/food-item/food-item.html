@@ -1,16 +1,6 @@
-<li class="food-item" *ngIf="food()">
-  <figure class="food-item__icon">
-    <!-- Placeholder icon, replace with dynamic icon based on food().icon -->
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-apple">
-      <path
-        d="M12.22 2h-.44C9.76 2 8 3.76 8 6v4c0 2.24 1.76 4 4.22 4h.44c2.46 0 4.22-1.76 4.22-4V6c0-2.24-1.76-4-4.22-4Z" />
-      <path
-        d="M4 10V6c0-2.24 1.76-4 4-4h.22c-.12 1-.22 2.05-.22 3.12 0 1.25.04 2.45.16 3.53-1 .5-2 1.34-2.88 2.48C4.54 13.9 4 15.42 4 17c0 2.94 2.22 5 6 5h2c3.78 0 6-2.06 6-5 0-1.58-.54-3.1-1.12-4.25-.88-1.14-1.88-1.98-2.88-2.48.12-1.08.16-2.28.16-3.53 0-1.07-.1-2.12-.22-3.12H16c2.24 0 4 1.76 4 4v4c0 2.24-1.76 4-4 4h-.22c.12 1 .22 2.05.22 3.12 0 1.25-.04 2.45-.16 3.53 1 .5 2 1.34 2.88 2.48C19.46 13.9 20 15.42 20 17c0 2.94-2.22 5-6 5h-2c-3.78 0-6-2.06-6-5 0-1.58.54-3.1 1.12-4.25.88-1.14 1.88-1.98 2.88-2.48-.12-1.08-.16-2.28-.16-3.53z" />
-    </svg>
-  </figure>
-  <p class="food-item__details">
-    <span class="food-item__quantity">{{ food()!.quantity }}</span>
-    <span class="food-item__name">{{ food()!.name }}</span>
-  </p>
-</li>
+@if (hasFood()) {
+  <li class="food-item" role="listitem">
+    <span class="food-item__name">{{ displayName() }}</span>
+    <span class="food-item__quantity" aria-label="Cantidad">{{ displayQuantity() }}</span>
+  </li>
+}

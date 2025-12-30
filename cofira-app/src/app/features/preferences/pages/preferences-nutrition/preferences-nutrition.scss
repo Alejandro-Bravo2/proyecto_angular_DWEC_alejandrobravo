@@ -1,0 +1,22 @@
+.preferences-nutrition {
+  &__section {
+    margin-bottom: var(--spacing-xl);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__section-title {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-text);
+    margin: 0 0 var(--spacing-xs);
+  }
+
+  &__description {
+    color: var(--color-text-muted);
+    margin: 0 0 var(--spacing-md);
+    font-size: var(--font-size-sm);
+  }
+}

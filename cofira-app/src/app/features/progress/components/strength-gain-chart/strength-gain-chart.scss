@@ -6,7 +6,6 @@
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   padding: var(--spacing-size-xl);
-  text-align: center;
   @include transition-base;
 
   &:hover {
@@ -18,6 +17,7 @@
     margin-bottom: var(--spacing-size-l);
     flex-wrap: wrap;
     gap: var(--spacing-size-s);
+    text-align: left;
 
     h3 {
       @include tipografia-titulo;
@@ -28,28 +28,74 @@
   }
 
   &__dropdown {
-    background-color: var(--gris-ultraligero);
-    border: 1px solid transparent;
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-light);
     border-radius: var(--radius-md);
-    padding: var(--spacing-size-xs) var(--spacing-size-s);
+    padding: var(--spacing-size-s) var(--spacing-size-m);
     font-size: var(--font-size-md);
     color: var(--text-primary);
     width: auto;
-    min-width: 180px;
+    min-width: 200px;
+    cursor: pointer;
     @include transition-base;
+
+    &:hover {
+      border-color: var(--border-medium);
+    }
 
     &:focus {
       outline: none;
-      border-color: var(--negro-puro);
+      border-color: var(--brand-primary);
+    }
+
+    option {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
     }
   }
 
   &__body {
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-      margin: 0 auto;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__chart-container {
+    width: 100%;
+    height: 350px;
+  }
+
+  &__empty-state,
+  &__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-size-2xl);
+    text-align: center;
+    gap: var(--spacing-size-m);
+
+    svg {
+      opacity: 0.6;
+      margin-bottom: var(--spacing-size-s);
+    }
+
+    p {
+      margin: 0;
+      font-size: var(--font-size-lg);
+      color: var(--text-secondary);
+    }
+
+    small {
+      color: var(--text-tertiary);
+      font-size: var(--font-size-sm);
+    }
+  }
+
+  &__placeholder {
+    p {
+      font-size: var(--font-size-md);
     }
   }
 }

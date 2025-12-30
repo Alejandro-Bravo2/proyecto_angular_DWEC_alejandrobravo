@@ -2,45 +2,21 @@
 @import '../../../../../styles/01-tools/mixins';
 
 .food-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-size-s);
+  @include flex-between;
   padding: var(--spacing-size-xs) 0;
-  border-bottom: 1px dashed var(--border-light);
 
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &__icon {
-    @include flex-center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-circle);
-    background-color: var(--bg-secondary);
-    color: var(--text-secondary);
-    margin: 0;
-
-    svg {
-      width: 20px;
-      height: 20px;
-    }
-  }
-
-  &__details {
-    flex-grow: 1;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--text-primary);
-    font-size: var(--font-size-md);
-  }
-
-  &__quantity {
-    font-weight: var(--font-weight-medium);
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border-light);
   }
 
   &__name {
-    margin-left: var(--spacing-size-s);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+  }
+
+  &__quantity {
+    color: var(--text-muted);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
   }
 }

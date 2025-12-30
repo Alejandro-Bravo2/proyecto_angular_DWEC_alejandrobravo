@@ -57,9 +57,14 @@ public class AuthService {
                 .findFirst()
                 .map(item -> item.getAuthority().replace("ROLE_", ""))
                 .orElse("");
-        
+
         // Convertir el String a Rol enum
         Rol rol = roleString.equals("ADMIN") ? Rol.ADMIN : Rol.USER;
+
+        // Obtener estado de onboarding
+        Usuario usuario = usuarioRepository.findByUsername(userDetails.getUsername())
+                .orElse(null);
+        Boolean isOnboarded = usuario != null && Boolean.TRUE.equals(usuario.getIsOnboarded());
 
         return AuthResponseDTO.builder()
                 .token(jwt)
@@ -68,6 +73,7 @@ public class AuthService {
                 .username(userDetails.getUsername())
                 .email(userDetails.getEmail())
                 .rol(rol)
+                .isOnboarded(isOnboarded)
                 .build();
     }
 

@@ -101,42 +101,42 @@ export class NutritionService extends BaseHttpService {
    * Listar todas las rutinas de alimentación
    */
   listarRutinas(): Observable<RutinaAlimentacionDTO[]> {
-    return this.get<RutinaAlimentacionDTO[]>('rutinas-alimentacion');
+    return this.get<RutinaAlimentacionDTO[]>('api/rutinas-alimentacion');
   }
 
   /**
    * Obtener una rutina de alimentación por ID
    */
   obtenerRutina(id: number): Observable<RutinaAlimentacionDTO> {
-    return this.get<RutinaAlimentacionDTO>(`rutinas-alimentacion/${id}`);
+    return this.get<RutinaAlimentacionDTO>(`api/rutinas-alimentacion/${id}`);
   }
 
   /**
    * Crear una nueva rutina de alimentación
    */
   crearRutina(dto: CrearRutinaAlimentacionDTO): Observable<RutinaAlimentacionDTO> {
-    return this.post<RutinaAlimentacionDTO>('rutinas-alimentacion', dto);
+    return this.post<RutinaAlimentacionDTO>('api/rutinas-alimentacion', dto);
   }
 
   /**
    * Eliminar una rutina de alimentación
    */
   eliminarRutina(id: number): Observable<void> {
-    return this.delete<void>(`rutinas-alimentacion/${id}`);
+    return this.delete<void>(`api/rutinas-alimentacion/${id}`);
   }
 
   /**
    * Listar todos los alimentos disponibles
    */
   listarAlimentos(): Observable<AlimentoDTO[]> {
-    return this.get<AlimentoDTO[]>('alimentos');
+    return this.get<AlimentoDTO[]>('api/alimentos');
   }
 
   /**
    * Obtener un alimento por ID
    */
   obtenerAlimento(id: number): Observable<AlimentoDTO> {
-    return this.get<AlimentoDTO>(`alimentos/${id}`);
+    return this.get<AlimentoDTO>(`api/alimentos/${id}`);
   }
 
   // ==========================================

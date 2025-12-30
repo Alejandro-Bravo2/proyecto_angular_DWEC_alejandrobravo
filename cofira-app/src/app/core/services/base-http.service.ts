@@ -16,7 +16,7 @@ export interface HttpOptions {
 export class BaseHttpService {
   private API_BASE_URL = environment.apiUrl; // Backend URL from environment
 
-  constructor(private http: HttpClient, private loadingService: LoadingService) { }
+  constructor(protected http: HttpClient, private loadingService: LoadingService) { }
 
   private handleError(error: HttpErrorResponse) {
     let errorMessage = 'An unknown error occurred!';

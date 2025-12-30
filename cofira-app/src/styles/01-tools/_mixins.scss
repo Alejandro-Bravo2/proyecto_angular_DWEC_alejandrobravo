@@ -100,6 +100,128 @@ Estilo: Minimalista Apple/Ferrari
   -webkit-backdrop-filter: blur($blur);
 }
 
+// Premium glass con noise texture
+@mixin glass-premium($blur: 24px) {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  backdrop-filter: blur($blur) saturate(180%);
+  -webkit-backdrop-filter: blur($blur) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+  }
+}
+
+// Glow effect para elementos interactivos
+@mixin glow-effect($color: rgba(255, 255, 255, 0.5), $size: 20px) {
+  box-shadow:
+    0 0 $size $color,
+    0 0 ($size * 2) rgba($color, 0.3),
+    0 0 ($size * 3) rgba($color, 0.1);
+}
+
+// Glow on hover
+@mixin hover-glow($color: rgba(255, 255, 255, 0.3)) {
+  @include transition-premium(box-shadow);
+
+  &:hover {
+    box-shadow:
+      0 0 20px $color,
+      0 0 40px rgba($color, 0.2),
+      0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+
+// Inner glow para tarjetas
+@mixin inner-glow($color: rgba(255, 255, 255, 0.1)) {
+  box-shadow:
+    inset 0 1px 0 $color,
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+}
+
+// Gradient border animation
+@mixin gradient-border-animated {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      45deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.3) 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.3) 75%,
+      transparent 100%
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 8s ease infinite;
+    z-index: -1;
+    opacity: 0;
+    @include transition-base(opacity);
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+// Premium shadow stack
+@mixin shadow-premium {
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.07),
+    0 2px 4px rgba(0, 0, 0, 0.07),
+    0 4px 8px rgba(0, 0, 0, 0.07),
+    0 8px 16px rgba(0, 0, 0, 0.07),
+    0 16px 32px rgba(0, 0, 0, 0.07);
+}
+
+// Shimmer effect
+@mixin shimmer-effect {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
 // Efecto hover con elevación sutil
 @mixin hover-lift($distance: -4px) {
   @include transition-premium(transform);

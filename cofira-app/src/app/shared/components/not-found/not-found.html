@@ -1,1 +1,51 @@
-<p>not-found works!</p>
+<section class="not-found">
+  <div class="not-found__container">
+    <!-- Ilustracion 404 -->
+    <div class="not-found__illustration">
+      <span class="not-found__number">4</span>
+      <span class="not-found__icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M8 15h8M9 9h.01M15 9h.01"/>
+        </svg>
+      </span>
+      <span class="not-found__number">4</span>
+    </div>
+
+    <!-- Mensaje principal -->
+    <h1 class="not-found__title">Pagina no encontrada</h1>
+    <p class="not-found__message">
+      Lo sentimos, la pagina que buscas no existe o ha sido movida.
+    </p>
+
+    <!-- URL actual -->
+    <div class="not-found__url-box">
+      <span class="not-found__url-label">URL solicitada:</span>
+      <code class="not-found__url">{{ currentUrl }}</code>
+    </div>
+
+    <!-- Botones de accion -->
+    <div class="not-found__actions">
+      <button class="not-found__btn not-found__btn--secondary" (click)="goBack()">
+        <span class="not-found__btn-icon">&larr;</span>
+        Volver atras
+      </button>
+      <a routerLink="/" class="not-found__btn not-found__btn--primary">
+        Ir al inicio
+      </a>
+    </div>
+
+    <!-- Sugerencias -->
+    <div class="not-found__suggestions">
+      <h2 class="not-found__suggestions-title">Quizas buscabas:</h2>
+      <nav class="not-found__nav">
+        @for (suggestion of suggestions; track suggestion.path) {
+          <a [routerLink]="suggestion.path" class="not-found__nav-link">
+            <span class="not-found__nav-icon not-found__nav-icon--{{ suggestion.icon }}"></span>
+            {{ suggestion.label }}
+          </a>
+        }
+      </nav>
+    </div>
+  </div>
+</section>

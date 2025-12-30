@@ -1,5 +1,4 @@
-import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, input, computed, inject } from '@angular/core';
 import { FoodItem } from '../food-item/food-item';
 import { ModalService } from '../../../../core/services/modal.service';
 import { IngredientsModal } from '../ingredients-modal/ingredients-modal';
@@ -14,29 +13,36 @@ interface Ingredient {
 @Component({
   selector: 'app-meal-section',
   standalone: true,
-  imports: [CommonModule, FoodItem],
+  imports: [FoodItem],
   templateUrl: './meal-section.html',
   styleUrl: './meal-section.scss',
 })
 export class MealSection {
-  // Input signals for real data
-  title = input<string>('');
-  foods = input<FoodItemType[]>([]);
-  mealId = input<string>('');
+  private readonly modalService = inject(ModalService);
 
-  constructor(private modalService: ModalService) {}
+  readonly title = input.required<string>();
+  readonly foods = input<FoodItemType[]>([]);
+  readonly mealId = input.required<string>();
+
+  readonly isEmpty = computed(() => this.foods().length === 0);
+  readonly foodCount = computed(() => this.foods().length);
 
   openIngredientsModal(): void {
-    // Convert foods to ingredients format for modal
+    if (this.isEmpty()) return;
+
     const ingredients: Ingredient[] = this.foods().map(food => ({
       name: food.name,
       quantity: food.quantity,
-      price: 0 // Price can be added later if available in the API
+      price: 0,
     }));
 
     this.modalService.open(IngredientsModal, {
       mealName: this.title(),
-      ingredients
+      ingredients,
     });
+  }
+
+  trackByFoodName(_index: number, food: FoodItemType): string {
+    return food.name;
   }
 }

@@ -81,6 +81,7 @@ pgdata/
 .recommenders
 .settings/
 .loadpath
+CLAUDE.md
 .externalToolBuilders/
 *.launch
 

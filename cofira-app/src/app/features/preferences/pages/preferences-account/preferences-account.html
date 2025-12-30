@@ -1,0 +1,126 @@
+<div class="preferences-account">
+  <section class="preferences-account__section">
+    <div class="preferences-account__section-header">
+      <h2 class="preferences-account__section-title">Informacion de Cuenta</h2>
+      @if (!isEditing()) {
+        <button class="preferences-account__btn preferences-account__btn--outline" (click)="toggleEdit()">
+          Editar
+        </button>
+      }
+    </div>
+
+    <form [formGroup]="accountForm" class="preferences-account__form">
+      <div class="preferences-account__field">
+        <label class="preferences-account__label">Nombre</label>
+        @if (isEditing()) {
+          <input
+            type="text"
+            formControlName="name"
+            class="preferences-account__input"
+            placeholder="Tu nombre">
+        } @else {
+          <p class="preferences-account__value">{{ accountForm.get('name')?.value }}</p>
+        }
+      </div>
+
+      <div class="preferences-account__field">
+        <label class="preferences-account__label">Email</label>
+        @if (isEditing()) {
+          <input
+            type="email"
+            formControlName="email"
+            class="preferences-account__input"
+            placeholder="tu@email.com">
+        } @else {
+          <p class="preferences-account__value">{{ accountForm.get('email')?.value }}</p>
+        }
+      </div>
+
+      <div class="preferences-account__field">
+        <label class="preferences-account__label">Telefono</label>
+        @if (isEditing()) {
+          <input
+            type="tel"
+            formControlName="phone"
+            class="preferences-account__input"
+            placeholder="+34 600 000 000">
+        } @else {
+          <p class="preferences-account__value">{{ accountForm.get('phone')?.value || 'No especificado' }}</p>
+        }
+      </div>
+
+      @if (isEditing()) {
+        <div class="preferences-account__actions">
+          <button
+            type="button"
+            class="preferences-account__btn preferences-account__btn--secondary"
+            (click)="cancelEdit()">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="preferences-account__btn preferences-account__btn--primary"
+            [disabled]="!accountForm.valid || isSaving()"
+            (click)="saveChanges()">
+            @if (isSaving()) {
+              Guardando...
+            } @else {
+              Guardar cambios
+            }
+          </button>
+        </div>
+      }
+    </form>
+  </section>
+
+  <section class="preferences-account__section" id="security">
+    <h2 class="preferences-account__section-title">Seguridad</h2>
+    <div class="preferences-account__security-item">
+      <div class="preferences-account__security-info">
+        <span class="preferences-account__security-label">Contrasena</span>
+        <span class="preferences-account__security-value">************</span>
+      </div>
+      <button
+        class="preferences-account__btn preferences-account__btn--outline"
+        (click)="changePassword()">
+        Cambiar
+      </button>
+    </div>
+  </section>
+
+  <section class="preferences-account__section">
+    <h2 class="preferences-account__section-title">Configuracion de Privacidad</h2>
+    <p class="preferences-account__description">
+      Controla quien puede ver tu informacion y actividad.
+    </p>
+
+    <div class="preferences-account__privacy-list">
+      <label class="preferences-account__checkbox">
+        <input
+          type="checkbox"
+          [checked]="privacySettings().publicProfile"
+          (change)="updatePrivacy('publicProfile')">
+        <span class="preferences-account__checkbox-label">Perfil publico</span>
+        <span class="preferences-account__checkbox-hint">Otros usuarios pueden ver tu perfil</span>
+      </label>
+
+      <label class="preferences-account__checkbox">
+        <input
+          type="checkbox"
+          [checked]="privacySettings().showProgress"
+          (change)="updatePrivacy('showProgress')">
+        <span class="preferences-account__checkbox-label">Mostrar progreso</span>
+        <span class="preferences-account__checkbox-hint">Tu progreso sera visible para otros</span>
+      </label>
+
+      <label class="preferences-account__checkbox">
+        <input
+          type="checkbox"
+          [checked]="privacySettings().shareStats"
+          (change)="updatePrivacy('shareStats')">
+        <span class="preferences-account__checkbox-label">Compartir estadisticas</span>
+        <span class="preferences-account__checkbox-hint">Comparte tus logros en redes sociales</span>
+      </label>
+    </div>
+  </section>
+</div>

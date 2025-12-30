@@ -13,11 +13,18 @@ export class NutrientCounter {
   // Input signal for nutrient data
   nutrientData = input<NutrientData | null>(null);
 
+  // Computed signal to check if we have actual nutrient data (not just zeros)
+  hasNutrientData = computed(() => {
+    const data = this.nutrientData();
+    if (!data) return false;
+    return data.protein > 0 || data.carbs > 0 || data.fat > 0 || data.calories > 0;
+  });
+
   // Computed signal for calorie percentage
   caloriePercentage = computed(() => {
     const data = this.nutrientData();
     if (!data || data.calorieGoal === 0) return 0;
-    return Math.round((data.calories / data.calorieGoal) * 100);
+    return Math.min(100, Math.round((data.calories / data.calorieGoal) * 100));
   });
 
   // Chart configuration for doughnut chart

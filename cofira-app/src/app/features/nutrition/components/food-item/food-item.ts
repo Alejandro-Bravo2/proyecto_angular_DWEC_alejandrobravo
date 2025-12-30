@@ -1,20 +1,17 @@
-import { Component, input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-
-interface Food {
-  icon: string;
-  quantity: string;
-  name: string;
-}
+import { Component, input, computed } from '@angular/core';
+import { FoodItem as FoodItemType } from '../../services/nutrition.service';
 
 @Component({
   selector: 'app-food-item',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './food-item.html',
   styleUrl: './food-item.scss',
 })
 export class FoodItem {
-  // Using Angular 20 input signal
-  food = input<Food | undefined>(undefined);
+  readonly food = input<FoodItemType>();
+
+  readonly hasFood = computed(() => !!this.food());
+  readonly displayName = computed(() => this.food()?.name ?? '');
+  readonly displayQuantity = computed(() => this.food()?.quantity ?? '');
 }

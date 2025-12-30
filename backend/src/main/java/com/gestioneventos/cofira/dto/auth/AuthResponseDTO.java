@@ -19,4 +19,6 @@ public class AuthResponseDTO {
     private String username;
     private String email;
     private Rol rol;
+    @Builder.Default
+    private Boolean isOnboarded = false;
 }

@@ -2,50 +2,120 @@
 @import '../../../../../styles/01-tools/mixins';
 
 .daily-menu {
-  padding: var(--spacing-size-l);
-  background-color: var(--bg-primary);
-  color: var(--text-primary);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-light);
-  max-width: 800px;
-  margin: 0 auto;
+  @include flex-columna(var(--spacing-size-xl));
+  outline: none;
 
-  &__header {
+  &:focus-visible {
+    outline: 2px solid var(--negro-normal);
+    outline-offset: 4px;
+    border-radius: var(--radius-s);
+  }
+
+  &__nav {
     @include flex-between;
-    margin-bottom: var(--spacing-size-xl);
-    padding-bottom: var(--spacing-size-s);
-    border-bottom: 1px solid var(--border-light);
+    padding: var(--spacing-size-s) 0;
+  }
 
-    h2 {
-      @include tipografia-titulo;
-      font-size: var(--font-size-2xl);
-      margin: 0;
+  &__nav-btn {
+    @include button-reset;
+    @include flex-center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-circle);
+    color: var(--text-secondary);
+    @include transition-base;
+
+    &:hover {
+      background-color: var(--bg-secondary);
       color: var(--text-primary);
     }
 
-    button {
-      @include button-reset;
-      @include flex-center;
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-circle);
-      color: var(--text-secondary);
-      @include transition-base;
+    &:focus-visible {
+      outline: 2px solid var(--negro-normal);
+      outline-offset: 2px;
+      background-color: var(--bg-secondary);
+    }
 
-      &:hover {
-        background-color: var(--bg-secondary);
-        color: var(--text-primary);
-      }
+    &:active {
+      transform: scale(0.95);
     }
   }
 
-  &__sections {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-size-l);
+  &__date {
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+    padding: var(--spacing-size-xss) var(--spacing-size-s);
+    border-radius: var(--radius-s);
+    @include transition-base;
+
+    &:hover {
+      background-color: var(--bg-secondary);
+    }
   }
 
-  @include responsive('M') {
-    padding: var(--spacing-size-xl);
+  &__date-text {
+    font-family: var(--font-secondary);
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-medium);
+    color: var(--text-primary);
+    margin: 0;
+    text-transform: capitalize;
+  }
+
+  &__date-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+
+    &:focus-visible + .daily-menu__date-text {
+      outline: 2px solid var(--negro-normal);
+      outline-offset: 2px;
+    }
+  }
+
+  &__today {
+    @include button-reset;
+    display: block;
+    margin: calc(var(--spacing-size-s) * -1) auto var(--spacing-size-m);
+    padding: var(--spacing-size-xss) var(--spacing-size-m);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-pill);
+    @include transition-base;
+
+    &:hover {
+      border-color: var(--border-medium);
+      color: var(--text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--negro-normal);
+      outline-offset: 2px;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    gap: var(--spacing-size-m);
+
+    @include responsive('M') {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &__empty {
+    @include tarjeta-base;
+    text-align: center;
+    padding: var(--spacing-size-xxl);
+
+    p {
+      color: var(--text-secondary);
+      margin: 0;
+    }
   }
 }

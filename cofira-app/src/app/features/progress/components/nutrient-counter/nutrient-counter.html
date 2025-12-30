@@ -4,31 +4,45 @@
   </header>
   <section class="nutrient-counter__body">
     <figure class="nutrient-counter__chart">
-      @if (nutrientData()) {
-      <div style="width: 150px; height: 150px; margin: 0 auto;">
+      @if (hasNutrientData()) {
+      <div class="nutrient-counter__chart-container">
         <canvas baseChart [data]="doughnutChartData()" [options]="doughnutChartOptions" type="doughnut">
         </canvas>
       </div>
       } @else {
-      <img src="https://via.placeholder.com/150/FDB913/FFFFFF?text=Sin+Datos" alt="Gráfico circular de nutrientes">
+      <div class="nutrient-counter__empty-chart">
+        <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="60" cy="60" r="55" stroke="var(--border-medium)" stroke-width="8" stroke-dasharray="12 6"/>
+          <text x="60" y="55" text-anchor="middle" fill="var(--text-secondary)" font-size="12">Sin datos</text>
+          <text x="60" y="72" text-anchor="middle" fill="var(--text-tertiary)" font-size="10">registrados</text>
+        </svg>
+      </div>
       }
     </figure>
     <section class="nutrient-counter__details">
       <h4>Desglose</h4>
-      @if (nutrientData(); as data) {
-      <ul>
-        <li>Proteínas: <span class="u-text-brand">{{ data.protein }}g</span></li>
-        <li>Carbohidratos: <span class="u-text-brand">{{ data.carbs }}g</span></li>
-        <li>Grasas: <span class="u-text-brand">{{ data.fat }}g</span></li>
-        <li>Fibra: <span class="u-text-brand">{{ data.fiber }}g</span></li>
-        <li>Agua: <span class="u-text-brand">{{ data.water }}L</span></li>
-      </ul>
-      <p class="nutrient-counter__calories">
-        Calorías Totales: <span class="u-text-brand">{{ data.calories }}</span> / {{ data.calorieGoal }} kcal
-        <small>({{ caloriePercentage() }}%)</small>
-      </p>
+      @if (hasNutrientData()) {
+        @if (nutrientData(); as data) {
+        <ul>
+          <li><span class="nutrient-label">Proteínas</span> <span class="nutrient-value protein">{{ data.protein }}g</span></li>
+          <li><span class="nutrient-label">Carbohidratos</span> <span class="nutrient-value carbs">{{ data.carbs }}g</span></li>
+          <li><span class="nutrient-label">Grasas</span> <span class="nutrient-value fat">{{ data.fat }}g</span></li>
+          <li><span class="nutrient-label">Fibra</span> <span class="nutrient-value fiber">{{ data.fiber }}g</span></li>
+          <li><span class="nutrient-label">Agua</span> <span class="nutrient-value water">{{ data.water }}L</span></li>
+        </ul>
+        <p class="nutrient-counter__calories">
+          <span class="calories-label">Calorías</span>
+          <span class="calories-value">{{ data.calories }} <small>/ {{ data.calorieGoal }} kcal</small></span>
+          <span class="calories-progress">
+            <span class="calories-progress__bar" [style.width.%]="caloriePercentage()"></span>
+          </span>
+        </p>
+        }
       } @else {
-      <p>Cargando datos de nutrientes...</p>
+      <div class="nutrient-counter__empty-state">
+        <p>No hay datos de nutrientes para hoy</p>
+        <small>Registra tus comidas para ver el desglose</small>
+      </div>
       }
     </section>
   </section>
