@@ -1,4 +1,4 @@
-import { Component, input, computed, effect, signal } from '@angular/core';
+import { Component, input, computed, effect, signal, ChangeDetectionStrategy } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { NutrientData } from '../../services/progress.service';
@@ -8,6 +8,7 @@ import { NutrientData } from '../../services/progress.service';
   imports: [BaseChartDirective],
   templateUrl: './nutrient-counter.html',
   styleUrl: './nutrient-counter.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NutrientCounter {
   // Input signal for nutrient data

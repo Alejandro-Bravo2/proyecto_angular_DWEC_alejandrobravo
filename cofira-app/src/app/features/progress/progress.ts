@@ -1,17 +1,25 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NutrientCounter } from './components/nutrient-counter/nutrient-counter';
 import { StrengthGainChart } from './components/strength-gain-chart/strength-gain-chart';
 import { ProgressService, NutrientData, ProgressEntry } from './services/progress.service';
+import { ProgressStore } from './stores/progress.store';
 
 @Component({
   selector: 'app-progress',
   standalone: true,
-  imports: [NutrientCounter, StrengthGainChart],
+  imports: [NutrientCounter, StrengthGainChart, ReactiveFormsModule],
   templateUrl: './progress.html',
   styleUrl: './progress.scss',
 })
 export class Progress implements OnInit {
-  private progressService = inject(ProgressService);
+  private readonly progressService = inject(ProgressService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** Store de progreso para gestion de estado */
+  readonly store = inject(ProgressStore);
 
   // Reactive state using signals
   currentDate = signal(new Date().toISOString().split('T')[0]);
@@ -20,6 +28,20 @@ export class Progress implements OnInit {
   exercises = signal<string[]>([]);
   isLoading = signal(false);
   error = signal<string | null>(null);
+
+  /** Control para busqueda con debounce */
+  readonly searchControl = new FormControl('');
+
+  constructor() {
+    // Configurar busqueda con debounce
+    this.searchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(term => {
+      this.store.setSearchTerm(term ?? '');
+    });
+  }
 
   ngOnInit(): void {
     this.loadProgressData();
@@ -34,6 +56,9 @@ export class Progress implements OnInit {
 
     this.isLoading.set(true);
     this.error.set(null);
+
+    // Cargar datos usando el store
+    this.store.load(userId, this.currentDate());
 
     // Load nutrient data
     this.progressService.getNutrientDataByDate(userId, this.currentDate()).subscribe({
@@ -77,5 +102,21 @@ export class Progress implements OnInit {
       return JSON.parse(user).id;
     }
     return null;
+  }
+
+  /** Limpiar busqueda */
+  clearSearch(): void {
+    this.searchControl.setValue('');
+    this.store.clearSearch();
+  }
+
+  /** Ir a pagina anterior */
+  previousPage(): void {
+    this.store.previousPage();
+  }
+
+  /** Ir a pagina siguiente */
+  nextPage(): void {
+    this.store.nextPage();
   }
 }

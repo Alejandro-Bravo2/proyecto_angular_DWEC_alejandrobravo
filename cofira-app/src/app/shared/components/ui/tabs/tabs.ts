@@ -38,41 +38,7 @@ export interface Tab {
   selector: 'app-tabs',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="c-tabs">
-      <!-- Tabs Header -->
-      <div class="c-tabs__header" role="tablist">
-        @for (tab of tabs(); track tab.id) {
-          <button
-            class="c-tabs__tab"
-            [class.c-tabs__tab--active]="activeTabId() === tab.id"
-            [class.c-tabs__tab--disabled]="tab.disabled"
-            [disabled]="tab.disabled"
-            role="tab"
-            [attr.aria-selected]="activeTabId() === tab.id"
-            [attr.aria-controls]="'panel-' + tab.id"
-            [id]="'tab-' + tab.id"
-            (click)="selectTab(tab.id)"
-            type="button"
-          >
-            {{ tab.label }}
-          </button>
-        }
-
-        <!-- Active Tab Indicator -->
-        <div
-          class="c-tabs__indicator"
-          [style.transform]="'translateX(' + indicatorPosition() + 'px)'"
-          [style.width]="indicatorWidth() + 'px'"
-        ></div>
-      </div>
-
-      <!-- Tabs Content -->
-      <div class="c-tabs__content" role="tabpanel">
-        <ng-content />
-      </div>
-    </div>
-  `,
+  templateUrl: './tabs.html',
   styleUrl: './tabs.scss'
 })
 export class Tabs implements OnInit {
@@ -164,19 +130,7 @@ export class Tabs implements OnInit {
   selector: 'app-tab-panel',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    @if (isActive()) {
-      <div
-        class="c-tab-panel"
-        [@fadeIn]
-        role="tabpanel"
-        [attr.aria-labelledby]="'tab-' + tabId()"
-        [id]="'panel-' + tabId()"
-      >
-        <ng-content />
-      </div>
-    }
-  `,
+  templateUrl: './tab-panel.html',
   styleUrl: './tabs.scss',
   animations: [
     trigger('fadeIn', [

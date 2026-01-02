@@ -1,4 +1,4 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface Ingredient {
@@ -13,6 +13,7 @@ interface Ingredient {
   imports: [CommonModule],
   templateUrl: './ingredients-modal.html',
   styleUrl: './ingredients-modal.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IngredientsModal {
   // Using Angular 20 input signals

@@ -16,47 +16,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-password-strength',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    @if (password()) {
-      <div class="c-password-strength">
-        <div class="c-password-strength__bar">
-          @for (level of [1, 2, 3, 4]; track level) {
-            <div
-              class="c-password-strength__segment"
-              [class.c-password-strength__segment--active]="strength() >= level"
-              [class.c-password-strength__segment--weak]="strength() === 1 && strength() >= level"
-              [class.c-password-strength__segment--fair]="strength() === 2 && strength() >= level"
-              [class.c-password-strength__segment--good]="strength() === 3 && strength() >= level"
-              [class.c-password-strength__segment--strong]="strength() === 4 && strength() >= level"
-            ></div>
-          }
-        </div>
-
-        <div class="c-password-strength__feedback">
-          <p class="c-password-strength__label" [class]="labelClass()">
-            {{ strengthLabel() }}
-          </p>
-
-          @if (showRequirements()) {
-            <ul class="c-password-strength__requirements">
-              <li [class.c-password-strength__requirement--met]="hasMinLength()">
-                {{ hasMinLength() ? '✓' : '○' }} Al menos 12 caracteres
-              </li>
-              <li [class.c-password-strength__requirement--met]="hasUpperLower()">
-                {{ hasUpperLower() ? '✓' : '○' }} Mayúsculas y minúsculas
-              </li>
-              <li [class.c-password-strength__requirement--met]="hasNumber()">
-                {{ hasNumber() ? '✓' : '○' }} Al menos un número
-              </li>
-              <li [class.c-password-strength__requirement--met]="hasSpecialChar()">
-                {{ hasSpecialChar() ? '✓' : '○' }} Al menos un símbolo especial
-              </li>
-            </ul>
-          }
-        </div>
-      </div>
-    }
-  `,
+  templateUrl: './password-strength.html',
   styleUrl: './password-strength.scss'
 })
 export class PasswordStrength {

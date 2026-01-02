@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { WorkoutProgress } from '../../services/training.service';
 
@@ -7,6 +7,7 @@ import { WorkoutProgress } from '../../services/training.service';
   imports: [RouterLink],
   templateUrl: './progress-card.html',
   styleUrl: './progress-card.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProgressCard {
   // Input signal for workout progress

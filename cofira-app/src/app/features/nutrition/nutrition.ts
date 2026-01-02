@@ -1,8 +1,11 @@
 import { Component, signal, inject, OnInit, computed, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DailyMenu } from './components/daily-menu/daily-menu';
 import { NutritionService, DailyNutrition } from './services/nutrition.service';
+import { NutritionStore } from './stores/nutrition.store';
 import { NutritionSceneComponent } from '../../shared/components/nutrition-scene/nutrition-scene.component';
 import { NutritionDashboard, NutritionGoals } from './components/nutrition-dashboard/nutrition-dashboard';
 import { WeeklyProgress, WeeklyData } from './components/weekly-progress/weekly-progress';
@@ -15,7 +18,7 @@ import { of } from 'rxjs';
 @Component({
   selector: 'app-nutrition',
   standalone: true,
-  imports: [DailyMenu, NutritionSceneComponent, NutritionDashboard, WeeklyProgress],
+  imports: [DailyMenu, NutritionSceneComponent, NutritionDashboard, WeeklyProgress, ReactiveFormsModule],
   templateUrl: './nutrition.html',
   styleUrl: './nutrition.scss',
 })
@@ -25,6 +28,9 @@ export class Nutrition implements OnInit {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly toastService = inject(ToastService);
+
+  /** Store de nutricion para gestion de estado */
+  readonly store = inject(NutritionStore);
 
   // State signals
   readonly currentDate = signal(this.getTodayDate());
@@ -44,6 +50,9 @@ export class Nutrition implements OnInit {
   readonly waterGlasses = signal(6);
   readonly currentStreak = signal(12);
 
+  /** Control para busqueda con debounce */
+  readonly searchControl = new FormControl('');
+
   // Computed states
   readonly isEmpty = computed(() =>
     !this.dailyNutrition() && !this.isLoading() && !this.error()
@@ -53,6 +62,17 @@ export class Nutrition implements OnInit {
     const nutrition = this.dailyNutrition();
     return nutrition && nutrition.meals.length > 0;
   });
+
+  constructor() {
+    // Configurar busqueda con debounce
+    this.searchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(term => {
+      this.store.setSearchTerm(term ?? '');
+    });
+  }
 
   ngOnInit(): void {
     this.loadNutritionGoals();
@@ -167,5 +187,21 @@ export class Nutrition implements OnInit {
 
   private getTodayDate(): string {
     return new Date().toISOString().split('T')[0];
+  }
+
+  /** Limpiar busqueda */
+  clearSearch(): void {
+    this.searchControl.setValue('');
+    this.store.clearSearch();
+  }
+
+  /** Ir a pagina anterior */
+  previousPage(): void {
+    this.store.previousPage();
+  }
+
+  /** Ir a pagina siguiente */
+  nextPage(): void {
+    this.store.nextPage();
   }
 }

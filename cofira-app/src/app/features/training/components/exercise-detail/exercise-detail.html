@@ -1,53 +1,53 @@
 <section class="exercise-detail">
   <!-- Breadcrumb de navegación -->
-  <nav class="exercise-detail__breadcrumb">
+  <nav class="exercise-detail__breadcrumb" aria-label="Migas de pan">
     <a routerLink="/entrenamiento" class="exercise-detail__breadcrumb-link">
       Entrenamiento
     </a>
-    <span class="exercise-detail__breadcrumb-separator">/</span>
+    <span class="exercise-detail__breadcrumb-separator" aria-hidden="true">/</span>
     @if (exercise()) {
-      <span class="exercise-detail__breadcrumb-current">{{ exercise()?.nombreEjercicio }}</span>
+      <span class="exercise-detail__breadcrumb-current" aria-current="page">{{ exercise()?.nombreEjercicio }}</span>
     } @else {
-      <span class="exercise-detail__breadcrumb-current">Detalle</span>
+      <span class="exercise-detail__breadcrumb-current" aria-current="page">Detalle</span>
     }
   </nav>
 
   <!-- Estado de carga -->
   @if (isLoading()) {
-    <div class="exercise-detail__loading">
-      <div class="exercise-detail__spinner"></div>
+    <aside class="exercise-detail__loading" role="status" aria-live="polite">
+      <output class="exercise-detail__spinner" aria-hidden="true"></output>
       <p>Cargando ejercicio...</p>
-    </div>
+    </aside>
   }
 
   <!-- Estado de error -->
   @if (error()) {
-    <div class="exercise-detail__error">
-      <div class="exercise-detail__error-icon">!</div>
+    <aside class="exercise-detail__error" role="alert">
+      <mark class="exercise-detail__error-icon" aria-hidden="true">!</mark>
       <h2>Error al cargar</h2>
       <p>{{ error() }}</p>
       <button class="exercise-detail__btn exercise-detail__btn--primary" (click)="goBack()">
         Volver a Entrenamiento
       </button>
-    </div>
+    </aside>
   }
 
   <!-- Contenido del ejercicio -->
   @if (exercise() && !isLoading() && !error()) {
     <article class="exercise-detail__content">
       <header class="exercise-detail__header">
-        <div class="exercise-detail__title-group">
+        <hgroup class="exercise-detail__title-group">
           <h1 class="exercise-detail__title">{{ exercise()?.nombreEjercicio }}</h1>
-          <span
+          <mark
             class="exercise-detail__muscle-badge"
             [style.background-color]="getMuscleGroupColor(exercise()?.grupoMuscular || '')">
             {{ exercise()?.grupoMuscular }}
-          </span>
-        </div>
+          </mark>
+        </hgroup>
         <p class="exercise-detail__id">ID: #{{ exerciseId() }}</p>
       </header>
 
-      <div class="exercise-detail__body">
+      <main class="exercise-detail__body">
         <!-- Descripción -->
         <section class="exercise-detail__section">
           <h2 class="exercise-detail__section-title">Descripción</h2>
@@ -59,35 +59,35 @@
         <!-- Parámetros del ejercicio -->
         <section class="exercise-detail__section">
           <h2 class="exercise-detail__section-title">Parámetros</h2>
-          <div class="exercise-detail__stats">
-            <div class="exercise-detail__stat">
-              <span class="exercise-detail__stat-value">{{ exercise()?.series }}</span>
+          <ul class="exercise-detail__stats" role="list">
+            <li class="exercise-detail__stat">
+              <data class="exercise-detail__stat-value" [value]="exercise()?.series">{{ exercise()?.series }}</data>
               <span class="exercise-detail__stat-label">Series</span>
-            </div>
-            <div class="exercise-detail__stat">
-              <span class="exercise-detail__stat-value">{{ exercise()?.repeticiones }}</span>
+            </li>
+            <li class="exercise-detail__stat">
+              <data class="exercise-detail__stat-value" [value]="exercise()?.repeticiones">{{ exercise()?.repeticiones }}</data>
               <span class="exercise-detail__stat-label">Repeticiones</span>
-            </div>
-            <div class="exercise-detail__stat">
-              <span class="exercise-detail__stat-value">{{ exercise()?.tiempoDescansoSegundos }}s</span>
+            </li>
+            <li class="exercise-detail__stat">
+              <data class="exercise-detail__stat-value" [value]="exercise()?.tiempoDescansoSegundos">{{ exercise()?.tiempoDescansoSegundos }}s</data>
               <span class="exercise-detail__stat-label">Descanso</span>
-            </div>
-          </div>
+            </li>
+          </ul>
         </section>
 
         <!-- Grupo muscular -->
         <section class="exercise-detail__section">
           <h2 class="exercise-detail__section-title">Grupo Muscular</h2>
-          <div class="exercise-detail__muscle-info">
-            <div
+          <figure class="exercise-detail__muscle-info">
+            <figcaption
               class="exercise-detail__muscle-icon"
               [style.background-color]="getMuscleGroupColor(exercise()?.grupoMuscular || '')">
               {{ exercise()?.grupoMuscular?.charAt(0) }}
-            </div>
+            </figcaption>
             <span>{{ exercise()?.grupoMuscular }}</span>
-          </div>
+          </figure>
         </section>
-      </div>
+      </main>
 
       <!-- Navegación entre ejercicios -->
       <footer class="exercise-detail__footer">

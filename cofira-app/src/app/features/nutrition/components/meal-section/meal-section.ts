@@ -1,4 +1,4 @@
-import { Component, input, computed, inject } from '@angular/core';
+import { Component, input, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FoodItem } from '../food-item/food-item';
 import { ModalService } from '../../../../core/services/modal.service';
 import { IngredientsModal } from '../ingredients-modal/ingredients-modal';
@@ -16,6 +16,7 @@ interface Ingredient {
   imports: [FoodItem],
   templateUrl: './meal-section.html',
   styleUrl: './meal-section.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MealSection {
   private readonly modalService = inject(ModalService);

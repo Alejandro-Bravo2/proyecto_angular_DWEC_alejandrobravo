@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 interface Exercise {
@@ -14,6 +14,7 @@ interface Exercise {
   imports: [CommonModule],
   templateUrl: './exercise-row.html',
   styleUrl: './exercise-row.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExerciseRow {
   // Using Angular 20 input signal

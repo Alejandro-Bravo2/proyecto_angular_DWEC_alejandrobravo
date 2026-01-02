@@ -32,6 +32,7 @@
  - [Fase 3: Formularios Reactivos Avanzados](#fase-3-formularios-reactivos-avanzados)
  - [Fase 4: Sistema de Rutas y Navegación](#fase-4-sistema-de-rutas-y-navegación)
  - [Fase 5: Servicios y Comunicación HTTP](#fase-5-servicios-y-comunicación-http)
+ - [Fase 6: Gestión de Estado y Actualización Dinámica](#fase-6-gestión-de-estado-y-actualización-dinámica)
 - [Testing](#-testing)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
 - [Contribución](#-contribución)
@@ -3501,6 +3502,253 @@ onSubmit(): void {
   });
 }
 ```
+
+---
+
+### Fase 6: Gestión de Estado y Actualización Dinámica
+
+Esta fase implementa un sistema de gestión de estado robusto y escalable utilizando el patrón de Stores con Angular Signals.
+
+#### 6.1 Patrón de Estado Elegido: Servicios con Signals
+
+COFIRA utiliza **servicios de dominio (stores)** que exponen estado mediante `signal()`, `computed()` y métodos para mutarlo.
+
+**Justificación**:
+- Integración nativa con Angular 20 (change detection optimizado)
+- Sintaxis simple sin boilerplate de RxJS
+- Curva de aprendizaje adecuada
+- Flujo de datos unidireccional claro
+
+**Stores implementados**:
+- `TrainingStore` - Gestión de ejercicios y entrenamientos
+- `NutritionStore` - Gestión de comidas y nutrición diaria
+- `ProgressStore` - Gestión de progreso y métricas
+
+#### 6.2 Arquitectura del Store
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class TrainingStore {
+  // Estado privado (solo modificable internamente)
+  private readonly _exercises = signal<Exercise[]>([]);
+  private readonly _loading = signal(false);
+  private readonly _error = signal<string | null>(null);
+  private readonly _searchTerm = signal('');
+  private readonly _currentPage = signal(1);
+
+  // Estado público (readonly para componentes)
+  readonly exercises = this._exercises.asReadonly();
+  readonly loading = this._loading.asReadonly();
+  readonly error = this._error.asReadonly();
+
+  // Computed - Valores derivados sin recálculo innecesario
+  readonly totalExercises = computed(() => this._exercises().length);
+  readonly filteredExercises = computed(() => {
+    const term = this._searchTerm().toLowerCase();
+    if (!term) return this._exercises();
+    return this._exercises().filter(e =>
+      e.name.toLowerCase().includes(term)
+    );
+  });
+  readonly paginatedExercises = computed(() => {
+    const start = (this._currentPage() - 1) * this.pageSize;
+    return this.filteredExercises().slice(start, start + this.pageSize);
+  });
+
+  // Métodos CRUD
+  add(exercise: Exercise): void {
+    this._exercises.update(list => [...list, exercise]);
+  }
+  update(updated: Exercise): void {
+    this._exercises.update(list =>
+      list.map(e => e.id === updated.id ? updated : e)
+    );
+  }
+  remove(id: string): void {
+    this._exercises.update(list => list.filter(e => e.id !== id));
+  }
+
+  // Métodos de búsqueda y paginación
+  setSearchTerm(term: string): void {
+    this._searchTerm.set(term);
+    this._currentPage.set(1);
+  }
+  nextPage(): void { ... }
+  previousPage(): void { ... }
+}
+```
+
+#### 6.3 Opciones de Gestión de Estado Evaluadas
+
+| Opción | Complejidad | Ventajas | Inconvenientes |
+|--------|-------------|----------|----------------|
+| Servicios + BehaviorSubject | Baja | Patrón conocido | Más RxJS, riesgo de leaks |
+| **Servicios + Signals (elegida)** | Media | Nativo Angular, sintaxis simple | Requiere Angular 17+ |
+| NgRx | Alta | Escalable, time-travel debugging | Sobredimensionado para este proyecto |
+
+#### 6.4 Estrategias de Optimización Aplicadas
+
+##### A. ChangeDetectionStrategy.OnPush
+
+Aplicado en **12 componentes presentacionales**:
+- WeeklyTable, ExerciseRow, ProgressCard
+- DailyMenu, MealSection, FoodItem, IngredientsModal
+- NutritionDashboard, WeeklyProgress
+- NutrientCounter, StrengthGainChart, AddProgressForm
+
+```typescript
+@Component({
+  selector: 'app-weekly-table',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  // ...
+})
+export class WeeklyTable { }
+```
+
+##### B. trackBy en @for
+
+Implementado en todos los listados para optimizar el re-renderizado:
+
+```html
+@for (meal of dailyNutrition().meals; track meal.id) {
+  <app-meal-section [title]="getMealLabel(meal.mealType)" />
+}
+```
+
+##### C. takeUntilDestroyed
+
+Gestión automática de suscripciones para evitar memory leaks:
+
+```typescript
+constructor() {
+  this.searchControl.valueChanges.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    takeUntilDestroyed(this.destroyRef)
+  ).subscribe(term => {
+    this.store.setSearchTerm(term ?? '');
+  });
+}
+```
+
+##### D. computed() para valores derivados
+
+```typescript
+readonly totalCalories = computed(() =>
+  this._meals().reduce((sum, m) => sum + m.totalCalories, 0)
+);
+
+readonly filteredMeals = computed(() => {
+  const term = this._searchTerm().toLowerCase();
+  if (!term) return this._meals();
+  return this._meals().filter(m =>
+    m.foods.some(f => f.name.toLowerCase().includes(term))
+  );
+});
+```
+
+#### 6.5 Actualización Dinámica sin Recargas
+
+Los stores mantienen el estado en memoria y notifican cambios automáticamente:
+
+```typescript
+// Agregar elemento - UI se actualiza instantáneamente
+store.add(newExercise);
+
+// Eliminar elemento - UI refleja cambio sin recargar
+store.remove(exerciseId);
+
+// Los componentes suscritos se re-renderizan automáticamente
+// gracias a Signals y OnPush
+```
+
+**Flujo de datos**:
+```
+Usuario interactúa → Store.método() → signal.update() → UI re-renderiza
+```
+
+#### 6.6 Búsqueda en Tiempo Real
+
+Implementada con debounce para optimizar rendimiento:
+
+```typescript
+// En el componente
+readonly searchControl = new FormControl('');
+
+constructor() {
+  this.searchControl.valueChanges.pipe(
+    debounceTime(300),      // Espera 300ms tras dejar de escribir
+    distinctUntilChanged(), // Evita búsquedas duplicadas
+    takeUntilDestroyed(this.destroyRef)
+  ).subscribe(term => this.store.setSearchTerm(term ?? ''));
+}
+```
+
+```html
+<!-- En el template -->
+<input
+  type="search"
+  [formControl]="searchControl"
+  placeholder="Buscar ejercicios..."
+/>
+@if (store.searchTerm()) {
+  <p>{{ store.filteredExercises().length }} resultado(s)</p>
+}
+```
+
+#### 6.7 Paginación
+
+Implementada con signals para máximo rendimiento:
+
+```typescript
+// En el Store
+readonly pageSize = 10;
+private readonly _currentPage = signal(1);
+
+readonly totalPages = computed(() =>
+  Math.ceil(this.filteredExercises().length / this.pageSize)
+);
+
+readonly paginatedExercises = computed(() => {
+  const start = (this._currentPage() - 1) * this.pageSize;
+  return this.filteredExercises().slice(start, start + this.pageSize);
+});
+
+nextPage(): void {
+  if (this._currentPage() < this.totalPages()) {
+    this._currentPage.update(p => p + 1);
+  }
+}
+
+previousPage(): void {
+  if (this._currentPage() > 1) {
+    this._currentPage.update(p => p - 1);
+  }
+}
+```
+
+```html
+<!-- Controles de paginación -->
+@if (store.totalPages() > 1) {
+  <nav class="pagination">
+    <button (click)="previousPage()" [disabled]="store.currentPage() === 1">
+      Anterior
+    </button>
+    <span>Página {{ store.currentPage() }} de {{ store.totalPages() }}</span>
+    <button (click)="nextPage()" [disabled]="store.currentPage() >= store.totalPages()">
+      Siguiente
+    </button>
+  </nav>
+}
+```
+
+#### 6.8 Archivos Creados
+
+| Archivo | Descripción |
+|---------|-------------|
+| `features/training/stores/training.store.ts` | Store de entrenamientos |
+| `features/nutrition/stores/nutrition.store.ts` | Store de nutrición |
+| `features/progress/stores/progress.store.ts` | Store de progreso |
 
 ---
 

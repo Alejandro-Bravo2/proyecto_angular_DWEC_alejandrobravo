@@ -16,11 +16,7 @@ import { trigger, state, style, transition, animate } from '@angular/animations'
 @Component({
   selector: 'app-accordion',
   standalone: true,
-  template: `
-    <div class="c-accordion">
-      <ng-content />
-    </div>
-  `,
+  templateUrl: './accordion.html',
   styleUrl: './accordion.scss'
 })
 export class Accordion {}
@@ -39,37 +35,7 @@ export class Accordion {}
   selector: 'app-accordion-item',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="c-accordion-item" [class.c-accordion-item--open]="isOpen()">
-      <button
-        class="c-accordion-item__header"
-        (click)="toggle()"
-        [attr.aria-expanded]="isOpen()"
-        [attr.aria-controls]="'content-' + itemId"
-        type="button"
-      >
-        <span class="c-accordion-item__title">{{ title() }}</span>
-        <span
-          class="c-accordion-item__icon"
-          [attr.aria-hidden]="true"
-        >
-          {{ isOpen() ? '−' : '+' }}
-        </span>
-      </button>
-
-      <div
-        [id]="'content-' + itemId"
-        class="c-accordion-item__content-wrapper"
-        [@slideDown]="isOpen() ? 'open' : 'closed'"
-        [attr.aria-hidden]="!isOpen()"
-        role="region"
-      >
-        <div class="c-accordion-item__content">
-          <ng-content />
-        </div>
-      </div>
-    </div>
-  `,
+  templateUrl: './accordion-item.html',
   styleUrl: './accordion.scss',
   animations: [
     trigger('slideDown', [

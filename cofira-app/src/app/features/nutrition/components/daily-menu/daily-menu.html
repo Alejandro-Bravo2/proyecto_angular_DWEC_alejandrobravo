@@ -12,7 +12,7 @@
       </svg>
     </button>
 
-    <div class="daily-menu__date">
+    <time class="daily-menu__date">
       <h2 class="daily-menu__date-text" aria-live="polite">{{ formattedDate() }}</h2>
       <input
         type="date"
@@ -21,7 +21,7 @@
         class="daily-menu__date-input"
         aria-label="Seleccionar fecha"
       />
-    </div>
+    </time>
 
     <button
       type="button"
@@ -43,15 +43,17 @@
   }
 
   @if (dailyNutrition(); as nutrition) {
-    <div class="daily-menu__grid" role="list">
+    <ul class="daily-menu__grid" role="list">
       @for (meal of nutrition.meals; track trackByMealId($index, meal)) {
-        <app-meal-section
-          [title]="getMealLabel(meal.mealType)"
-          [foods]="meal.foods"
-          [mealId]="meal.id"
-        />
+        <li>
+          <app-meal-section
+            [title]="getMealLabel(meal.mealType)"
+            [foods]="meal.foods"
+            [mealId]="meal.id"
+          />
+        </li>
       }
-    </div>
+    </ul>
   } @else {
     <article class="daily-menu__empty" role="status">
       <p>Sin datos para esta fecha</p>

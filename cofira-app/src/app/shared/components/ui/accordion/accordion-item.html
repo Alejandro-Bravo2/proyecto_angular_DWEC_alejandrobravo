@@ -1,0 +1,28 @@
+<details class="c-accordion-item" [open]="isOpen()">
+  <summary
+    class="c-accordion-item__header"
+    (click)="toggle(); $event.preventDefault()"
+    [attr.aria-expanded]="isOpen()"
+    [attr.aria-controls]="'content-' + itemId"
+  >
+    <span class="c-accordion-item__title">{{ title() }}</span>
+    <span
+      class="c-accordion-item__icon"
+      aria-hidden="true"
+    >
+      {{ isOpen() ? '−' : '+' }}
+    </span>
+  </summary>
+
+  <article
+    [id]="'content-' + itemId"
+    class="c-accordion-item__content-wrapper"
+    [@slideDown]="isOpen() ? 'open' : 'closed'"
+    [attr.aria-hidden]="!isOpen()"
+    role="region"
+  >
+    <section class="c-accordion-item__content">
+      <ng-content />
+    </section>
+  </article>
+</details>

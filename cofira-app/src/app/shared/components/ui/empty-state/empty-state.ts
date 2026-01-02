@@ -38,39 +38,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-empty-state',
   standalone: true,
   imports: [CommonModule],
-  template: `
-    <div class="c-empty-state">
-      @if (icon()) {
-        <div class="c-empty-state__icon" [attr.aria-hidden]="true">
-          {{ icon() }}
-        </div>
-      }
-
-      <h3 class="c-empty-state__title">{{ title() }}</h3>
-
-      <p class="c-empty-state__message">{{ message() }}</p>
-
-      @if (actionLabel()) {
-        <button
-          class="c-empty-state__action c-button c-button--primary"
-          (click)="actionClicked.emit()"
-          type="button"
-        >
-          {{ actionLabel() }}
-        </button>
-      }
-
-      @if (secondaryActionLabel()) {
-        <button
-          class="c-empty-state__action c-empty-state__action--secondary c-button c-button--secondary"
-          (click)="secondaryActionClicked.emit()"
-          type="button"
-        >
-          {{ secondaryActionLabel() }}
-        </button>
-      }
-    </div>
-  `,
+  templateUrl: './empty-state.html',
   styleUrl: './empty-state.scss'
 })
 export class EmptyState {

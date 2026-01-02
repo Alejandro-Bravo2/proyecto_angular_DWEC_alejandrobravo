@@ -1,4 +1,4 @@
-import { Component, input, signal, computed, effect } from '@angular/core';
+import { Component, input, signal, computed, effect, ChangeDetectionStrategy } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration } from 'chart.js';
 import { ProgressEntry } from '../../services/progress.service';
@@ -8,6 +8,7 @@ import { ProgressEntry } from '../../services/progress.service';
   imports: [BaseChartDirective],
   templateUrl: './strength-gain-chart.html',
   styleUrl: './strength-gain-chart.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StrengthGainChart {
   // Input signals

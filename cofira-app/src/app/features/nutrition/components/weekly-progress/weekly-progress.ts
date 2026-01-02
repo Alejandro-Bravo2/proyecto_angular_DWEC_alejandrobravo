@@ -1,4 +1,4 @@
-import { Component, input, computed, inject, effect } from '@angular/core';
+import { Component, input, computed, inject, effect, ChangeDetectionStrategy } from '@angular/core';
 import { BaseChartDirective } from 'ng2-charts';
 import { ChartConfiguration, ChartData } from 'chart.js';
 import { ThemeService } from '../../../../core/services/theme.service';
@@ -15,53 +15,8 @@ export interface WeeklyData {
   selector: 'app-weekly-progress',
   standalone: true,
   imports: [BaseChartDirective],
-  template: `
-    <article class="weekly-progress">
-      <header class="weekly-progress__header">
-        <h3 class="weekly-progress__title">Progreso Semanal</h3>
-        <div class="weekly-progress__tabs" role="tablist">
-          @for (tab of tabs; track tab.key) {
-            <button
-              type="button"
-              role="tab"
-              class="weekly-progress__tab"
-              [class.weekly-progress__tab--active]="activeTab() === tab.key"
-              [attr.aria-selected]="activeTab() === tab.key"
-              (click)="setActiveTab(tab.key)"
-            >
-              {{ tab.label }}
-            </button>
-          }
-        </div>
-      </header>
-
-      <div class="weekly-progress__chart">
-        <canvas
-          baseChart
-          [data]="chartData()"
-          [options]="chartOptions()"
-          [type]="'bar'"
-        ></canvas>
-      </div>
-
-      <footer class="weekly-progress__summary">
-        <div class="weekly-progress__avg">
-          <span class="weekly-progress__avg-label">Promedio diario</span>
-          <span class="weekly-progress__avg-value">{{ averageValue() }} {{ currentUnit() }}</span>
-        </div>
-        <div class="weekly-progress__trend" [class.weekly-progress__trend--positive]="trend() > 0">
-          @if (trend() !== 0) {
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" [style.transform]="trend() < 0 ? 'rotate(180deg)' : ''">
-              <path d="m18 15-6-6-6 6"/>
-            </svg>
-            <span>{{ Math.abs(trend()) }}% vs semana anterior</span>
-          } @else {
-            <span>Sin cambios</span>
-          }
-        </div>
-      </footer>
-    </article>
-  `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  templateUrl: './weekly-progress.html',
   styleUrl: './weekly-progress.scss',
 })
 export class WeeklyProgress {

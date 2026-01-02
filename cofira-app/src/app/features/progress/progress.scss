@@ -19,6 +19,10 @@
     }
   }
 
+  &__search {
+    margin-bottom: var(--spacing-size-l);
+  }
+
   &__content {
     display: grid;
     grid-template-columns: 1fr;
@@ -42,4 +46,105 @@
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-size-l);
   text-align: center;
+}
+
+// Estilos de busqueda
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  max-width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: var(--spacing-size-s);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: var(--spacing-size-s) var(--spacing-size-s) var(--spacing-size-s) var(--spacing-size-xxl);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-m);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: var(--font-size-md);
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus {
+    outline: none;
+    border-color: var(--negro-normal);
+    box-shadow: 0 0 0 3px var(--negro-alpha);
+  }
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+.search-clear {
+  position: absolute;
+  right: var(--spacing-size-s);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-size-xs);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-s);
+  transition: color 0.2s, background-color 0.2s;
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+  }
+}
+
+.search-results-count {
+  margin-top: var(--spacing-size-xs);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+// Estilos de paginacion
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-size-m);
+  margin-top: var(--spacing-size-l);
+  padding: var(--spacing-size-m) 0;
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-size-xs);
+    padding: var(--spacing-size-s) var(--spacing-size-m);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-m);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: var(--font-size-md);
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+
+    &:hover:not(:disabled) {
+      background: var(--bg-secondary);
+      border-color: var(--negro-normal);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__info {
+    font-size: var(--font-size-md);
+    color: var(--text-secondary);
+  }
 }

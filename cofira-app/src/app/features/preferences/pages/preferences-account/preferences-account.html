@@ -1,16 +1,16 @@
-<div class="preferences-account">
+<article class="preferences-account">
   <section class="preferences-account__section">
-    <div class="preferences-account__section-header">
+    <header class="preferences-account__section-header">
       <h2 class="preferences-account__section-title">Informacion de Cuenta</h2>
       @if (!isEditing()) {
         <button class="preferences-account__btn preferences-account__btn--outline" (click)="toggleEdit()">
           Editar
         </button>
       }
-    </div>
+    </header>
 
     <form [formGroup]="accountForm" class="preferences-account__form">
-      <div class="preferences-account__field">
+      <fieldset class="preferences-account__field">
         <label class="preferences-account__label">Nombre</label>
         @if (isEditing()) {
           <input
@@ -21,9 +21,9 @@
         } @else {
           <p class="preferences-account__value">{{ accountForm.get('name')?.value }}</p>
         }
-      </div>
+      </fieldset>
 
-      <div class="preferences-account__field">
+      <fieldset class="preferences-account__field">
         <label class="preferences-account__label">Email</label>
         @if (isEditing()) {
           <input
@@ -34,9 +34,9 @@
         } @else {
           <p class="preferences-account__value">{{ accountForm.get('email')?.value }}</p>
         }
-      </div>
+      </fieldset>
 
-      <div class="preferences-account__field">
+      <fieldset class="preferences-account__field">
         <label class="preferences-account__label">Telefono</label>
         @if (isEditing()) {
           <input
@@ -47,10 +47,10 @@
         } @else {
           <p class="preferences-account__value">{{ accountForm.get('phone')?.value || 'No especificado' }}</p>
         }
-      </div>
+      </fieldset>
 
       @if (isEditing()) {
-        <div class="preferences-account__actions">
+        <footer class="preferences-account__actions">
           <button
             type="button"
             class="preferences-account__btn preferences-account__btn--secondary"
@@ -68,24 +68,24 @@
               Guardar cambios
             }
           </button>
-        </div>
+        </footer>
       }
     </form>
   </section>
 
   <section class="preferences-account__section" id="security">
     <h2 class="preferences-account__section-title">Seguridad</h2>
-    <div class="preferences-account__security-item">
-      <div class="preferences-account__security-info">
+    <article class="preferences-account__security-item">
+      <figure class="preferences-account__security-info">
         <span class="preferences-account__security-label">Contrasena</span>
-        <span class="preferences-account__security-value">************</span>
-      </div>
+        <figcaption class="preferences-account__security-value">************</figcaption>
+      </figure>
       <button
         class="preferences-account__btn preferences-account__btn--outline"
         (click)="changePassword()">
         Cambiar
       </button>
-    </div>
+    </article>
   </section>
 
   <section class="preferences-account__section">
@@ -94,7 +94,7 @@
       Controla quien puede ver tu informacion y actividad.
     </p>
 
-    <div class="preferences-account__privacy-list">
+    <fieldset class="preferences-account__privacy-list">
       <label class="preferences-account__checkbox">
         <input
           type="checkbox"
@@ -121,6 +121,6 @@
         <span class="preferences-account__checkbox-label">Compartir estadisticas</span>
         <span class="preferences-account__checkbox-hint">Comparte tus logros en redes sociales</span>
       </label>
-    </div>
+    </fieldset>
   </section>
-</div>
+</article>

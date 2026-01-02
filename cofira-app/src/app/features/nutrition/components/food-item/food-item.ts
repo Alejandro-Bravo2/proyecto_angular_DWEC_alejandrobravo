@@ -1,4 +1,4 @@
-import { Component, input, computed } from '@angular/core';
+import { Component, input, computed, ChangeDetectionStrategy } from '@angular/core';
 import { FoodItem as FoodItemType } from '../../services/nutrition.service';
 
 @Component({
@@ -7,6 +7,7 @@ import { FoodItem as FoodItemType } from '../../services/nutrition.service';
   imports: [],
   templateUrl: './food-item.html',
   styleUrl: './food-item.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FoodItem {
   readonly food = input<FoodItemType>();

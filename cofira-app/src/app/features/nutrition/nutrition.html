@@ -1,26 +1,26 @@
 <section class="nutrition" role="main" aria-label="Gestión de alimentación">
   <!-- Hero section with 3D scene -->
-  <div class="nutrition__hero">
+  <figure class="nutrition__hero">
     <app-nutrition-scene class="nutrition__canvas" />
     <header class="nutrition__header">
       <span class="nutrition__label">Alimentación</span>
       <h1 class="nutrition__title">Tu Menú</h1>
       <p class="nutrition__subtitle">Controla tu alimentación diaria</p>
     </header>
-  </div>
+  </figure>
 
-  <div class="nutrition__content">
+  <article class="nutrition__content">
     @if (isLoading()) {
-      <div class="nutrition__loading" role="status" aria-live="polite">
-        <div class="nutrition__skeleton">
-          <div class="nutrition__skeleton-nav"></div>
-          <div class="nutrition__skeleton-grid">
-            <div class="nutrition__skeleton-card"></div>
-            <div class="nutrition__skeleton-card"></div>
-          </div>
-        </div>
+      <aside class="nutrition__loading" role="status" aria-live="polite">
+        <ul class="nutrition__skeleton" aria-hidden="true">
+          <li class="nutrition__skeleton-nav"></li>
+          <li class="nutrition__skeleton-grid">
+            <span class="nutrition__skeleton-card"></span>
+            <span class="nutrition__skeleton-card"></span>
+          </li>
+        </ul>
         <span class="sr-only">Cargando datos de nutrición...</span>
-      </div>
+      </aside>
     } @else if (error()) {
       <article class="nutrition__error" role="alert">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -71,11 +71,11 @@
 
       @if (activeView() === 'dashboard') {
         <!-- Dashboard View -->
-        <div class="nutrition__dashboard">
+        <section class="nutrition__dashboard">
           @if (isLoadingGoals()) {
-            <div class="nutrition__goals-loading">
-              <div class="nutrition__skeleton-card"></div>
-            </div>
+            <aside class="nutrition__goals-loading" aria-busy="true">
+              <span class="nutrition__skeleton-card"></span>
+            </aside>
           } @else if (nutritionGoals()) {
             <app-nutrition-dashboard
               [dailyNutrition]="dailyNutrition()"
@@ -98,7 +98,7 @@
               <p>Necesitas completar el onboarding para ver tus objetivos nutricionales personalizados.</p>
             </article>
           }
-        </div>
+        </section>
       } @else {
         <!-- Meals View -->
         @if (isEmpty()) {
@@ -114,13 +114,83 @@
             </button>
           </article>
         } @else {
+          <!-- Barra de busqueda para comidas -->
+          <search class="nutrition__search">
+            <fieldset class="search-input-wrapper">
+              <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/>
+                <path d="m21 21-4.3-4.3"/>
+              </svg>
+              <input
+                type="search"
+                [formControl]="searchControl"
+                placeholder="Buscar comidas o alimentos..."
+                class="search-input"
+                aria-label="Buscar comidas"
+              />
+              @if (store.searchTerm()) {
+                <button
+                  type="button"
+                  class="search-clear"
+                  (click)="clearSearch()"
+                  aria-label="Limpiar busqueda"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M18 6 6 18"/>
+                    <path d="m6 6 12 12"/>
+                  </svg>
+                </button>
+              }
+            </fieldset>
+            @if (store.searchTerm()) {
+              <output class="search-results-count" aria-live="polite">
+                {{ store.filteredMeals().length }} comida(s) encontrada(s)
+              </output>
+            }
+          </search>
+
           <app-daily-menu
             [dailyNutrition]="dailyNutrition()"
             [currentDate]="currentDate()"
             (dateChanged)="onDateChanged($event)"
           />
+
+          <!-- Controles de paginacion -->
+          @if (store.totalPages() > 1) {
+            <nav class="pagination" aria-label="Paginacion de comidas">
+              <button
+                type="button"
+                class="pagination__btn"
+                (click)="previousPage()"
+                [disabled]="store.currentPage() === 1"
+                aria-label="Pagina anterior"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m15 18-6-6 6-6"/>
+                </svg>
+                Anterior
+              </button>
+
+              <span class="pagination__info">
+                Pagina {{ store.currentPage() }} de {{ store.totalPages() }}
+              </span>
+
+              <button
+                type="button"
+                class="pagination__btn"
+                (click)="nextPage()"
+                [disabled]="store.currentPage() >= store.totalPages()"
+                aria-label="Pagina siguiente"
+              >
+                Siguiente
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m9 18 6-6-6-6"/>
+                </svg>
+              </button>
+            </nav>
+          }
         }
       }
     }
-  </div>
+  </article>
 </section>

@@ -1,26 +1,47 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
+import { Component, signal, inject, OnInit, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { WeeklyTable } from './components/weekly-table/weekly-table';
 import { FeedbackForm } from './components/feedback-form/feedback-form';
 import { ProgressCard } from './components/progress-card/progress-card';
 import { TrainingService, Exercise, WorkoutProgress } from './services/training.service';
+import { TrainingStore } from './stores/training.store';
 import { EmptyState } from '../../shared/components/ui/empty-state/empty-state';
 
 @Component({
   selector: 'app-training',
   standalone: true,
-  imports: [WeeklyTable, FeedbackForm, ProgressCard, EmptyState],
+  imports: [WeeklyTable, FeedbackForm, ProgressCard, EmptyState, ReactiveFormsModule],
   templateUrl: './training.html',
   styleUrl: './training.scss',
 })
 export class Training implements OnInit {
-  private trainingService = inject(TrainingService);
+  private readonly trainingService = inject(TrainingService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** Store de entrenamiento para gestion de estado */
+  readonly store = inject(TrainingStore);
 
   // Reactive state using signals
   currentDate = signal(new Date().toISOString().split('T')[0]);
-  exercises = signal<Exercise[]>([]);
   workoutProgress = signal<WorkoutProgress | null>(null);
   isLoading = signal(false);
   error = signal<string | null>(null);
+
+  /** Control para busqueda con debounce */
+  readonly searchControl = new FormControl('');
+
+  constructor() {
+    // Configurar busqueda con debounce
+    this.searchControl.valueChanges.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(term => {
+      this.store.setSearchTerm(term ?? '');
+    });
+  }
 
   ngOnInit(): void {
     this.loadTrainingData();
@@ -36,26 +57,18 @@ export class Training implements OnInit {
     this.isLoading.set(true);
     this.error.set(null);
 
-    // Load exercises
-    this.trainingService.getExercises(userId, this.currentDate()).subscribe({
-      next: (exercises) => {
-        this.exercises.set(exercises);
-        this.isLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Error loading exercises:', err);
-        this.error.set('Error al cargar los ejercicios');
-        this.isLoading.set(false);
-      },
-    });
+    // Cargar ejercicios usando el store
+    this.store.load(userId, this.currentDate());
 
     // Load workout progress
     this.trainingService.getWorkoutProgress(userId).subscribe({
       next: (progress) => {
         this.workoutProgress.set(progress);
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Error loading workout progress:', err);
+        this.isLoading.set(false);
       },
     });
   }
@@ -66,6 +79,22 @@ export class Training implements OnInit {
       return JSON.parse(user).id;
     }
     return null;
+  }
+
+  /** Limpiar busqueda */
+  clearSearch(): void {
+    this.searchControl.setValue('');
+    this.store.clearSearch();
+  }
+
+  /** Ir a pagina anterior */
+  previousPage(): void {
+    this.store.previousPage();
+  }
+
+  /** Ir a pagina siguiente */
+  nextPage(): void {
+    this.store.nextPage();
   }
 
   /**

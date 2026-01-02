@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { ExerciseRow } from '../exercise-row/exercise-row';
 import { Exercise } from '../../services/training.service';
 
@@ -8,6 +8,7 @@ import { Exercise } from '../../services/training.service';
   imports: [ExerciseRow],
   templateUrl: './weekly-table.html',
   styleUrl: './weekly-table.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WeeklyTable {
   // Input signal for exercises

@@ -1,4 +1,4 @@
-import { Component, input, output, computed, HostListener } from '@angular/core';
+import { Component, input, output, computed, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { MealSection } from '../meal-section/meal-section';
 import { DailyNutrition } from '../../services/nutrition.service';
 
@@ -17,6 +17,7 @@ const MEAL_LABELS: Record<MealType, string> = {
   imports: [MealSection],
   templateUrl: './daily-menu.html',
   styleUrl: './daily-menu.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DailyMenu {
   readonly dailyNutrition = input<DailyNutrition | null>(null);

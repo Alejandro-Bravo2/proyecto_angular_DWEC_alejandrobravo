@@ -13,49 +13,7 @@ export interface MacroData {
   selector: 'app-macro-chart',
   standalone: true,
   imports: [BaseChartDirective],
-  template: `
-    <article
-      class="macro-chart"
-      role="figure"
-      [attr.aria-label]="ariaLabel()"
-      tabindex="0"
-    >
-      <div class="macro-chart__ring" aria-hidden="true">
-        <canvas
-          baseChart
-          [data]="chartData()"
-          [options]="chartOptions"
-          [type]="'doughnut'"
-        ></canvas>
-        <div class="macro-chart__center">
-          <span class="macro-chart__value">{{ displayValue() }}</span>
-          <span class="macro-chart__unit">%</span>
-        </div>
-      </div>
-      <div class="macro-chart__info">
-        <h3 class="macro-chart__label">{{ label() }}</h3>
-        <p class="macro-chart__progress">
-          <span class="macro-chart__current">{{ data().current }}</span>
-          <span class="macro-chart__separator" aria-hidden="true">/</span>
-          <span class="macro-chart__goal">{{ data().goal }}{{ data().unit }}</span>
-        </p>
-        <div
-          class="macro-chart__bar"
-          role="progressbar"
-          [attr.aria-valuenow]="data().current"
-          [attr.aria-valuemin]="0"
-          [attr.aria-valuemax]="data().goal"
-          [attr.aria-label]="label() + ' progress'"
-        >
-          <div
-            class="macro-chart__bar-fill"
-            [style.width.%]="percentage()"
-            [style.background]="barGradient()"
-          ></div>
-        </div>
-      </div>
-    </article>
-  `,
+  templateUrl: './macro-chart.html',
   styleUrl: './macro-chart.scss',
 })
 export class MacroChart {

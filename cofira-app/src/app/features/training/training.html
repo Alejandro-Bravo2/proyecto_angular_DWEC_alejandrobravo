@@ -4,10 +4,10 @@
   </header>
 
   @if (error()) {
-    <div class="error-message">{{ error() }}</div>
+    <aside class="error-message" role="alert">{{ error() }}</aside>
   }
 
-  @if (exercises().length === 0 && !isLoading() && !error()) {
+  @if (store.isEmpty() && !store.loading()) {
     <app-empty-state
       icon="🏋️"
       title="No hay ejercicios programados"
@@ -16,7 +16,79 @@
       (actionClicked)="createRoutine()"
     />
   } @else {
-    <app-weekly-table [exercises]="exercises()" />
+    <!-- Barra de busqueda -->
+    <search class="training-page__search">
+      <fieldset class="search-input-wrapper">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.3-4.3"/>
+        </svg>
+        <input
+          type="search"
+          [formControl]="searchControl"
+          placeholder="Buscar ejercicios..."
+          class="search-input"
+          aria-label="Buscar ejercicios"
+        />
+        @if (store.searchTerm()) {
+          <button
+            type="button"
+            class="search-clear"
+            (click)="clearSearch()"
+            aria-label="Limpiar busqueda"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 6 6 18"/>
+              <path d="m6 6 12 12"/>
+            </svg>
+          </button>
+        }
+      </fieldset>
+      @if (store.searchTerm()) {
+        <output class="search-results-count" aria-live="polite">
+          {{ store.filteredExercises().length }} resultado(s) encontrado(s)
+        </output>
+      }
+    </search>
+
+    <!-- Tabla de ejercicios con datos paginados -->
+    <app-weekly-table [exercises]="store.paginatedExercises()" />
+
+    <!-- Controles de paginacion -->
+    @if (store.totalPages() > 1) {
+      <nav class="pagination" aria-label="Paginacion de ejercicios">
+        <button
+          type="button"
+          class="pagination__btn"
+          (click)="previousPage()"
+          [disabled]="store.currentPage() === 1"
+          aria-label="Pagina anterior"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+          Anterior
+        </button>
+
+        <span class="pagination__info">
+          Pagina {{ store.currentPage() }} de {{ store.totalPages() }}
+        </span>
+
+        <button
+          type="button"
+          class="pagination__btn"
+          (click)="nextPage()"
+          [disabled]="store.currentPage() >= store.totalPages()"
+          aria-label="Pagina siguiente"
+        >
+          Siguiente
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </button>
+      </nav>
+    }
+
     <app-feedback-form />
     <app-progress-card [workoutProgress]="workoutProgress()" />
   }
