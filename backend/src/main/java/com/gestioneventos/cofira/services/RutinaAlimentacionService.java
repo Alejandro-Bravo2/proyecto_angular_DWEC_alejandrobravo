@@ -1,21 +1,29 @@
 package com.gestioneventos.cofira.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gestioneventos.cofira.dto.ai.IngredienteDTO;
 import com.gestioneventos.cofira.dto.rutinaalimentacion.*;
 import com.gestioneventos.cofira.entities.*;
 import com.gestioneventos.cofira.enums.DiaSemana;
 import com.gestioneventos.cofira.exceptions.RecursoNoEncontradoException;
 import com.gestioneventos.cofira.repositories.RutinaAlimentacionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class RutinaAlimentacionService {
+    private static final Logger logger = LoggerFactory.getLogger(RutinaAlimentacionService.class);
     private static final String RUTINA_NO_ENCONTRADA = "Rutina de alimentación no encontrada con id ";
 
     private final RutinaAlimentacionRepository rutinaAlimentacionRepository;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public RutinaAlimentacionService(RutinaAlimentacionRepository rutinaAlimentacionRepository) {
         this.rutinaAlimentacionRepository = rutinaAlimentacionRepository;
@@ -87,28 +95,70 @@ public class RutinaAlimentacionService {
         if (comida == null) return null;
 
         ComidaDTO dto = new ComidaDTO();
-        if (comida instanceof Desayuno) {
-            Desayuno d = (Desayuno) comida;
+        if (comida instanceof Desayuno d) {
             dto.setId(d.getId());
             dto.setAlimentos(d.getAlimentos());
-        } else if (comida instanceof Almuerzo) {
-            Almuerzo a = (Almuerzo) comida;
+            dto.setDescripcion(d.getDescripcion());
+            dto.setTiempoPreparacionMinutos(d.getTiempoPreparacionMinutos());
+            dto.setPorciones(d.getPorciones());
+            dto.setDificultad(d.getDificultad());
+            dto.setIngredientes(parseIngredientes(d.getIngredientesJson()));
+            dto.setPasosPreparacion(d.getPasosPreparacion());
+        } else if (comida instanceof Almuerzo a) {
             dto.setId(a.getId());
             dto.setAlimentos(a.getAlimentos());
-        } else if (comida instanceof Comida) {
-            Comida c = (Comida) comida;
+            dto.setDescripcion(a.getDescripcion());
+            dto.setTiempoPreparacionMinutos(a.getTiempoPreparacionMinutos());
+            dto.setPorciones(a.getPorciones());
+            dto.setDificultad(a.getDificultad());
+            dto.setIngredientes(parseIngredientes(a.getIngredientesJson()));
+            dto.setPasosPreparacion(a.getPasosPreparacion());
+        } else if (comida instanceof Comida c) {
             dto.setId(c.getId());
             dto.setAlimentos(c.getAlimentos());
-        } else if (comida instanceof Merienda) {
-            Merienda m = (Merienda) comida;
+            dto.setDescripcion(c.getDescripcion());
+            dto.setTiempoPreparacionMinutos(c.getTiempoPreparacionMinutos());
+            dto.setPorciones(c.getPorciones());
+            dto.setDificultad(c.getDificultad());
+            dto.setIngredientes(parseIngredientes(c.getIngredientesJson()));
+            dto.setPasosPreparacion(c.getPasosPreparacion());
+        } else if (comida instanceof Merienda m) {
             dto.setId(m.getId());
             dto.setAlimentos(m.getAlimentos());
-        } else if (comida instanceof Cena) {
-            Cena c = (Cena) comida;
+            dto.setDescripcion(m.getDescripcion());
+            dto.setTiempoPreparacionMinutos(m.getTiempoPreparacionMinutos());
+            dto.setPorciones(m.getPorciones());
+            dto.setDificultad(m.getDificultad());
+            dto.setIngredientes(parseIngredientes(m.getIngredientesJson()));
+            dto.setPasosPreparacion(m.getPasosPreparacion());
+        } else if (comida instanceof Cena c) {
             dto.setId(c.getId());
             dto.setAlimentos(c.getAlimentos());
+            dto.setDescripcion(c.getDescripcion());
+            dto.setTiempoPreparacionMinutos(c.getTiempoPreparacionMinutos());
+            dto.setPorciones(c.getPorciones());
+            dto.setDificultad(c.getDificultad());
+            dto.setIngredientes(parseIngredientes(c.getIngredientesJson()));
+            dto.setPasosPreparacion(c.getPasosPreparacion());
         }
         return dto;
+    }
+
+    private List<IngredienteDTO> parseIngredientes(List<String> ingredientesJson) {
+        if (ingredientesJson == null || ingredientesJson.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<IngredienteDTO> ingredientes = new ArrayList<>();
+        for (String json : ingredientesJson) {
+            try {
+                IngredienteDTO ingrediente = objectMapper.readValue(json, IngredienteDTO.class);
+                ingredientes.add(ingrediente);
+            } catch (JsonProcessingException e) {
+                logger.warn("Error parsing ingredient JSON: {}", e.getMessage());
+            }
+        }
+        return ingredientes;
     }
 
     private DiaAlimentacion convertirDiaAlimentacionDTOAEntidad(CrearDiaAlimentacionDTO dto) {

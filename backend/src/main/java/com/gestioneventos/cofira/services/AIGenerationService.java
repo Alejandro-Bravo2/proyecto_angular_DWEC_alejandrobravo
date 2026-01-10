@@ -153,7 +153,7 @@ public class AIGenerationService {
 
     private String buildMealPrompt(UserProfile profile) {
         StringBuilder prompt = new StringBuilder();
-        prompt.append("Eres un nutricionista profesional. Genera un plan de comidas semanal personalizado.\n\n");
+        prompt.append("Eres un nutricionista y chef profesional. Genera un plan de comidas semanal personalizado con recetas detalladas.\n\n");
         prompt.append("DATOS DEL USUARIO:\n");
         prompt.append("- Calorias diarias objetivo: ").append(Math.round(profile.getDailyCalorieTarget())).append(" kcal\n");
         prompt.append("- Proteinas objetivo: ").append(Math.round(profile.getProteinTargetGrams())).append("g\n");
@@ -175,16 +175,35 @@ public class AIGenerationService {
         prompt.append("  \"dias\": [\n");
         prompt.append("    {\n");
         prompt.append("      \"diaSemana\": \"LUNES\",\n");
-        prompt.append("      \"desayuno\": [\"Avena con leche\", \"Platano\", \"Miel\"],\n");
-        prompt.append("      \"almuerzo\": [\"Ensalada cesar\", \"Pollo a la plancha\"],\n");
-        prompt.append("      \"comida\": [\"Arroz integral\", \"Verduras salteadas\", \"Tofu\"],\n");
-        prompt.append("      \"merienda\": [\"Yogur natural\", \"Frutos secos\"],\n");
-        prompt.append("      \"cena\": [\"Salmon al horno\", \"Ensalada verde\"]\n");
+        prompt.append("      \"desayuno\": {\n");
+        prompt.append("        \"alimentos\": [\"Avena con leche\", \"Platano\"],\n");
+        prompt.append("        \"descripcion\": \"Desayuno energetico y nutritivo\",\n");
+        prompt.append("        \"tiempoPreparacionMinutos\": 10,\n");
+        prompt.append("        \"porciones\": 1,\n");
+        prompt.append("        \"dificultad\": \"FACIL\",\n");
+        prompt.append("        \"ingredientes\": [\n");
+        prompt.append("          {\"nombre\": \"Avena\", \"cantidad\": \"50\", \"unidad\": \"g\", \"opcional\": false},\n");
+        prompt.append("          {\"nombre\": \"Leche\", \"cantidad\": \"200\", \"unidad\": \"ml\", \"opcional\": false}\n");
+        prompt.append("        ],\n");
+        prompt.append("        \"pasosPreparacion\": [\n");
+        prompt.append("          \"Calentar la leche en un cazo\",\n");
+        prompt.append("          \"Anadir la avena y cocinar 5 minutos\",\n");
+        prompt.append("          \"Servir y decorar con el platano\"\n");
+        prompt.append("        ]\n");
+        prompt.append("      },\n");
+        prompt.append("      \"almuerzo\": { ... },\n");
+        prompt.append("      \"comida\": { ... },\n");
+        prompt.append("      \"merienda\": { ... },\n");
+        prompt.append("      \"cena\": { ... }\n");
         prompt.append("    }\n");
         prompt.append("  ]\n");
         prompt.append("}\n");
-        prompt.append("\nGenera comidas para 7 dias. Usa dias de semana validos: LUNES, MARTES, MIERCOLES, JUEVES, VIERNES, SABADO, DOMINGO.");
-        prompt.append("\nCada comida es un array de strings con los alimentos que la componen.");
+        prompt.append("\nIMPORTANTE:\n");
+        prompt.append("- Genera comidas para 7 dias: LUNES, MARTES, MIERCOLES, JUEVES, VIERNES, SABADO, DOMINGO.\n");
+        prompt.append("- Cada comida (desayuno, almuerzo, comida, merienda, cena) debe tener TODOS los campos del ejemplo.\n");
+        prompt.append("- dificultad puede ser: FACIL, MEDIA o DIFICIL.\n");
+        prompt.append("- Los ingredientes deben incluir cantidad, unidad y si son opcionales.\n");
+        prompt.append("- Los pasos de preparacion deben ser claros y detallados (3-6 pasos por receta).\n");
 
         return prompt.toString();
     }
@@ -373,35 +392,25 @@ public class AIGenerationService {
                 DiaAlimentacion.DiaAlimentacionBuilder builder = DiaAlimentacion.builder()
                     .diaSemana(diaSemana);
 
-                // Parse each meal type
+                // Parse each meal type with full recipe details
                 if (diaNode.has("desayuno")) {
-                    builder.desayuno(Desayuno.builder()
-                        .alimentos(parseAlimentos(diaNode.get("desayuno")))
-                        .build());
+                    builder.desayuno(parseDesayuno(diaNode.get("desayuno")));
                 }
 
                 if (diaNode.has("almuerzo")) {
-                    builder.almuerzo(Almuerzo.builder()
-                        .alimentos(parseAlimentos(diaNode.get("almuerzo")))
-                        .build());
+                    builder.almuerzo(parseAlmuerzo(diaNode.get("almuerzo")));
                 }
 
                 if (diaNode.has("comida")) {
-                    builder.comida(Comida.builder()
-                        .alimentos(parseAlimentos(diaNode.get("comida")))
-                        .build());
+                    builder.comida(parseComida(diaNode.get("comida")));
                 }
 
                 if (diaNode.has("merienda")) {
-                    builder.merienda(Merienda.builder()
-                        .alimentos(parseAlimentos(diaNode.get("merienda")))
-                        .build());
+                    builder.merienda(parseMerienda(diaNode.get("merienda")));
                 }
 
                 if (diaNode.has("cena")) {
-                    builder.cena(Cena.builder()
-                        .alimentos(parseAlimentos(diaNode.get("cena")))
-                        .build());
+                    builder.cena(parseCena(diaNode.get("cena")));
                 }
 
                 diasAlimentacion.add(builder.build());
@@ -416,7 +425,94 @@ public class AIGenerationService {
         return rutinaAlimentacionRepository.save(rutina);
     }
 
-    private List<String> parseAlimentos(JsonNode node) {
+    private Desayuno parseDesayuno(JsonNode node) {
+        Desayuno.DesayunoBuilder builder = Desayuno.builder();
+        parseMealCommon(node, builder::alimentos, builder::descripcion, builder::tiempoPreparacionMinutos,
+            builder::porciones, builder::dificultad, builder::ingredientesJson, builder::pasosPreparacion);
+        return builder.build();
+    }
+
+    private Almuerzo parseAlmuerzo(JsonNode node) {
+        Almuerzo.AlmuerzoBuilder builder = Almuerzo.builder();
+        parseMealCommon(node, builder::alimentos, builder::descripcion, builder::tiempoPreparacionMinutos,
+            builder::porciones, builder::dificultad, builder::ingredientesJson, builder::pasosPreparacion);
+        return builder.build();
+    }
+
+    private Comida parseComida(JsonNode node) {
+        Comida.ComidaBuilder builder = Comida.builder();
+        parseMealCommon(node, builder::alimentos, builder::descripcion, builder::tiempoPreparacionMinutos,
+            builder::porciones, builder::dificultad, builder::ingredientesJson, builder::pasosPreparacion);
+        return builder.build();
+    }
+
+    private Merienda parseMerienda(JsonNode node) {
+        Merienda.MeriendaBuilder builder = Merienda.builder();
+        parseMealCommon(node, builder::alimentos, builder::descripcion, builder::tiempoPreparacionMinutos,
+            builder::porciones, builder::dificultad, builder::ingredientesJson, builder::pasosPreparacion);
+        return builder.build();
+    }
+
+    private Cena parseCena(JsonNode node) {
+        Cena.CenaBuilder builder = Cena.builder();
+        parseMealCommon(node, builder::alimentos, builder::descripcion, builder::tiempoPreparacionMinutos,
+            builder::porciones, builder::dificultad, builder::ingredientesJson, builder::pasosPreparacion);
+        return builder.build();
+    }
+
+    private void parseMealCommon(JsonNode node,
+                                  java.util.function.Consumer<List<String>> alimentosSetter,
+                                  java.util.function.Consumer<String> descripcionSetter,
+                                  java.util.function.Consumer<Integer> tiempoSetter,
+                                  java.util.function.Consumer<Integer> porcionesSetter,
+                                  java.util.function.Consumer<String> dificultadSetter,
+                                  java.util.function.Consumer<List<String>> ingredientesSetter,
+                                  java.util.function.Consumer<List<String>> pasosSetter) {
+        if (node == null) return;
+
+        // Handle both old format (array) and new format (object)
+        if (node.isArray()) {
+            // Old format: just an array of food names
+            alimentosSetter.accept(parseAlimentosArray(node));
+        } else if (node.isObject()) {
+            // New format: object with recipe details
+            if (node.has("alimentos")) {
+                alimentosSetter.accept(parseAlimentosArray(node.get("alimentos")));
+            }
+            if (node.has("descripcion")) {
+                descripcionSetter.accept(node.get("descripcion").asText());
+            }
+            if (node.has("tiempoPreparacionMinutos")) {
+                tiempoSetter.accept(node.get("tiempoPreparacionMinutos").asInt());
+            }
+            if (node.has("porciones")) {
+                porcionesSetter.accept(node.get("porciones").asInt());
+            }
+            if (node.has("dificultad")) {
+                dificultadSetter.accept(node.get("dificultad").asText());
+            }
+            if (node.has("ingredientes") && node.get("ingredientes").isArray()) {
+                List<String> ingredientesJson = new ArrayList<>();
+                for (JsonNode ing : node.get("ingredientes")) {
+                    try {
+                        ingredientesJson.add(objectMapper.writeValueAsString(ing));
+                    } catch (JsonProcessingException e) {
+                        logger.warn("Error serializing ingredient: {}", e.getMessage());
+                    }
+                }
+                ingredientesSetter.accept(ingredientesJson);
+            }
+            if (node.has("pasosPreparacion") && node.get("pasosPreparacion").isArray()) {
+                List<String> pasos = new ArrayList<>();
+                for (JsonNode paso : node.get("pasosPreparacion")) {
+                    pasos.add(paso.asText());
+                }
+                pasosSetter.accept(pasos);
+            }
+        }
+    }
+
+    private List<String> parseAlimentosArray(JsonNode node) {
         List<String> alimentos = new ArrayList<>();
         if (node != null && node.isArray()) {
             for (JsonNode item : node) {
@@ -511,18 +607,103 @@ public class AIGenerationService {
                 .diaSemana(dia)
                 .desayuno(Desayuno.builder()
                     .alimentos(Arrays.asList("Avena con leche", "Platano", "Miel"))
+                    .descripcion("Desayuno energetico con carbohidratos complejos y frutas")
+                    .tiempoPreparacionMinutos(10)
+                    .porciones(1)
+                    .dificultad("FACIL")
+                    .ingredientesJson(Arrays.asList(
+                        "{\"nombre\":\"Avena\",\"cantidad\":\"50\",\"unidad\":\"g\",\"opcional\":false}",
+                        "{\"nombre\":\"Leche\",\"cantidad\":\"200\",\"unidad\":\"ml\",\"opcional\":false}",
+                        "{\"nombre\":\"Platano\",\"cantidad\":\"1\",\"unidad\":\"unidad\",\"opcional\":false}",
+                        "{\"nombre\":\"Miel\",\"cantidad\":\"1\",\"unidad\":\"cucharada\",\"opcional\":true}"
+                    ))
+                    .pasosPreparacion(Arrays.asList(
+                        "Calentar la leche en un cazo a fuego medio",
+                        "Anadir la avena y cocinar 5 minutos removiendo",
+                        "Cortar el platano en rodajas",
+                        "Servir la avena y decorar con el platano",
+                        "Anadir miel al gusto"
+                    ))
                     .build())
                 .almuerzo(Almuerzo.builder()
                     .alimentos(Arrays.asList("Ensalada cesar", "Pollo a la plancha", "Pan integral"))
+                    .descripcion("Almuerzo ligero con proteinas y vegetales")
+                    .tiempoPreparacionMinutos(20)
+                    .porciones(1)
+                    .dificultad("FACIL")
+                    .ingredientesJson(Arrays.asList(
+                        "{\"nombre\":\"Lechuga romana\",\"cantidad\":\"100\",\"unidad\":\"g\",\"opcional\":false}",
+                        "{\"nombre\":\"Pechuga de pollo\",\"cantidad\":\"150\",\"unidad\":\"g\",\"opcional\":false}",
+                        "{\"nombre\":\"Pan integral\",\"cantidad\":\"2\",\"unidad\":\"rebanadas\",\"opcional\":false}",
+                        "{\"nombre\":\"Queso parmesano\",\"cantidad\":\"30\",\"unidad\":\"g\",\"opcional\":true}"
+                    ))
+                    .pasosPreparacion(Arrays.asList(
+                        "Lavar y cortar la lechuga",
+                        "Cocinar el pollo a la plancha con sal y pimienta",
+                        "Cortar el pollo en tiras",
+                        "Mezclar la lechuga con el pollo",
+                        "Servir con el pan integral"
+                    ))
                     .build())
                 .comida(Comida.builder()
                     .alimentos(Arrays.asList("Arroz integral", "Verduras salteadas", "Pechuga de pollo"))
+                    .descripcion("Comida equilibrada con proteinas, carbohidratos y fibra")
+                    .tiempoPreparacionMinutos(30)
+                    .porciones(1)
+                    .dificultad("MEDIA")
+                    .ingredientesJson(Arrays.asList(
+                        "{\"nombre\":\"Arroz integral\",\"cantidad\":\"80\",\"unidad\":\"g\",\"opcional\":false}",
+                        "{\"nombre\":\"Pechuga de pollo\",\"cantidad\":\"150\",\"unidad\":\"g\",\"opcional\":false}",
+                        "{\"nombre\":\"Brocoli\",\"cantidad\":\"100\",\"unidad\":\"g\",\"opcional\":false}",
+                        "{\"nombre\":\"Zanahoria\",\"cantidad\":\"1\",\"unidad\":\"unidad\",\"opcional\":false}",
+                        "{\"nombre\":\"Aceite de oliva\",\"cantidad\":\"1\",\"unidad\":\"cucharada\",\"opcional\":false}"
+                    ))
+                    .pasosPreparacion(Arrays.asList(
+                        "Cocinar el arroz integral segun las instrucciones",
+                        "Cortar las verduras en trozos pequenos",
+                        "Saltear las verduras en aceite de oliva",
+                        "Cocinar el pollo a la plancha",
+                        "Servir el arroz con las verduras y el pollo"
+                    ))
                     .build())
                 .merienda(Merienda.builder()
                     .alimentos(Arrays.asList("Yogur natural", "Frutos secos"))
+                    .descripcion("Merienda saludable con proteinas y grasas buenas")
+                    .tiempoPreparacionMinutos(5)
+                    .porciones(1)
+                    .dificultad("FACIL")
+                    .ingredientesJson(Arrays.asList(
+                        "{\"nombre\":\"Yogur natural\",\"cantidad\":\"150\",\"unidad\":\"g\",\"opcional\":false}",
+                        "{\"nombre\":\"Almendras\",\"cantidad\":\"20\",\"unidad\":\"g\",\"opcional\":false}",
+                        "{\"nombre\":\"Nueces\",\"cantidad\":\"15\",\"unidad\":\"g\",\"opcional\":true}"
+                    ))
+                    .pasosPreparacion(Arrays.asList(
+                        "Servir el yogur en un bol",
+                        "Anadir los frutos secos por encima",
+                        "Mezclar y disfrutar"
+                    ))
                     .build())
                 .cena(Cena.builder()
                     .alimentos(Arrays.asList("Salmon al horno", "Ensalada verde"))
+                    .descripcion("Cena ligera rica en omega-3 y vitaminas")
+                    .tiempoPreparacionMinutos(25)
+                    .porciones(1)
+                    .dificultad("MEDIA")
+                    .ingredientesJson(Arrays.asList(
+                        "{\"nombre\":\"Salmon fresco\",\"cantidad\":\"180\",\"unidad\":\"g\",\"opcional\":false}",
+                        "{\"nombre\":\"Limon\",\"cantidad\":\"1\",\"unidad\":\"unidad\",\"opcional\":false}",
+                        "{\"nombre\":\"Lechuga mixta\",\"cantidad\":\"80\",\"unidad\":\"g\",\"opcional\":false}",
+                        "{\"nombre\":\"Tomate cherry\",\"cantidad\":\"50\",\"unidad\":\"g\",\"opcional\":true}",
+                        "{\"nombre\":\"Aceite de oliva\",\"cantidad\":\"1\",\"unidad\":\"cucharada\",\"opcional\":false}"
+                    ))
+                    .pasosPreparacion(Arrays.asList(
+                        "Precalentar el horno a 180 grados",
+                        "Condimentar el salmon con limon, sal y pimienta",
+                        "Hornear el salmon durante 15-20 minutos",
+                        "Preparar la ensalada con la lechuga y tomates",
+                        "Aliñar con aceite de oliva",
+                        "Servir el salmon con la ensalada"
+                    ))
                     .build())
                 .build();
 

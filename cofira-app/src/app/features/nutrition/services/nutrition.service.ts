@@ -23,9 +23,22 @@ export interface DiaAlimentacionDTO {
   cena: ComidaDTO | null;
 }
 
+export interface IngredienteDTO {
+  nombre: string;
+  cantidad: string;
+  unidad: string;
+  opcional: boolean;
+}
+
 export interface ComidaDTO {
   id: number;
   alimentos: string[];
+  descripcion?: string;
+  tiempoPreparacionMinutos?: number;
+  porciones?: number;
+  dificultad?: 'FACIL' | 'MEDIA' | 'DIFICIL';
+  ingredientes?: IngredienteDTO[];
+  pasosPreparacion?: string[];
 }
 
 export interface AlimentoDTO {
@@ -64,6 +77,13 @@ export interface Meal {
   totalCarbs: number;
   totalFat: number;
   totalFiber: number;
+  // Nuevos campos para recetas
+  descripcion?: string;
+  tiempoPreparacionMinutos?: number;
+  porciones?: number;
+  dificultad?: 'FACIL' | 'MEDIA' | 'DIFICIL';
+  ingredientes?: IngredienteDTO[];
+  pasosPreparacion?: string[];
 }
 
 export interface FoodItem {
@@ -246,7 +266,14 @@ export class NutritionService extends BaseHttpService {
           totalProtein: 0,
           totalCarbs: 0,
           totalFat: 0,
-          totalFiber: 0
+          totalFiber: 0,
+          // Nuevos campos de receta
+          descripcion: comida.descripcion,
+          tiempoPreparacionMinutos: comida.tiempoPreparacionMinutos,
+          porciones: comida.porciones,
+          dificultad: comida.dificultad,
+          ingredientes: comida.ingredientes,
+          pasosPreparacion: comida.pasosPreparacion
         });
       }
     });

@@ -2,22 +2,24 @@
 @import '../../../../../styles/01-tools/mixins';
 
 .macro-chart {
-  @include flex-columna(var(--spacing-size-s));
+  @include flex-columna(var(--spacing-size-xs));
   align-items: center;
   text-align: center;
-  padding: var(--spacing-size-s);
-  border-radius: var(--radius-l);
+  padding: var(--spacing-size-xs);
+  border-radius: var(--radius-m);
   cursor: default;
   position: relative;
 
   // FIX: Critical for grid overflow prevention
   min-width: 0;
   max-width: 100%;
+  width: 100%;
   overflow: hidden;
 
   @include responsive('M') {
-    @include flex-columna(var(--spacing-size-m));
-    padding: var(--spacing-size-m);
+    @include flex-columna(var(--spacing-size-s));
+    padding: var(--spacing-size-s);
+    border-radius: var(--radius-l);
   }
 
   // Premium glass effect
@@ -69,18 +71,23 @@
 
   &__ring {
     position: relative;
-    width: 70px;
-    height: 70px;
+    width: 56px;
+    height: 56px;
     @include transition-premium;
 
     @include responsive('S') {
-      width: 80px;
-      height: 80px;
+      width: 64px;
+      height: 64px;
     }
 
     @include responsive('M') {
-      width: 100px;
-      height: 100px;
+      width: 72px;
+      height: 72px;
+    }
+
+    @include responsive('L') {
+      width: 80px;
+      height: 80px;
     }
 
     // Glow behind the ring
@@ -135,7 +142,7 @@
 
   &__value {
     font-family: var(--font-secondary);
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-sm);
     font-weight: var(--font-weight-bold);
     color: var(--text-primary);
     line-height: 1;
@@ -143,11 +150,11 @@
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
     @include responsive('S') {
-      font-size: var(--font-size-lg);
+      font-size: var(--font-size-base);
     }
 
     @include responsive('M') {
-      font-size: var(--font-size-xl);
+      font-size: var(--font-size-lg);
     }
 
     .macro-chart:hover & {
@@ -170,12 +177,17 @@
 
   &__label {
     font-family: var(--font-secondary);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-xs);
     font-weight: var(--font-weight-semibold);
     color: var(--text-primary);
-    margin: 0 0 var(--spacing-size-xss);
+    margin: 0;
     text-transform: uppercase;
-    letter-spacing: var(--letter-spacing-wider);
+    letter-spacing: var(--letter-spacing-wide);
+
+    @include responsive('M') {
+      font-size: var(--font-size-sm);
+      letter-spacing: var(--letter-spacing-wider);
+    }
   }
 
   &__progress {

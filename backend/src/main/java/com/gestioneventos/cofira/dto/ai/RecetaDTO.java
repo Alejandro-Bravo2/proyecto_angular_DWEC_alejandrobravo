@@ -1,13 +1,18 @@
-package com.gestioneventos.cofira.dto.rutinaalimentacion;
+package com.gestioneventos.cofira.dto.ai;
 
-import com.gestioneventos.cofira.dto.ai.IngredienteDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.List;
 
 @Data
-public class ComidaDTO {
-    private Long id;
-    private List<String> alimentos;
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RecetaDTO {
+    private String nombrePlato;
     private String descripcion;
     private Integer tiempoPreparacionMinutos;
     private Integer porciones;
