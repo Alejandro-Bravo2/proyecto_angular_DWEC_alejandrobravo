@@ -2,13 +2,23 @@
 @import '../../../../../styles/01-tools/mixins';
 
 .macro-chart {
-  @include flex-columna(var(--spacing-size-m));
+  @include flex-columna(var(--spacing-size-s));
   align-items: center;
   text-align: center;
-  padding: var(--spacing-size-m);
+  padding: var(--spacing-size-s);
   border-radius: var(--radius-l);
   cursor: default;
   position: relative;
+
+  // FIX: Critical for grid overflow prevention
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+
+  @include responsive('M') {
+    @include flex-columna(var(--spacing-size-m));
+    padding: var(--spacing-size-m);
+  }
 
   // Premium glass effect
   background: linear-gradient(
@@ -59,13 +69,18 @@
 
   &__ring {
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 70px;
+    height: 70px;
     @include transition-premium;
 
+    @include responsive('S') {
+      width: 80px;
+      height: 80px;
+    }
+
     @include responsive('M') {
-      width: 120px;
-      height: 120px;
+      width: 100px;
+      height: 100px;
     }
 
     // Glow behind the ring
@@ -120,15 +135,19 @@
 
   &__value {
     font-family: var(--font-secondary);
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-base);
     font-weight: var(--font-weight-bold);
     color: var(--text-primary);
     line-height: 1;
     @include transition-premium;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
+    @include responsive('S') {
+      font-size: var(--font-size-lg);
+    }
+
     @include responsive('M') {
-      font-size: var(--font-size-2xl);
+      font-size: var(--font-size-xl);
     }
 
     .macro-chart:hover & {

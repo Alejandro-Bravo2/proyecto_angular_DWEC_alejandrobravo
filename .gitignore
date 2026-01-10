@@ -90,6 +90,7 @@ CLAUDE.md
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
+CLAUDE.md
 !.vscode/extensions.json
 .history/
 *.code-workspace

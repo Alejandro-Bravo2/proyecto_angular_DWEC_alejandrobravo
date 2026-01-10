@@ -265,7 +265,8 @@
 
   // Macros Grid - Premium Glass Card
   &__macros {
-    padding: var(--spacing-size-xl);
+    overflow: hidden; // FIX: Prevent macro cards overflow
+    padding: var(--spacing-size-m);
     border-radius: var(--radius-l);
     background: linear-gradient(
       160deg,
@@ -281,6 +282,10 @@
     @include transition-premium;
     animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
 
+    @include responsive('M') {
+      padding: var(--spacing-size-xl);
+    }
+
     &:hover {
       border-color: rgba(255, 255, 255, 0.12);
       box-shadow:
@@ -292,10 +297,11 @@
   &__macros-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-size-xl);
+    gap: var(--spacing-size-m);
 
     @include responsive('M') {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(4, minmax(0, 1fr)); // FIX: minmax prevents overflow
+      gap: var(--spacing-size-l);
     }
   }
 
