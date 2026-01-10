@@ -7,7 +7,7 @@
     <aside class="error-message" role="alert">{{ error() }}</aside>
   }
 
-  @if (store.isEmpty() && !store.loading()) {
+  @if (!store.hasRoutines() && !store.loading()) {
     <app-empty-state
       icon="🏋️"
       title="No hay ejercicios programados"
@@ -83,7 +83,13 @@
 
     @if (store.viewMode() === 'pagination') {
       <!-- Modo paginacion -->
-      <app-weekly-table [exercises]="store.paginatedExercises()" />
+      <app-weekly-table
+        [exercises]="store.paginatedExercises()"
+        [selectedDay]="store.selectedDay()"
+        [availableDays]="store.availableDays()"
+        (previousDayClicked)="onPreviousDay()"
+        (nextDayClicked)="onNextDay()"
+      />
 
       <!-- Controles de paginacion -->
       @if (store.totalPages() > 1) {
@@ -121,7 +127,13 @@
       }
     } @else {
       <!-- Modo infinite scroll -->
-      <app-weekly-table [exercises]="store.infiniteScrollItems()" />
+      <app-weekly-table
+        [exercises]="store.infiniteScrollItems()"
+        [selectedDay]="store.selectedDay()"
+        [availableDays]="store.availableDays()"
+        (previousDayClicked)="onPreviousDay()"
+        (nextDayClicked)="onNextDay()"
+      />
 
       <!-- Sentinel para infinite scroll -->
       <div

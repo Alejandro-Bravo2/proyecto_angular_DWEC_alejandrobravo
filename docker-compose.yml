@@ -75,6 +75,8 @@ services:
       # Email Configuration (Gmail SMTP)
       GMAIL_USERNAME: ${GMAIL_USERNAME:-}
       GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD:-}
+      # OpenRouter AI Configuration
+      GEMINI_API: ${GEMINI_API:-}
     ports:
       - "${SERVER_PORT:-8080}:8080"
     networks:

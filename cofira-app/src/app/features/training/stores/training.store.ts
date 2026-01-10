@@ -41,6 +41,9 @@ export class TrainingStore {
   private readonly _error = signal<string | null>(null);
   private readonly _searchTerm = signal('');
   private readonly _currentPage = signal(1);
+  private readonly _selectedDay = signal<string>(this.getCurrentDayInSpanish());
+  private readonly _availableDays = signal<string[]>([]);
+  private readonly _hasRoutines = signal(false);
 
   // Estado para infinite scroll
   private readonly _viewMode = signal<'pagination' | 'infinite'>('pagination');
@@ -70,6 +73,15 @@ export class TrainingStore {
 
   /** Elementos por pagina */
   readonly pageSize = 10;
+
+  /** Día seleccionado actualmente */
+  readonly selectedDay = this._selectedDay.asReadonly();
+
+  /** Días disponibles con ejercicios */
+  readonly availableDays = this._availableDays.asReadonly();
+
+  /** Indica si hay rutinas cargadas (aunque no haya ejercicios hoy) */
+  readonly hasRoutines = this._hasRoutines.asReadonly();
 
   // Estado publico para infinite scroll
   /** Modo de visualizacion actual (paginacion o infinite scroll) */
@@ -157,9 +169,31 @@ export class TrainingStore {
     this._loading.set(true);
     this._error.set(null);
 
-    const currentDate = date || new Date().toISOString().split('T')[0];
+    // Primero cargar los días disponibles
+    this.trainingService.getAvailableTrainingDays().pipe(
+      catchError(err => {
+        console.error('Error loading available days:', err);
+        return of([] as string[]);
+      })
+    ).subscribe(days => {
+      this._availableDays.set(days);
+      this._hasRoutines.set(days.length > 0);
 
-    this.trainingService.getExercises(userId, currentDate).pipe(
+      // Si el día seleccionado no tiene ejercicios, seleccionar el primer día disponible
+      if (days.length > 0 && !days.includes(this._selectedDay())) {
+        this._selectedDay.set(days[0]);
+      }
+
+      // Cargar ejercicios del día seleccionado
+      this.loadExercisesForDay(userId, this._selectedDay());
+    });
+  }
+
+  /**
+   * Carga ejercicios para un día específico
+   */
+  private loadExercisesForDay(userId: string, day: string): void {
+    this.trainingService.getExercisesByDay(userId, day).pipe(
       catchError(err => {
         console.error('Error loading exercises:', err);
         this._error.set('Error al cargar los ejercicios');
@@ -170,6 +204,45 @@ export class TrainingStore {
       this._exercises.set(exercises);
       this._currentPage.set(1);
     });
+  }
+
+  /**
+   * Cambia el día seleccionado y carga ejercicios
+   */
+  selectDay(userId: string, day: string): void {
+    this._selectedDay.set(day);
+    this._loading.set(true);
+    this.loadExercisesForDay(userId, day);
+  }
+
+  /**
+   * Navega al día anterior
+   */
+  previousDay(userId: string): void {
+    const days = this._availableDays();
+    const currentIndex = days.indexOf(this._selectedDay());
+    if (currentIndex > 0) {
+      this.selectDay(userId, days[currentIndex - 1]);
+    }
+  }
+
+  /**
+   * Navega al día siguiente
+   */
+  nextDay(userId: string): void {
+    const days = this._availableDays();
+    const currentIndex = days.indexOf(this._selectedDay());
+    if (currentIndex < days.length - 1) {
+      this.selectDay(userId, days[currentIndex + 1]);
+    }
+  }
+
+  /**
+   * Helper para obtener el día actual en español
+   */
+  private getCurrentDayInSpanish(): string {
+    const days = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
+    return days[new Date().getDay()];
   }
 
   /**

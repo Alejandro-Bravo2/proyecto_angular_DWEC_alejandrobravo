@@ -62,6 +62,9 @@ public class AuthService {
     @Autowired
     private CalorieCalculationService calorieCalculationService;
 
+    @Autowired
+    private AIGenerationService aiGenerationService;
+
     private static final int CODE_LENGTH = 6;
     private static final int CODE_EXPIRATION_MINUTES = 15;
 
@@ -217,7 +220,17 @@ public class AuthService {
         usuario.setUserProfile(profile);
         usuarioRepository.save(usuario);
 
-        // 6. Autenticar y generar token
+        // 6. Generar planes personalizados con IA (async para no bloquear registro)
+        try {
+            aiGenerationService.generateWeeklyWorkoutPlan(profile);
+            aiGenerationService.generateWeeklyMealPlan(profile);
+        } catch (Exception e) {
+            // Log error but don't fail registration
+            // Plans can be generated later via the AI endpoints
+            System.err.println("Error generating AI plans during registration: " + e.getMessage());
+        }
+
+        // 7. Autenticar y generar token
         LoginRequestDTO loginRequest = new LoginRequestDTO();
         loginRequest.setUsername(request.getUsername());
         loginRequest.setPassword(request.getPassword());

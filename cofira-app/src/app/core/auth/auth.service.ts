@@ -134,7 +134,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private readonly TOKEN_KEY = 'authToken';
   private readonly USER_KEY = 'currentUser';
-  private readonly API_URL = `${environment.apiUrl}/api/auth`;
+  private readonly API_URL = `${environment.apiUrl}/auth`;
 
   // Reactive state
   currentUser = signal<User | null>(null);
@@ -204,7 +204,7 @@ export class AuthService {
 
   async completeOnboarding(data: OnboardingRequest): Promise<OnboardingResponse> {
     const response = await firstValueFrom(
-      this.http.post<OnboardingResponse>(`${environment.apiUrl}/api/onboarding/complete`, data)
+      this.http.post<OnboardingResponse>(`${environment.apiUrl}/onboarding/complete`, data)
     );
 
     // Actualizar el usuario local

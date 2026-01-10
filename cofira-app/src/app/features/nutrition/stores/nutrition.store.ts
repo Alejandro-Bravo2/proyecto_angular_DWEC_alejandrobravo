@@ -44,6 +44,11 @@ export class NutritionStore {
   private readonly _currentPage = signal(1);
   private readonly _currentDate = signal(new Date().toISOString().split('T')[0]);
 
+  // Estado para navegación por días de la semana (como entrenamiento)
+  private readonly _selectedDay = signal<string>(this.getCurrentDayInSpanish());
+  private readonly _availableDays = signal<string[]>([]);
+  private readonly _hasMealPlan = signal(false);
+
   // Estado para infinite scroll
   private readonly _viewMode = signal<'pagination' | 'infinite'>('pagination');
   private readonly _infinitePage = signal(1);
@@ -78,6 +83,15 @@ export class NutritionStore {
 
   /** Elementos por pagina */
   readonly pageSize = 5;
+
+  /** Día seleccionado actualmente */
+  readonly selectedDay = this._selectedDay.asReadonly();
+
+  /** Días disponibles con comidas */
+  readonly availableDays = this._availableDays.asReadonly();
+
+  /** Indica si hay plan de comidas cargado */
+  readonly hasMealPlan = this._hasMealPlan.asReadonly();
 
   // Estado publico para infinite scroll
   /** Modo de visualizacion actual (paginacion o infinite scroll) */
@@ -152,6 +166,34 @@ export class NutritionStore {
   /** Indica si hay comidas hoy */
   readonly hasMealsToday = computed(() => this._meals().length > 0);
 
+  /** Puede navegar al día anterior */
+  readonly canGoPreviousDay = computed(() => {
+    const days = this._availableDays();
+    const current = this._selectedDay();
+    return days.indexOf(current) > 0;
+  });
+
+  /** Puede navegar al día siguiente */
+  readonly canGoNextDay = computed(() => {
+    const days = this._availableDays();
+    const current = this._selectedDay();
+    return days.indexOf(current) < days.length - 1;
+  });
+
+  /** Nombre del día formateado */
+  readonly formattedDayName = computed(() => {
+    const dayMap: Record<string, string> = {
+      'LUNES': 'Lunes',
+      'MARTES': 'Martes',
+      'MIERCOLES': 'Miércoles',
+      'JUEVES': 'Jueves',
+      'VIERNES': 'Viernes',
+      'SABADO': 'Sábado',
+      'DOMINGO': 'Domingo'
+    };
+    return dayMap[this._selectedDay()] || this._selectedDay();
+  });
+
   /** Elementos para infinite scroll (filtrados por busqueda) */
   readonly infiniteScrollItems = computed(() => {
     const term = this._searchTerm().toLowerCase().trim();
@@ -170,7 +212,157 @@ export class NutritionStore {
   // ==========================================
 
   /**
-   * Carga la nutricion del dia desde el backend
+   * Carga los días disponibles y las comidas del usuario
+   */
+  load(userId: string): void {
+    this._loading.set(true);
+    this._error.set(null);
+
+    // Primero cargar los días disponibles
+    this.nutritionService.getAvailableMealDays().pipe(
+      catchError(err => {
+        console.error('Error loading available days:', err);
+        return of([] as string[]);
+      })
+    ).subscribe(days => {
+      this._availableDays.set(days);
+      this._hasMealPlan.set(days.length > 0);
+
+      // Si el día seleccionado no tiene comidas, seleccionar el primer día disponible
+      if (days.length > 0 && !days.includes(this._selectedDay())) {
+        this._selectedDay.set(days[0]);
+      }
+
+      // Cargar comidas del día seleccionado
+      if (days.length > 0) {
+        this.loadMealsForDay(this._selectedDay());
+      } else {
+        this._loading.set(false);
+        this._meals.set([]);
+      }
+    });
+  }
+
+  /**
+   * Carga comidas para un día específico de la semana
+   */
+  private loadMealsForDay(dayOfWeek: string): void {
+    this.nutritionService.getMealsByDay(dayOfWeek).pipe(
+      catchError(err => {
+        console.error('Error loading meals:', err);
+        this._error.set('Error al cargar las comidas');
+        return of(null);
+      }),
+      finalize(() => this._loading.set(false))
+    ).subscribe(dia => {
+      if (dia) {
+        // Transformar a formato Meal[]
+        const meals = this.transformDiaToMeals(dia);
+        this._meals.set(meals);
+      } else {
+        this._meals.set([]);
+      }
+      this._currentPage.set(1);
+    });
+  }
+
+  /**
+   * Transforma DiaAlimentacionDTO a Meal[]
+   */
+  private transformDiaToMeals(dia: any): Meal[] {
+    const meals: Meal[] = [];
+    const mealTypes = [
+      { key: 'desayuno', type: 'breakfast' as const, label: 'Desayuno' },
+      { key: 'almuerzo', type: 'snack' as const, label: 'Almuerzo' },
+      { key: 'comida', type: 'lunch' as const, label: 'Comida' },
+      { key: 'merienda', type: 'snack' as const, label: 'Merienda' },
+      { key: 'cena', type: 'dinner' as const, label: 'Cena' }
+    ];
+
+    mealTypes.forEach(({ key, type, label }) => {
+      const comida = dia[key];
+      if (comida && comida.alimentos && comida.alimentos.length > 0) {
+        meals.push({
+          id: `${dia.id}-${key}`,
+          userId: '',
+          date: new Date().toISOString().split('T')[0],
+          mealType: type,
+          foods: comida.alimentos.map((alimento: string) => ({
+            icon: this.getIconForMealType(type),
+            quantity: '1 porción',
+            name: alimento,
+            calories: 0,
+            protein: 0,
+            carbs: 0,
+            fat: 0,
+            fiber: 0
+          })),
+          totalCalories: 0,
+          totalProtein: 0,
+          totalCarbs: 0,
+          totalFat: 0,
+          totalFiber: 0
+        });
+      }
+    });
+
+    return meals;
+  }
+
+  /**
+   * Helper para obtener icono según tipo de comida
+   */
+  private getIconForMealType(type: Meal['mealType']): string {
+    const icons: Record<Meal['mealType'], string> = {
+      breakfast: '🍳',
+      lunch: '🥗',
+      dinner: '🍽️',
+      snack: '🍎'
+    };
+    return icons[type] || '🍴';
+  }
+
+  /**
+   * Cambia el día seleccionado y carga comidas
+   */
+  selectDay(day: string): void {
+    this._selectedDay.set(day);
+    this._loading.set(true);
+    this.loadMealsForDay(day);
+  }
+
+  /**
+   * Navega al día anterior disponible
+   */
+  previousMealDay(): void {
+    const days = this._availableDays();
+    const currentIndex = days.indexOf(this._selectedDay());
+    if (currentIndex > 0) {
+      this.selectDay(days[currentIndex - 1]);
+    }
+  }
+
+  /**
+   * Navega al día siguiente disponible
+   */
+  nextMealDay(): void {
+    const days = this._availableDays();
+    const currentIndex = days.indexOf(this._selectedDay());
+    if (currentIndex < days.length - 1) {
+      this.selectDay(days[currentIndex + 1]);
+    }
+  }
+
+  /**
+   * Helper para obtener el día actual en español
+   */
+  private getCurrentDayInSpanish(): string {
+    const days = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
+    return days[new Date().getDay()];
+  }
+
+  /**
+   * Carga la nutricion del dia desde el backend (método legacy)
    */
   loadByDate(userId: string, date?: string): void {
     const targetDate = date || this._currentDate();
@@ -196,7 +388,7 @@ export class NutritionStore {
    * Recarga los datos
    */
   refresh(userId: string): void {
-    this.loadByDate(userId, this._currentDate());
+    this.load(userId);
   }
 
   // ==========================================

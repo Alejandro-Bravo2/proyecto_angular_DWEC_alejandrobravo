@@ -87,6 +87,9 @@ export interface Exercise {
   name: string;
   sets: number;
   reps: string;
+  restSeconds: number;
+  description?: string;
+  muscleGroup?: string;
   completed: boolean;
   date: string;
   notes?: string;
@@ -113,7 +116,7 @@ export interface WorkoutProgress {
   providedIn: 'root',
 })
 export class TrainingService extends BaseHttpService {
-  private readonly aiApiUrl = `${environment.apiUrl}/api/training`;
+  private readonly aiApiUrl = `${environment.apiUrl}/training`;
 
   // Reactive state for AI workouts
   weeklySchedule = signal<WeeklySchedule | null>(null);
@@ -243,8 +246,119 @@ export class TrainingService extends BaseHttpService {
   }
 
   getExercises(userId: string, date?: string): Observable<Exercise[]> {
+    const targetDate = date || new Date().toISOString().split('T')[0];
+    const dayOfWeek = this.getDayOfWeekInSpanish(new Date(targetDate));
+
     return this.listarRutinas().pipe(
-      map(() => [])
+      map(rutinas => {
+        if (!rutinas || rutinas.length === 0) {
+          return [];
+        }
+
+        // Get the most recent routine (last one)
+        const rutina = rutinas[rutinas.length - 1];
+        if (!rutina.diasEjercicio) {
+          return [];
+        }
+
+        // Find the exercises for today's day of the week
+        const diaEjercicio = rutina.diasEjercicio.find(
+          dia => dia.diaSemana.toUpperCase() === dayOfWeek.toUpperCase()
+        );
+
+        if (!diaEjercicio || !diaEjercicio.ejercicios) {
+          return [];
+        }
+
+        // Transform backend exercises to frontend Exercise format
+        return diaEjercicio.ejercicios.map(ej => ({
+          id: ej.id.toString(),
+          userId: userId,
+          name: ej.nombreEjercicio,
+          sets: ej.series,
+          reps: `${ej.repeticiones}`,
+          restSeconds: ej.tiempoDescansoSegundos || 60,
+          description: ej.descripcion,
+          muscleGroup: ej.grupoMuscular,
+          completed: false,
+          date: targetDate,
+          notes: ej.descripcion
+        }));
+      })
+    );
+  }
+
+  /**
+   * Get day of week in Spanish for matching with backend data
+   */
+  private getDayOfWeekInSpanish(date: Date): string {
+    const days = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
+    return days[date.getDay()];
+  }
+
+  /**
+   * Get exercises for a specific day of the week
+   */
+  getExercisesByDay(userId: string, dayOfWeek: string): Observable<Exercise[]> {
+    return this.listarRutinas().pipe(
+      map(rutinas => {
+        if (!rutinas || rutinas.length === 0) {
+          return [];
+        }
+
+        // Get the most recent routine (last one)
+        const rutina = rutinas[rutinas.length - 1];
+        if (!rutina.diasEjercicio) {
+          return [];
+        }
+
+        // Find the exercises for the specified day of week
+        const diaEjercicio = rutina.diasEjercicio.find(
+          dia => dia.diaSemana.toUpperCase() === dayOfWeek.toUpperCase()
+        );
+
+        if (!diaEjercicio || !diaEjercicio.ejercicios) {
+          return [];
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+
+        // Transform backend exercises to frontend Exercise format
+        return diaEjercicio.ejercicios.map(ej => ({
+          id: ej.id.toString(),
+          userId: userId,
+          name: ej.nombreEjercicio,
+          sets: ej.series,
+          reps: `${ej.repeticiones}`,
+          restSeconds: ej.tiempoDescansoSegundos || 60,
+          description: ej.descripcion,
+          muscleGroup: ej.grupoMuscular,
+          completed: false,
+          date: today,
+          notes: ej.descripcion
+        }));
+      })
+    );
+  }
+
+  /**
+   * Get all available training days from routines
+   */
+  getAvailableTrainingDays(): Observable<string[]> {
+    return this.listarRutinas().pipe(
+      map(rutinas => {
+        if (!rutinas || rutinas.length === 0) {
+          return [];
+        }
+
+        // Get the most recent routine
+        const rutina = rutinas[rutinas.length - 1];
+        if (!rutina.diasEjercicio) {
+          return [];
+        }
+
+        return rutina.diasEjercicio.map(dia => dia.diaSemana);
+      })
     );
   }
 

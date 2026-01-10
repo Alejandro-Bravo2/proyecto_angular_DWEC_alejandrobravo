@@ -47,9 +47,9 @@ export class Nutrition implements OnInit {
   // Weekly data for progress chart
   readonly weeklyData = signal<WeeklyData[]>([]);
 
-  // Stats
-  readonly waterGlasses = signal(6);
-  readonly currentStreak = signal(12);
+  // Stats - start at 0, load from backend
+  readonly waterGlasses = signal(0);
+  readonly currentStreak = signal(0);
 
   /** Control para busqueda con debounce */
   readonly searchControl = new FormControl('');
@@ -77,7 +77,31 @@ export class Nutrition implements OnInit {
 
   ngOnInit(): void {
     this.loadNutritionGoals();
-    this.loadNutritionData();
+    this.loadNutritionDataFromStore();
+  }
+
+  private loadNutritionDataFromStore(): void {
+    const userId = this.getUserId();
+    if (!userId) {
+      this.dailyNutrition.set(null);
+      return;
+    }
+    // Cargar usando el store (navegación por días de la semana)
+    this.store.load(userId);
+  }
+
+  /**
+   * Navega al día anterior de comidas
+   */
+  onPreviousMealDay(): void {
+    this.store.previousMealDay();
+  }
+
+  /**
+   * Navega al día siguiente de comidas
+   */
+  onNextMealDay(): void {
+    this.store.nextMealDay();
   }
 
   private loadNutritionGoals(): void {
@@ -115,7 +139,7 @@ export class Nutrition implements OnInit {
   }
 
   retryLoad(): void {
-    this.loadNutritionData();
+    this.loadNutritionDataFromStore();
   }
 
   addMeal(): void {

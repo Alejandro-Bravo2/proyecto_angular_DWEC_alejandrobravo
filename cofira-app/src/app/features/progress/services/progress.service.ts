@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { BaseHttpService } from '../../../core/services/base-http.service';
 import { LoadingService } from '../../../core/services/loading.service';
 import { environment } from '../../../../environments/environment';
@@ -153,20 +153,33 @@ export class ProgressService extends BaseHttpService {
   }
 
   /**
-   * Obtiene datos de nutrientes por fecha (formato legacy)
-   * @deprecated Usar NutritionService.getDailyNutrition() o implementar endpoint
+   * Obtiene datos de nutrientes por fecha
+   * Intenta cargar los targets del perfil del usuario como objetivos
    */
   getNutrientDataByDate(userId: string, date: string): Observable<NutrientData> {
-    return of({
-      date: date,
-      protein: 0,
-      carbs: 0,
-      fat: 0,
-      fiber: 0,
-      water: 0,
-      calories: 0,
-      calorieGoal: 2000
-    });
+    // Intenta obtener los targets del perfil del usuario
+    return this.get<any>(`onboarding/nutrition-targets`).pipe(
+      map(targets => ({
+        date: date,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        fiber: 0,
+        water: 0,
+        calories: 0,
+        calorieGoal: targets?.dailyCalories ? Math.round(targets.dailyCalories) : 2000
+      })),
+      catchError(() => of({
+        date: date,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+        fiber: 0,
+        water: 0,
+        calories: 0,
+        calorieGoal: 2000
+      }))
+    );
   }
 
   /**

@@ -1,51 +1,8 @@
-<section class="daily-menu" tabindex="0" role="region" aria-label="Menú diario">
-  <nav class="daily-menu__nav" aria-label="Navegación de fechas">
-    <button
-      type="button"
-      class="daily-menu__nav-btn"
-      (click)="previousDay()"
-      aria-label="Ir al día anterior"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="m15 18-6-6 6-6" />
-      </svg>
-    </button>
-
-    <time class="daily-menu__date">
-      <h2 class="daily-menu__date-text" aria-live="polite">{{ formattedDate() }}</h2>
-      <input
-        type="date"
-        [value]="currentDate()"
-        (change)="onDateInputChange($event)"
-        class="daily-menu__date-input"
-        aria-label="Seleccionar fecha"
-      />
-    </time>
-
-    <button
-      type="button"
-      class="daily-menu__nav-btn"
-      (click)="nextDay()"
-      aria-label="Ir al día siguiente"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="m9 18 6-6-6-6" />
-      </svg>
-    </button>
-  </nav>
-
-  @if (!isToday()) {
-    <button type="button" class="daily-menu__today" (click)="goToToday()">
-      Volver a hoy
-    </button>
-  }
-
-  @if (dailyNutrition(); as nutrition) {
+<section class="daily-menu" role="region" aria-label="Menú del día">
+  @if (hasMealsToShow()) {
     <ul class="daily-menu__grid" role="list">
-      @for (meal of nutrition.meals; track trackByMealId($index, meal)) {
-        <li>
+      @for (meal of displayMeals(); track trackByMealId($index, meal)) {
+        <li class="daily-menu__item">
           <app-meal-section
             [title]="getMealLabel(meal.mealType)"
             [foods]="meal.foods"
@@ -56,7 +13,13 @@
     </ul>
   } @else {
     <article class="daily-menu__empty" role="status">
-      <p>Sin datos para esta fecha</p>
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/>
+        <path d="M7 2v20"/>
+        <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>
+      </svg>
+      <p>Sin comidas para este día</p>
     </article>
   }
 </section>

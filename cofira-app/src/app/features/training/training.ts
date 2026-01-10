@@ -75,9 +75,14 @@ export class Training implements OnInit {
   }
 
   private getUserId(): string | null {
-    const user = localStorage.getItem('currentUser');
-    if (user) {
-      return JSON.parse(user).id;
+    try {
+      const user = localStorage.getItem('currentUser');
+      if (user) {
+        const parsed = JSON.parse(user);
+        return parsed?.id ?? null;
+      }
+    } catch (e) {
+      console.error('Error parsing user from localStorage:', e);
     }
     return null;
   }
@@ -104,6 +109,26 @@ export class Training implements OnInit {
   createRoutine(): void {
     console.log('Crear nueva rutina de entrenamiento');
     // TODO: Implementar lógica para abrir modal o navegar a formulario de creación de rutina
+  }
+
+  /**
+   * Navega al día anterior
+   */
+  onPreviousDay(): void {
+    const userId = this.getUserId();
+    if (userId) {
+      this.store.previousDay(userId);
+    }
+  }
+
+  /**
+   * Navega al día siguiente
+   */
+  onNextDay(): void {
+    const userId = this.getUserId();
+    if (userId) {
+      this.store.nextDay(userId);
+    }
   }
 
   // ==========================================

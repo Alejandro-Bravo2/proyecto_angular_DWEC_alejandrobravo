@@ -3,7 +3,6 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { BaseHttpService } from '../../../core/services/base-http.service';
 import { LoadingService } from '../../../core/services/loading.service';
-import { environment } from '../../../../environments/environment';
 import { RutinaAlimentacionDTO } from '../../nutrition/services/nutrition.service';
 import { RutinaEjercicioDTO } from '../../training/services/training.service';
 
@@ -73,7 +72,7 @@ interface User {
   providedIn: 'root'
 })
 export class UserService extends BaseHttpService {
-  private readonly API_URL = `${environment.apiUrl}/usuarios`;
+  private readonly API_URL = 'usuarios';
 
   constructor(http: HttpClient, loadingService: LoadingService) {
     super(http, loadingService);

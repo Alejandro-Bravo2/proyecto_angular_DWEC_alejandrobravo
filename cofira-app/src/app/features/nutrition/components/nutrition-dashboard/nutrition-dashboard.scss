@@ -302,8 +302,12 @@
   // Quick Stats - Premium Glass Cards
   &__stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr;
     gap: var(--spacing-size-m);
+
+    @include responsive('S') {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   &__stat {

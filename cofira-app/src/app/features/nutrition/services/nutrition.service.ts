@@ -101,42 +101,97 @@ export class NutritionService extends BaseHttpService {
    * Listar todas las rutinas de alimentación
    */
   listarRutinas(): Observable<RutinaAlimentacionDTO[]> {
-    return this.get<RutinaAlimentacionDTO[]>('api/rutinas-alimentacion');
+    return this.get<RutinaAlimentacionDTO[]>('rutinas-alimentacion');
   }
 
   /**
    * Obtener una rutina de alimentación por ID
    */
   obtenerRutina(id: number): Observable<RutinaAlimentacionDTO> {
-    return this.get<RutinaAlimentacionDTO>(`api/rutinas-alimentacion/${id}`);
+    return this.get<RutinaAlimentacionDTO>(`rutinas-alimentacion/${id}`);
   }
 
   /**
    * Crear una nueva rutina de alimentación
    */
   crearRutina(dto: CrearRutinaAlimentacionDTO): Observable<RutinaAlimentacionDTO> {
-    return this.post<RutinaAlimentacionDTO>('api/rutinas-alimentacion', dto);
+    return this.post<RutinaAlimentacionDTO>('rutinas-alimentacion', dto);
   }
 
   /**
    * Eliminar una rutina de alimentación
    */
   eliminarRutina(id: number): Observable<void> {
-    return this.delete<void>(`api/rutinas-alimentacion/${id}`);
+    return this.delete<void>(`rutinas-alimentacion/${id}`);
   }
 
   /**
    * Listar todos los alimentos disponibles
    */
   listarAlimentos(): Observable<AlimentoDTO[]> {
-    return this.get<AlimentoDTO[]>('api/alimentos');
+    return this.get<AlimentoDTO[]>('alimentos');
   }
 
   /**
    * Obtener un alimento por ID
    */
   obtenerAlimento(id: number): Observable<AlimentoDTO> {
-    return this.get<AlimentoDTO>(`api/alimentos/${id}`);
+    return this.get<AlimentoDTO>(`alimentos/${id}`);
+  }
+
+  // ==========================================
+  // MÉTODOS PARA NAVEGACIÓN POR DÍAS
+  // ==========================================
+
+  /**
+   * Obtiene los días de la semana que tienen comidas programadas
+   */
+  getAvailableMealDays(): Observable<string[]> {
+    return this.listarRutinas().pipe(
+      map(rutinas => {
+        if (!rutinas || rutinas.length === 0) return [];
+
+        // Extraer días únicos de todas las rutinas
+        const daysSet = new Set<string>();
+        rutinas.forEach(rutina => {
+          rutina.diasAlimentacion?.forEach(dia => {
+            if (dia.diaSemana) {
+              daysSet.add(dia.diaSemana);
+            }
+          });
+        });
+
+        // Ordenar días de la semana
+        const dayOrder = ['LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO', 'DOMINGO'];
+        return dayOrder.filter(day => daysSet.has(day));
+      })
+    );
+  }
+
+  /**
+   * Obtiene las comidas de un día específico de la semana
+   */
+  getMealsByDay(dayOfWeek: string): Observable<DiaAlimentacionDTO | null> {
+    return this.listarRutinas().pipe(
+      map(rutinas => {
+        if (!rutinas || rutinas.length === 0) return null;
+
+        // Buscar el día en las rutinas
+        for (const rutina of rutinas) {
+          const dia = rutina.diasAlimentacion?.find(d => d.diaSemana === dayOfWeek);
+          if (dia) return dia;
+        }
+        return null;
+      })
+    );
+  }
+
+  /**
+   * Helper para obtener el día actual en español
+   */
+  private getDayOfWeekInSpanish(date: Date): string {
+    const days = ['DOMINGO', 'LUNES', 'MARTES', 'MIERCOLES', 'JUEVES', 'VIERNES', 'SABADO'];
+    return days[date.getDay()];
   }
 
   // ==========================================
@@ -145,32 +200,84 @@ export class NutritionService extends BaseHttpService {
 
   /**
    * Obtiene las comidas de un día específico transformadas al formato legacy
-   * @deprecated Usar listarRutinas() y trabajar con RutinaAlimentacionDTO directamente
    */
   getMealsByDate(userId: string, date: string): Observable<Meal[]> {
-    // Por ahora, retornar array vacío hasta que se implemente el backend endpoint específico
-    // O transformar desde rutinas de alimentación si es necesario
-    return this.listarRutinas().pipe(
-      map(rutinas => {
-        // Transformar rutinas a formato legacy Meal[]
-        // Por ahora retornar vacío como placeholder
-        return [];
+    const dayOfWeek = this.getDayOfWeekInSpanish(new Date(date));
+    return this.getMealsByDay(dayOfWeek).pipe(
+      map(dia => {
+        if (!dia) return [];
+        return this.transformDiaToMeals(dia, date);
       })
     );
   }
 
   /**
+   * Transforma un DiaAlimentacionDTO a array de Meals
+   */
+  private transformDiaToMeals(dia: DiaAlimentacionDTO, date: string): Meal[] {
+    const meals: Meal[] = [];
+    const mealTypes: { key: keyof DiaAlimentacionDTO; type: Meal['mealType'] }[] = [
+      { key: 'desayuno', type: 'breakfast' },
+      { key: 'almuerzo', type: 'snack' },
+      { key: 'comida', type: 'lunch' },
+      { key: 'merienda', type: 'snack' },
+      { key: 'cena', type: 'dinner' }
+    ];
+
+    mealTypes.forEach(({ key, type }) => {
+      const comida = dia[key] as ComidaDTO | null;
+      if (comida && comida.alimentos && comida.alimentos.length > 0) {
+        meals.push({
+          id: `${dia.id}-${key}`,
+          userId: '',
+          date: date,
+          mealType: type,
+          foods: comida.alimentos.map((alimento, idx) => ({
+            icon: this.getIconForMealType(type),
+            quantity: '1 porción',
+            name: alimento,
+            calories: 0,
+            protein: 0,
+            carbs: 0,
+            fat: 0,
+            fiber: 0
+          })),
+          totalCalories: 0,
+          totalProtein: 0,
+          totalCarbs: 0,
+          totalFat: 0,
+          totalFiber: 0
+        });
+      }
+    });
+
+    return meals;
+  }
+
+  /**
+   * Helper para obtener icono según tipo de comida
+   */
+  private getIconForMealType(type: Meal['mealType']): string {
+    const icons: Record<Meal['mealType'], string> = {
+      breakfast: '🍳',
+      lunch: '🥗',
+      dinner: '🍽️',
+      snack: '🍎'
+    };
+    return icons[type] || '🍴';
+  }
+
+  /**
    * Obtiene la nutrición diaria transformada al formato legacy
-   * @deprecated Usar listarRutinas() y calcular nutrición desde RutinaAlimentacionDTO
    */
   getDailyNutrition(userId: string, date: string): Observable<DailyNutrition> {
-    return this.listarRutinas().pipe(
-      map(rutinas => {
-        // Transformar rutinas a formato legacy DailyNutrition
-        // Por ahora retornar estructura vacía como placeholder
+    const dayOfWeek = this.getDayOfWeekInSpanish(new Date(date));
+    return this.getMealsByDay(dayOfWeek).pipe(
+      map(dia => {
+        const meals = dia ? this.transformDiaToMeals(dia, date) : [];
         return {
           date: date,
-          meals: [],
+          meals: meals,
           totalCalories: 0,
           totalProtein: 0,
           totalCarbs: 0,

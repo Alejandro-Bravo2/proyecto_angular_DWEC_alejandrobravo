@@ -101,16 +101,16 @@
         </section>
       } @else {
         <!-- Meals View -->
-        @if (isEmpty()) {
+        @if (!store.hasMealPlan() && !store.loading()) {
           <article class="nutrition__empty">
-            <h2 class="nutrition__empty-title">Sin comidas registradas</h2>
-            <p class="nutrition__empty-text">Comienza a registrar tu alimentación diaria</p>
+            <h2 class="nutrition__empty-title">Sin plan de comidas</h2>
+            <p class="nutrition__empty-text">Aún no tienes un plan de alimentación generado. Completa el onboarding para generar tu plan personalizado.</p>
             <button type="button" class="nutrition__empty-action" (click)="addMeal()">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 5v14"/>
                 <path d="M5 12h14"/>
               </svg>
-              Agregar comida
+              Agregar comida manual
             </button>
           </article>
         } @else {
@@ -179,10 +179,41 @@
             </button>
           </div>
 
+          <!-- Day Navigation (similar to training) -->
+          <header class="day-navigation">
+            <button
+              class="day-navigation__btn"
+              aria-label="Día anterior"
+              [disabled]="!store.canGoPreviousDay()"
+              (click)="onPreviousMealDay()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+
+            <div class="day-navigation__info">
+              <span class="day-navigation__label">Día de alimentación</span>
+              <h2 class="day-navigation__day">{{ store.formattedDayName() }}</h2>
+            </div>
+
+            <button
+              class="day-navigation__btn"
+              aria-label="Día siguiente"
+              [disabled]="!store.canGoNextDay()"
+              (click)="onNextMealDay()"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </button>
+          </header>
+
           <app-daily-menu
-            [dailyNutrition]="dailyNutrition()"
-            [currentDate]="currentDate()"
-            (dateChanged)="onDateChanged($event)"
+            [meals]="store.meals()"
+            [selectedDay]="store.selectedDay()"
           />
 
           @if (store.viewMode() === 'pagination') {

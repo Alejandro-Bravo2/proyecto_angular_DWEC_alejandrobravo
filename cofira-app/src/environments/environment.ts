@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: '' // Vacío para usar proxy en desarrollo
+  apiUrl: '/api' // Usa /api para proxy de nginx en Docker
 };

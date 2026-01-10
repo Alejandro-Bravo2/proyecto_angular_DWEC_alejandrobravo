@@ -47,7 +47,7 @@ export interface UserProfile {
 })
 export class UserProfileService {
   private http = inject(HttpClient);
-  private readonly API_URL = `${environment.apiUrl}/api/onboarding`;
+  private readonly API_URL = `${environment.apiUrl}/onboarding`;
 
   private nutritionTargets$: Observable<NutritionTargets> | null = null;
 

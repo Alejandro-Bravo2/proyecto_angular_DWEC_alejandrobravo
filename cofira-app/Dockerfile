@@ -28,7 +28,7 @@ RUN npm ci --legacy-peer-deps
 COPY . .
 
 # Build application for production
-RUN npm run build --configuration=production
+RUN npm run build -- --configuration=production
 
 # ============================================================================
 # STAGE 2: Production

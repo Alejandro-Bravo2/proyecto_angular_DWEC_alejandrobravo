@@ -65,7 +65,7 @@ export interface DailyNutrition {
 })
 export class NutritionAIService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = `${environment.apiUrl}/api/nutrition`;
+  private readonly apiUrl = `${environment.apiUrl}/nutrition`;
 
   // State
   isAnalyzing = signal(false);
