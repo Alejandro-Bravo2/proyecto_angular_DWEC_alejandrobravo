@@ -54,7 +54,7 @@ public class UserProfile {
     @Enumerated(EnumType.STRING)
     private WorkType workType;
 
-    private Integer sleepHoursAverage;
+    private Double sleepHoursAverage;
 
     // Goals & Training
     @Enumerated(EnumType.STRING)

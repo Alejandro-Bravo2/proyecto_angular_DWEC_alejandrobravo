@@ -8,7 +8,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 72px;
+  height: 60px;
   z-index: var(--z-fixed);
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
@@ -16,22 +16,46 @@
   border-bottom: 1px solid var(--glass-border);
   @include transition-base;
 
+  @include responsive('xs') {
+    height: 64px;
+  }
+
+  @include responsive('M') {
+    height: 72px;
+  }
+
   &__inner {
     @include flex-between;
-    height: 72px;
-    padding: 0 var(--spacing-size-l);
+    height: 100%;
+    padding: 0 var(--spacing-size-s);
     max-width: 1400px;
     margin: 0 auto;
+
+    @include responsive('xs') {
+      padding: 0 var(--spacing-size-m);
+    }
+
+    @include responsive('s') {
+      padding: 0 var(--spacing-size-l);
+    }
+
+    @include responsive('L') {
+      padding: 0 var(--spacing-size-xl);
+    }
   }
 
   &__logo {
     @include tipografia-titulo;
-    font-size: var(--font-size-xl);
+    font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     color: var(--text-primary);
     text-decoration: none;
     letter-spacing: var(--letter-spacing-tight);
     @include transition-fast;
+
+    @include responsive('xs') {
+      font-size: var(--font-size-xl);
+    }
 
     &:hover {
       opacity: 0.7;
@@ -44,6 +68,10 @@
 
       @include responsive('M') {
         display: flex;
+        gap: var(--spacing-size-l);
+      }
+
+      @include responsive('L') {
         gap: var(--spacing-size-xl);
       }
     }
@@ -52,16 +80,26 @@
       display: flex;
       flex-direction: column;
       position: absolute;
-      top: 72px;
+      top: 60px;
       left: 0;
       right: 0;
       background: var(--glass-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      padding: var(--spacing-size-l);
+      padding: var(--spacing-size-m);
       gap: var(--spacing-size-xs);
       border-bottom: 1px solid var(--glass-border);
       animation: slideInDown var(--duration-base) var(--ease-out);
+      max-height: calc(100vh - 60px);
+      max-height: calc(100dvh - 60px);
+      overflow-y: auto;
+
+      @include responsive('xs') {
+        top: 64px;
+        padding: var(--spacing-size-l);
+        max-height: calc(100vh - 64px);
+        max-height: calc(100dvh - 64px);
+      }
 
       @include responsive('M') {
         display: none;
@@ -73,11 +111,16 @@
     @include tipografia-texto;
     color: var(--gris-texto);
     font-weight: var(--font-weight-medium);
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-md);
     text-decoration: none;
-    padding: var(--spacing-size-xss) 0;
+    padding: var(--spacing-size-s) 0;
     position: relative;
     @include transition-base;
+
+    @include responsive('M') {
+      font-size: var(--font-size-sm);
+      padding: var(--spacing-size-xss) 0;
+    }
 
     &::after {
       content: '';
@@ -111,17 +154,26 @@
       background: none;
       border: none;
       font-family: var(--font-primary);
-      font-size: var(--font-size-sm);
+      font-size: var(--font-size-md);
       font-weight: var(--font-weight-medium);
       text-align: left;
       cursor: pointer;
       width: 100%;
       color: var(--button-red);
-      padding: var(--spacing-size-xs) 0;
+      padding: var(--spacing-size-s) 0;
       @include transition-base;
+
+      @include responsive('M') {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-size-xs) 0;
+      }
 
       &:hover {
         opacity: 0.7;
+      }
+
+      @include touch-device {
+        padding: var(--spacing-size-m) 0;
       }
     }
   }
@@ -129,29 +181,48 @@
   &__actions {
     display: flex;
     align-items: center;
-    gap: var(--spacing-size-s);
+    gap: var(--spacing-size-xs);
+
+    @include responsive('xs') {
+      gap: var(--spacing-size-s);
+    }
   }
 
   &__theme-toggle {
     @include boton-reset;
     @include flex-center;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border-radius: var(--radius-circle);
     background-color: transparent;
     color: var(--text-primary);
     @include transition-base;
 
+    @include responsive('xs') {
+      width: 40px;
+      height: 40px;
+    }
+
     &:hover {
       background-color: var(--bg-tertiary);
+    }
+
+    @include touch-device {
+      width: 44px;
+      height: 44px;
     }
   }
 
   &__theme-icon {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     display: block;
     @include transition-base;
+
+    @include responsive('xs') {
+      width: 20px;
+      height: 20px;
+    }
   }
 
   &__hamburger {
@@ -159,12 +230,19 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 5px;
-    width: 40px;
-    height: 40px;
-    padding: 10px;
+    gap: 4px;
+    width: 36px;
+    height: 36px;
+    padding: 8px;
     border-radius: var(--radius-s);
     @include transition-base;
+
+    @include responsive('xs') {
+      width: 40px;
+      height: 40px;
+      gap: 5px;
+      padding: 10px;
+    }
 
     @include responsive('M') {
       display: none;
@@ -172,6 +250,11 @@
 
     &:hover {
       background-color: var(--bg-tertiary);
+    }
+
+    @include touch-device {
+      width: 44px;
+      height: 44px;
     }
 
     &-line {
@@ -185,13 +268,21 @@
     &[aria-expanded='true'] {
       .header__hamburger-line {
         &:nth-child(1) {
-          transform: rotate(45deg) translate(5px, 5px);
+          transform: rotate(45deg) translate(4px, 4px);
+
+          @include responsive('xs') {
+            transform: rotate(45deg) translate(5px, 5px);
+          }
         }
         &:nth-child(2) {
           opacity: 0;
         }
         &:nth-child(3) {
-          transform: rotate(-45deg) translate(5px, -5px);
+          transform: rotate(-45deg) translate(4px, -4px);
+
+          @include responsive('xs') {
+            transform: rotate(-45deg) translate(5px, -5px);
+          }
         }
       }
     }
@@ -200,11 +291,13 @@
   // Botones en el header
   .boton {
     display: none;
-    font-size: var(--font-size-sm);
-    padding: var(--spacing-size-xss) var(--spacing-size-m);
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-size-xss) var(--spacing-size-s);
 
     @include responsive('M') {
       display: inline-flex;
+      font-size: var(--font-size-sm);
+      padding: var(--spacing-size-xss) var(--spacing-size-m);
     }
   }
 }

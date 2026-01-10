@@ -8,11 +8,12 @@ import { ProgressCard } from './components/progress-card/progress-card';
 import { TrainingService, Exercise, WorkoutProgress } from './services/training.service';
 import { TrainingStore } from './stores/training.store';
 import { EmptyState } from '../../shared/components/ui/empty-state/empty-state';
+import { InfiniteScrollDirective } from '../../shared/directives/infinite-scroll.directive';
 
 @Component({
   selector: 'app-training',
   standalone: true,
-  imports: [WeeklyTable, FeedbackForm, ProgressCard, EmptyState, ReactiveFormsModule],
+  imports: [WeeklyTable, FeedbackForm, ProgressCard, EmptyState, ReactiveFormsModule, InfiniteScrollDirective],
   templateUrl: './training.html',
   styleUrl: './training.scss',
 })
@@ -103,5 +104,23 @@ export class Training implements OnInit {
   createRoutine(): void {
     console.log('Crear nueva rutina de entrenamiento');
     // TODO: Implementar lógica para abrir modal o navegar a formulario de creación de rutina
+  }
+
+  // ==========================================
+  // METODOS DE INFINITE SCROLL
+  // ==========================================
+
+  /**
+   * Cambia el modo de visualizacion (paginacion o infinite scroll)
+   */
+  setViewMode(mode: 'pagination' | 'infinite'): void {
+    this.store.setViewMode(mode);
+  }
+
+  /**
+   * Carga mas elementos para infinite scroll
+   */
+  loadMore(): void {
+    this.store.loadMore();
   }
 }

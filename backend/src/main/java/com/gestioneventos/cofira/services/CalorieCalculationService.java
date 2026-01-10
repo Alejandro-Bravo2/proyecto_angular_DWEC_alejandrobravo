@@ -108,11 +108,11 @@ public class CalorieCalculationService {
         return NutritionTargetsDTO.builder()
                 .calculatedBMR(Math.round(bmr * 100.0) / 100.0)
                 .calculatedTDEE(Math.round(tdee * 100.0) / 100.0)
-                .dailyCalories(Math.round(dailyCalories))
-                .proteinGrams(Math.round(proteinGrams))
-                .carbsGrams(Math.round(carbsGrams))
-                .fatGrams(Math.round(fatGrams))
-                .fiberGrams(Math.round(fiberGrams))
+                .dailyCalories((double) Math.round(dailyCalories))
+                .proteinGrams((double) Math.round(proteinGrams))
+                .carbsGrams((double) Math.round(carbsGrams))
+                .fatGrams((double) Math.round(fatGrams))
+                .fiberGrams((double) Math.round(fiberGrams))
                 .build();
     }
 

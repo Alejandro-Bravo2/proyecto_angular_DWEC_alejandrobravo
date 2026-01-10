@@ -44,6 +44,13 @@ export class NutritionStore {
   private readonly _currentPage = signal(1);
   private readonly _currentDate = signal(new Date().toISOString().split('T')[0]);
 
+  // Estado para infinite scroll
+  private readonly _viewMode = signal<'pagination' | 'infinite'>('pagination');
+  private readonly _infinitePage = signal(1);
+  private readonly _hasMore = signal(true);
+  private readonly _isLoadingMore = signal(false);
+  private readonly _infiniteItems = signal<Meal[]>([]);
+
   // ==========================================
   // ESTADO PUBLICO (readonly para componentes)
   // ==========================================
@@ -71,6 +78,16 @@ export class NutritionStore {
 
   /** Elementos por pagina */
   readonly pageSize = 5;
+
+  // Estado publico para infinite scroll
+  /** Modo de visualizacion actual (paginacion o infinite scroll) */
+  readonly viewMode = this._viewMode.asReadonly();
+
+  /** Indica si hay mas elementos para cargar */
+  readonly hasMore = this._hasMore.asReadonly();
+
+  /** Estado de carga de mas elementos */
+  readonly isLoadingMore = this._isLoadingMore.asReadonly();
 
   // ==========================================
   // COMPUTED (valores derivados)
@@ -134,6 +151,19 @@ export class NutritionStore {
 
   /** Indica si hay comidas hoy */
   readonly hasMealsToday = computed(() => this._meals().length > 0);
+
+  /** Elementos para infinite scroll (filtrados por busqueda) */
+  readonly infiniteScrollItems = computed(() => {
+    const term = this._searchTerm().toLowerCase().trim();
+    const items = this._infiniteItems();
+
+    if (!term) return items;
+
+    return items.filter(m =>
+      m.mealType.toLowerCase().includes(term) ||
+      m.foods.some(f => f.name.toLowerCase().includes(term))
+    );
+  });
 
   // ==========================================
   // METODOS DE CARGA
@@ -315,5 +345,66 @@ export class NutritionStore {
       waterIntake: 0,
       calorieGoal: 2000
     };
+  }
+
+  // ==========================================
+  // METODOS DE INFINITE SCROLL
+  // ==========================================
+
+  /**
+   * Cambia el modo de visualizacion (paginacion o infinite scroll)
+   */
+  setViewMode(mode: 'pagination' | 'infinite'): void {
+    this._viewMode.set(mode);
+    if (mode === 'infinite') {
+      this.resetInfiniteScroll();
+      this.loadMoreItems();
+    }
+  }
+
+  /**
+   * Carga mas elementos para infinite scroll
+   */
+  loadMore(): void {
+    if (this._isLoadingMore() || !this._hasMore() || this._viewMode() !== 'infinite') {
+      return;
+    }
+    this.loadMoreItems();
+  }
+
+  /**
+   * Carga la siguiente pagina de elementos
+   */
+  private loadMoreItems(): void {
+    this._isLoadingMore.set(true);
+
+    // Simular carga paginada desde las comidas existentes
+    const allItems = this._meals();
+    const currentPage = this._infinitePage();
+    const start = (currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    const newItems = allItems.slice(start, end);
+
+    // Simular delay de red
+    setTimeout(() => {
+      if (newItems.length > 0) {
+        this._infiniteItems.update(items => [...items, ...newItems]);
+        this._infinitePage.update(p => p + 1);
+      }
+
+      // Verificar si hay mas elementos
+      this._hasMore.set(end < allItems.length);
+      this._isLoadingMore.set(false);
+    }, 300);
+  }
+
+  /**
+   * Resetea el estado de infinite scroll
+   */
+  private resetInfiniteScroll(): void {
+    this._infinitePage.set(1);
+    this._hasMore.set(true);
+    this._infiniteItems.set([]);
+    this._isLoadingMore.set(false);
   }
 }

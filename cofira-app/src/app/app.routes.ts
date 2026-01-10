@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth-guard';
 import { canDeactivateGuard } from './core/guards/can-deactivate.guard';
 import { onboardingGuard, skipIfOnboardedGuard } from './core/guards/onboarding.guard';
+import { signupGuard } from './core/guards/signup.guard';
 import { trainingResolver } from './features/training/resolvers/training.resolver';
 import { nutritionResolver } from './features/nutrition/resolvers/nutrition.resolver';
 import { exerciseDetailResolver } from './features/training/resolvers/exercise-detail.resolver';
@@ -21,13 +22,12 @@ import { exerciseDetailResolver } from './features/training/resolvers/exercise-d
  */
 export const routes: Routes = [
   // ==========================================
-  // RUTA PRINCIPAL
+  // RUTA PRINCIPAL (publica - sin guards)
   // ==========================================
   {
     path: '',
     pathMatch: 'full',
     loadComponent: () => import('./features/home/home').then(m => m.Home),
-    canActivate: [authGuard, onboardingGuard],
     data: { breadcrumb: 'Inicio' }
   },
 
@@ -41,8 +41,8 @@ export const routes: Routes = [
   },
   {
     path: 'register',
-    loadComponent: () => import('./features/auth/register/register/register').then(m => m.Register),
-    canDeactivate: [canDeactivateGuard],
+    loadComponent: () => import('./features/auth/signup-wizard/signup-wizard').then(m => m.SignupWizard),
+    canActivate: [signupGuard],
     data: { breadcrumb: 'Registro' }
   },
   {

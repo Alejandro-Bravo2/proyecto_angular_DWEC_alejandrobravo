@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 
 /**
@@ -13,7 +13,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
@@ -47,8 +47,13 @@ export class Login implements OnInit {
         this.authService.login(username, password).subscribe({
           next: (response) => {
             console.log('Login successful', response);
-            // Navegar a la URL de retorno despues del login exitoso
-            this.router.navigateByUrl(this.returnUrl);
+            // Verificar si el usuario necesita completar el onboarding
+            if (this.authService.needsOnboarding()) {
+              this.router.navigateByUrl('/onboarding');
+            } else {
+              // Navegar a la URL de retorno despues del login exitoso
+              this.router.navigateByUrl(this.returnUrl);
+            }
           },
           error: (err) => {
             console.error('Login failed', err);

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { passwordStrengthValidator } from '../../../../shared/validators/password-strength.validator';
 import { passwordMatchValidator } from '../../../../shared/validators/cross-field.validators';
 import { AsyncValidatorsService } from '../../../../shared/validators/async-validators.service';
@@ -14,7 +14,7 @@ import { CanComponentDeactivate } from '../../../../core/guards/can-deactivate.g
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, PasswordStrength],
+  imports: [CommonModule, ReactiveFormsModule, PasswordStrength, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.scss',
 })

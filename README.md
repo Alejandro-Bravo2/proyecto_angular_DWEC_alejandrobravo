@@ -1768,6 +1768,149 @@ export const routes: Routes = [
 ];
 ```
 
+##### Rutas con Parámetros
+
+Para pantallas de detalle se usan rutas con parámetros tipo `/entrenamiento/:id`, accediendo al id vía `ActivatedRoute`:
+
+```typescript
+// Ruta definida en app.routes.ts
+{
+  path: 'entrenamiento/:id',
+  loadComponent: () => import('./features/training/components/exercise-detail/exercise-detail').then(m => m.ExerciseDetail),
+  canActivate: [authGuard, onboardingGuard],
+  resolve: { exercise: exerciseDetailResolver },
+  data: { breadcrumb: 'Detalle Ejercicio' }
+}
+```
+
+**Lectura del parámetro en el componente:**
+
+```typescript
+// exercise-detail.ts
+export class ExerciseDetail implements OnInit {
+  private route = inject(ActivatedRoute);
+  exerciseId = signal<number | null>(null);
+
+  ngOnInit() {
+    // Opción 1: snapshot (valor inicial)
+    const id = this.route.snapshot.paramMap.get('id');
+    this.exerciseId.set(Number(id));
+
+    // Opción 2: Observable (cambios reactivos)
+    this.route.paramMap.subscribe(params => {
+      this.exerciseId.set(Number(params.get('id')));
+    });
+  }
+}
+```
+
+**Navegación con routerLink:**
+
+```html
+<!-- Desde lista de ejercicios -->
+<a [routerLink]="['/entrenamiento', ejercicio.id]">Ver detalle</a>
+```
+
+##### Rutas Hijas Anidadas (Child Routes)
+
+Para secciones con subpáginas (como el área de preferencias) se definen child routes con `<router-outlet>` interno:
+
+```typescript
+// app.routes.ts - Rutas hijas de Preferencias
+{
+  path: 'preferencias',
+  loadComponent: () => import('./features/preferences/preferences-layout/preferences-layout').then(m => m.PreferencesLayout),
+  canActivate: [authGuard, onboardingGuard],
+  data: { breadcrumb: 'Preferencias' },
+  children: [
+    {
+      path: '',
+      pathMatch: 'full',
+      redirectTo: 'alimentacion'  // Redirige a la primera pestaña
+    },
+    {
+      path: 'alimentacion',
+      loadComponent: () => import('./features/preferences/pages/preferences-nutrition/preferences-nutrition').then(m => m.PreferencesNutrition),
+      data: { breadcrumb: 'Alimentación' }
+    },
+    {
+      path: 'cuenta',
+      loadComponent: () => import('./features/preferences/pages/preferences-account/preferences-account').then(m => m.PreferencesAccount),
+      canDeactivate: [canDeactivateGuard],  // Previene salir con cambios sin guardar
+      data: { breadcrumb: 'Cuenta' }
+    },
+    {
+      path: 'notificaciones',
+      loadComponent: () => import('./features/preferences/pages/preferences-notifications/preferences-notifications').then(m => m.PreferencesNotifications),
+      data: { breadcrumb: 'Notificaciones' }
+    }
+  ]
+}
+```
+
+**Componente Layout con router-outlet interno:**
+
+```typescript
+// preferences-layout.ts
+@Component({
+  selector: 'app-preferences-layout',
+  standalone: true,
+  imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet],
+  templateUrl: './preferences-layout.html'
+})
+export class PreferencesLayout {
+  navItems = [
+    { path: 'alimentacion', label: 'Alimentación', icon: 'nutrition' },
+    { path: 'cuenta', label: 'Cuenta', icon: 'account' },
+    { path: 'notificaciones', label: 'Notificaciones', icon: 'notifications' }
+  ];
+}
+```
+
+```html
+<!-- preferences-layout.html -->
+<section class="preferences">
+  <nav class="preferences__nav">
+    @for (item of navItems; track item.path) {
+      <a
+        [routerLink]="item.path"
+        routerLinkActive="active"
+        class="preferences__nav-link">
+        {{ item.label }}
+      </a>
+    }
+  </nav>
+
+  <!-- Aquí se renderizan los hijos -->
+  <div class="preferences__content">
+    <router-outlet></router-outlet>
+  </div>
+</section>
+```
+
+**Estructura de rutas resultante:**
+
+```
+/preferencias
+  ├── /preferencias (redirect → /preferencias/alimentacion)
+  ├── /preferencias/alimentacion
+  ├── /preferencias/cuenta (con canDeactivate)
+  └── /preferencias/notificaciones
+```
+
+##### Ruta Wildcard para 404
+
+La ruta wildcard `**` captura cualquier URL no reconocida y muestra una página 404 personalizada; debe ir siempre en último lugar:
+
+```typescript
+// Siempre la última ruta en app.routes.ts
+{
+  path: '**',
+  loadComponent: () => import('./shared/components/not-found/not-found').then(m => m.NotFound),
+  data: { breadcrumb: 'Página no encontrada' }
+}
+```
+
 #### 4.2 Guards
 
 ##### A. AuthGuard (CanActivate)
@@ -2020,6 +2163,198 @@ export class Component {
  this.router.navigate(["../next"], { relativeTo: this.route });
  }
 }
+```
+
+##### NavigationExtras con state
+
+Para pasar datos entre rutas sin exponerlos en la URL:
+
+```typescript
+// Navegar pasando datos ocultos
+this.router.navigate(['/entrenamiento'], {
+  state: { error: 'El ejercicio no existe' }
+});
+
+// Leer el state en el componente destino
+export class Training implements OnInit {
+  private router = inject(Router);
+
+  ngOnInit(): void {
+    const navigation = this.router.getCurrentNavigation();
+    const error = navigation?.extras?.state?.['error'];
+
+    if (error) {
+      this.toastService.error(error);
+    }
+  }
+}
+```
+
+**Casos de uso**:
+- Mostrar mensajes de error tras redirección
+- Pasar datos temporales entre componentes
+- Información que no debe aparecer en la URL
+
+#### 4.7 Componente NotFound (Página 404)
+
+**Ubicación**: `src/app/shared/components/not-found/not-found.ts`
+
+El componente NotFound proporciona una experiencia de usuario amigable cuando se accede a rutas inexistentes:
+
+```typescript
+@Component({
+  selector: 'app-not-found',
+  standalone: true,
+  imports: [CommonModule, RouterLink],
+  templateUrl: './not-found.html',
+  styleUrl: './not-found.scss'
+})
+export class NotFound {
+  private router = inject(Router);
+
+  // Captura la URL actual para mostrar al usuario
+  currentUrl = this.router.url;
+
+  // Sugerencias de navegación
+  suggestions = [
+    { path: '/', label: 'Inicio', icon: 'home' },
+    { path: '/entrenamiento', label: 'Entrenamiento', icon: 'fitness' },
+    { path: '/alimentacion', label: 'Alimentación', icon: 'nutrition' },
+    { path: '/seguimiento', label: 'Seguimiento', icon: 'progress' },
+  ];
+
+  // Navegación hacia atrás en el historial
+  goBack(): void {
+    window.history.back();
+  }
+
+  // Navegación programática al inicio
+  goHome(): void {
+    this.router.navigate(['/']);
+  }
+}
+```
+
+**Template con diseño completo:**
+
+```html
+<!-- not-found.html -->
+<section class="not-found">
+  <article class="not-found__container">
+    <!-- Ilustración visual del error -->
+    <figure class="not-found__illustration" aria-hidden="true">
+      <span class="not-found__number">4</span>
+      <svg class="not-found__icon"><!-- icono --></svg>
+      <span class="not-found__number">4</span>
+    </figure>
+
+    <h1 class="not-found__title">Página no encontrada</h1>
+    <p class="not-found__message">
+      Lo sentimos, la página que buscas no existe o ha sido movida.
+    </p>
+
+    <!-- Mostrar la URL solicitada -->
+    <aside class="not-found__url-box">
+      <span class="not-found__url-label">URL solicitada:</span>
+      <code class="not-found__url">{{ currentUrl }}</code>
+    </aside>
+
+    <!-- Acciones disponibles -->
+    <footer class="not-found__actions">
+      <button class="not-found__btn not-found__btn--secondary" (click)="goBack()">
+        <span class="not-found__btn-icon" aria-hidden="true">&larr;</span>
+        Volver atrás
+      </button>
+      <a routerLink="/" class="not-found__btn not-found__btn--primary">
+        Ir al inicio
+      </a>
+    </footer>
+
+    <!-- Sugerencias de navegación -->
+    <aside class="not-found__suggestions">
+      <h2 class="not-found__suggestions-title">Quizás buscabas:</h2>
+      <nav class="not-found__nav">
+        @for (suggestion of suggestions; track suggestion.path) {
+          <a [routerLink]="suggestion.path" class="not-found__nav-link">
+            {{ suggestion.label }}
+          </a>
+        }
+      </nav>
+    </aside>
+  </article>
+</section>
+```
+
+#### 4.8 Mapa Completo de Rutas
+
+Tabla resumen de todas las rutas de la aplicación COFIRA:
+
+| Ruta | Descripción | Lazy | Guards | Resolver |
+|------|-------------|:----:|--------|----------|
+| `/` | Página de inicio | ✅ | `authGuard`, `onboardingGuard` | - |
+| `/login` | Iniciar sesión | ✅ | - | - |
+| `/register` | Registro de usuario | ✅ | `canDeactivateGuard` | - |
+| `/reset-password` | Restablecer contraseña | ✅ | - | - |
+| `/onboarding` | Flujo de bienvenida | ✅ | `authGuard`, `skipIfOnboardedGuard` | - |
+| `/onboarding/about` | Paso: Información personal | ✅ | - | - |
+| `/onboarding/nutrition` | Paso: Preferencias nutricionales | ✅ | - | - |
+| `/onboarding/goal` | Paso: Objetivos fitness | ✅ | - | - |
+| `/onboarding/pricing` | Paso: Plan de suscripción | ✅ | - | - |
+| `/onboarding/muscles` | Paso: Grupos musculares | ✅ | - | - |
+| `/entrenamiento` | Lista de ejercicios | ✅ | `authGuard`, `onboardingGuard` | `trainingResolver` |
+| `/entrenamiento/:id` | Detalle de ejercicio | ✅ | `authGuard`, `onboardingGuard` | `exerciseDetailResolver` |
+| `/alimentacion` | Gestión nutricional | ✅ | `authGuard`, `onboardingGuard` | `nutritionResolver` |
+| `/seguimiento` | Seguimiento de progreso | ✅ | `authGuard`, `onboardingGuard` | - |
+| `/preferencias` | Layout de preferencias | ✅ | `authGuard`, `onboardingGuard` | - |
+| `/preferencias/alimentacion` | Preferencias de alimentación | ✅ | - | - |
+| `/preferencias/cuenta` | Configuración de cuenta | ✅ | `canDeactivateGuard` | - |
+| `/preferencias/notificaciones` | Ajustes de notificaciones | ✅ | - | - |
+| `**` | Página 404 (Not Found) | ✅ | - | - |
+
+**Leyenda:**
+- ✅ Lazy Loading: Todas las rutas usan `loadComponent()` para carga diferida
+- Guards: Protecciones de navegación aplicadas a la ruta
+- Resolver: Datos pre-cargados antes de activar la ruta
+
+#### 4.9 Entregables Verificados
+
+Verificación del cumplimiento de todos los requisitos de la Fase 4:
+
+| Requisito | Estado | Implementación |
+|-----------|:------:|----------------|
+| Sistema de rutas completo (mínimo 5 rutas principales) | ✅ | 19 rutas configuradas en `app.routes.ts` |
+| Lazy loading en al menos 1 módulo | ✅ | Todas las rutas usan `loadComponent()` con `import()` dinámico |
+| Route guards implementados | ✅ | `authGuard`, `onboardingGuard`, `skipIfOnboardedGuard`, `canDeactivateGuard` |
+| Resolver en al menos 1 ruta | ✅ | `trainingResolver`, `nutritionResolver`, `exerciseDetailResolver` |
+| Navegación funcional en toda la aplicación | ✅ | `Router.navigate()`, `routerLink`, `NavigationExtras` |
+| Breadcrumbs dinámicos | ✅ | Componente `Breadcrumbs` con `NavigationEnd` y `data.breadcrumb` |
+| Documentación de rutas | ✅ | Esta sección del README |
+
+**Resumen de archivos clave:**
+
+```
+src/app/
+├── app.routes.ts                              # Configuración principal de rutas
+├── app.config.ts                              # provideRouter + PreloadAllModules
+├── core/
+│   └── guards/
+│       ├── auth-guard.ts                      # Protección de autenticación
+│       ├── onboarding.guard.ts                # Verificación de onboarding
+│       └── can-deactivate.guard.ts            # Cambios sin guardar
+├── features/
+│   ├── training/
+│   │   └── resolvers/
+│   │       ├── training.resolver.ts           # Pre-carga lista de ejercicios
+│   │       └── exercise-detail.resolver.ts    # Pre-carga detalle de ejercicio
+│   ├── nutrition/
+│   │   └── resolvers/
+│   │       └── nutrition.resolver.ts          # Pre-carga lista de alimentos
+│   └── preferences/
+│       └── preferences-layout/                # Layout con rutas hijas
+└── shared/
+    └── components/
+        ├── breadcrumbs/                       # Navegación de migas de pan
+        └── not-found/                         # Página 404
 ```
 
 ---
@@ -3742,13 +4077,334 @@ previousPage(): void {
 }
 ```
 
-#### 6.8 Archivos Creados
+#### 6.8 Infinite Scroll
+
+Implementación alternativa a la paginación usando IntersectionObserver para carga progresiva de datos. COFIRA permite al usuario elegir entre paginación tradicional e infinite scroll mediante un toggle.
+
+##### Directiva Reutilizable
+
+```typescript
+// shared/directives/infinite-scroll.directive.ts
+import { Directive, ElementRef, OnDestroy, OnInit, inject, output } from '@angular/core';
+
+@Directive({
+  selector: '[appInfiniteScroll]',
+  standalone: true
+})
+export class InfiniteScrollDirective implements OnInit, OnDestroy {
+  scrolled = output<void>();
+
+  private readonly el = inject(ElementRef<HTMLElement>);
+  private observer: IntersectionObserver | null = null;
+
+  ngOnInit(): void {
+    this.setupObserver();
+  }
+
+  private setupObserver(): void {
+    const options: IntersectionObserverInit = {
+      root: null,           // Viewport como contenedor
+      rootMargin: '100px',  // Cargar antes de llegar al final
+      threshold: 0.1        // Trigger con 10% visible
+    };
+
+    this.observer = new IntersectionObserver((entries) => {
+      const [entry] = entries;
+      if (entry.isIntersecting) {
+        this.scrolled.emit();
+      }
+    }, options);
+
+    this.observer.observe(this.el.nativeElement);
+  }
+
+  ngOnDestroy(): void {
+    if (this.observer) {
+      this.observer.disconnect();
+      this.observer = null;
+    }
+  }
+}
+```
+
+##### Estado en el Store
+
+```typescript
+// Señales para infinite scroll
+private readonly _viewMode = signal<'pagination' | 'infinite'>('pagination');
+private readonly _infinitePage = signal(1);
+private readonly _hasMore = signal(true);
+private readonly _isLoadingMore = signal(false);
+private readonly _infiniteItems = signal<Item[]>([]);
+
+// Estado público
+readonly viewMode = this._viewMode.asReadonly();
+readonly hasMore = this._hasMore.asReadonly();
+readonly isLoadingMore = this._isLoadingMore.asReadonly();
+
+// Computed para items filtrados
+readonly infiniteScrollItems = computed(() => {
+  const term = this._searchTerm().toLowerCase().trim();
+  const items = this._infiniteItems();
+  if (!term) return items;
+  return items.filter(item => item.name.toLowerCase().includes(term));
+});
+
+// Métodos
+setViewMode(mode: 'pagination' | 'infinite'): void {
+  this._viewMode.set(mode);
+  if (mode === 'infinite') {
+    this.resetInfiniteScroll();
+    this.loadMoreItems();
+  }
+}
+
+loadMore(): void {
+  if (this._isLoadingMore() || !this._hasMore() || this._viewMode() !== 'infinite') {
+    return;
+  }
+  this.loadMoreItems();
+}
+
+private loadMoreItems(): void {
+  this._isLoadingMore.set(true);
+  const allItems = this._items();
+  const currentPage = this._infinitePage();
+  const start = (currentPage - 1) * this.pageSize;
+  const end = start + this.pageSize;
+  const newItems = allItems.slice(start, end);
+
+  setTimeout(() => {
+    if (newItems.length > 0) {
+      this._infiniteItems.update(items => [...items, ...newItems]);
+      this._infinitePage.update(p => p + 1);
+    }
+    this._hasMore.set(end < allItems.length);
+    this._isLoadingMore.set(false);
+  }, 300);
+}
+
+private resetInfiniteScroll(): void {
+  this._infinitePage.set(1);
+  this._hasMore.set(true);
+  this._infiniteItems.set([]);
+  this._isLoadingMore.set(false);
+}
+```
+
+##### Toggle Paginación / Infinite Scroll
+
+```html
+<!-- Toggle de modo de visualización -->
+<div class="view-mode-toggle" role="group" aria-label="Modo de visualización">
+  <button
+    type="button"
+    [class.active]="store.viewMode() === 'pagination'"
+    (click)="setViewMode('pagination')"
+    aria-pressed="{{ store.viewMode() === 'pagination' }}"
+  >
+    <svg><!-- icono grid --></svg>
+    Páginas
+  </button>
+  <button
+    type="button"
+    [class.active]="store.viewMode() === 'infinite'"
+    (click)="setViewMode('infinite')"
+    aria-pressed="{{ store.viewMode() === 'infinite' }}"
+  >
+    <svg><!-- icono scroll --></svg>
+    Continuo
+  </button>
+</div>
+
+<!-- Renderizado condicional -->
+@if (store.viewMode() === 'pagination') {
+  <!-- Paginación existente -->
+  @for (item of store.paginatedItems(); track item.id) {
+    <app-item [data]="item" />
+  }
+  <!-- Controles de paginación -->
+} @else {
+  <!-- Infinite scroll -->
+  @for (item of store.infiniteScrollItems(); track item.id) {
+    <app-item [data]="item" />
+  }
+
+  <!-- Sentinel para detectar scroll -->
+  <div
+    class="infinite-scroll-sentinel"
+    appInfiniteScroll
+    (scrolled)="loadMore()"
+  ></div>
+
+  @if (store.isLoadingMore()) {
+    <div class="loading-more" role="status" aria-live="polite">
+      <span class="loading-more__spinner"></span>
+      Cargando más elementos...
+    </div>
+  }
+
+  @if (!store.hasMore() && store.infiniteScrollItems().length > 0) {
+    <p class="end-of-list">No hay más elementos</p>
+  }
+}
+```
+
+##### Estilos Compartidos
+
+```scss
+// Toggle de modo de visualización
+.view-mode-toggle {
+  display: flex;
+  gap: var(--spacing-size-xs);
+  margin-bottom: var(--spacing-size-m);
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-size-xs);
+    padding: var(--spacing-size-xs) var(--spacing-size-s);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-s);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.active {
+      background: var(--primary);
+      color: var(--text-on-primary, #fff);
+      border-color: var(--primary);
+    }
+  }
+}
+
+// Sentinel oculto para detectar scroll
+.infinite-scroll-sentinel {
+  height: 1px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+// Estado de carga
+.loading-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-size-s);
+  padding: var(--spacing-size-m);
+  color: var(--text-secondary);
+}
+
+.loading-more__spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// Mensaje de fin de lista
+.end-of-list {
+  text-align: center;
+  padding: var(--spacing-size-m);
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-color);
+  margin-top: var(--spacing-size-m);
+}
+```
+
+##### Comparativa de Modos
+
+| Modo | Ventajas | Caso de Uso |
+|------|----------|-------------|
+| Paginación | Control preciso, URLs compartibles, menor uso de memoria | Datos tabulares, búsqueda específica, listados largos |
+| Infinite Scroll | UX fluida, sin clics adicionales, exploración continua | Feeds, galerías, exploración de contenido |
+
+#### 6.9 Actualizaciones en Tiempo Real (Opcional)
+
+Documentación de opciones para actualización automática de datos. Actualmente COFIRA usa refresh manual, pero se documentan las opciones para futuras extensiones.
+
+##### Opción A: WebSockets
+
+```typescript
+import { Injectable } from '@angular/core';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { Observable } from 'rxjs';
+
+@Injectable({ providedIn: 'root' })
+export class RealtimeService {
+  private socket$: WebSocketSubject<unknown> | null = null;
+
+  connect(url: string): Observable<unknown> {
+    this.socket$ = webSocket(url);
+    return this.socket$.asObservable();
+  }
+
+  send(message: unknown): void {
+    this.socket$?.next(message);
+  }
+
+  close(): void {
+    this.socket$?.complete();
+    this.socket$ = null;
+  }
+}
+```
+
+##### Opción B: Polling con RxJS
+
+```typescript
+import { timer, Observable } from 'rxjs';
+import { switchMap, shareReplay } from 'rxjs/operators';
+
+pollData<T>(intervalMs = 30000): Observable<T[]> {
+  return timer(0, intervalMs).pipe(
+    switchMap(() => this.http.get<T[]>('/api/data')),
+    shareReplay(1)
+  );
+}
+```
+
+##### Opción C: Server-Sent Events (SSE)
+
+```typescript
+listenToUpdates(url: string): Observable<MessageEvent> {
+  return new Observable(observer => {
+    const eventSource = new EventSource(url);
+
+    eventSource.onmessage = (event) => observer.next(event);
+    eventSource.onerror = (error) => observer.error(error);
+
+    return () => eventSource.close();
+  });
+}
+```
+
+##### Estado en COFIRA
+
+| Mecanismo | Estado | Justificación |
+|-----------|--------|---------------|
+| Refresh manual | ✅ Implementado | Adecuado para datos de fitness que no cambian frecuentemente |
+| Polling | ❌ No requerido | Consumo innecesario de recursos para este caso de uso |
+| WebSockets | ❌ No requerido | No hay requisitos de colaboración en tiempo real |
+| SSE | ❌ No requerido | No hay notificaciones push del servidor |
+
+**Nota**: Se documenta como referencia para futuras extensiones si la aplicación requiere funcionalidades colaborativas o notificaciones en tiempo real.
+
+#### 6.10 Archivos Creados
 
 | Archivo | Descripción |
 |---------|-------------|
-| `features/training/stores/training.store.ts` | Store de entrenamientos |
-| `features/nutrition/stores/nutrition.store.ts` | Store de nutrición |
-| `features/progress/stores/progress.store.ts` | Store de progreso |
+| `features/training/stores/training.store.ts` | Store de entrenamientos con paginación e infinite scroll |
+| `features/nutrition/stores/nutrition.store.ts` | Store de nutrición con paginación e infinite scroll |
+| `features/progress/stores/progress.store.ts` | Store de progreso con paginación e infinite scroll |
+| `shared/directives/infinite-scroll.directive.ts` | Directiva reutilizable para detección de scroll |
 
 ---
 

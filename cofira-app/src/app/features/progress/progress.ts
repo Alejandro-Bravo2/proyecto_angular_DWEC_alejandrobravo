@@ -6,11 +6,12 @@ import { NutrientCounter } from './components/nutrient-counter/nutrient-counter'
 import { StrengthGainChart } from './components/strength-gain-chart/strength-gain-chart';
 import { ProgressService, NutrientData, ProgressEntry } from './services/progress.service';
 import { ProgressStore } from './stores/progress.store';
+import { InfiniteScrollDirective } from '../../shared/directives/infinite-scroll.directive';
 
 @Component({
   selector: 'app-progress',
   standalone: true,
-  imports: [NutrientCounter, StrengthGainChart, ReactiveFormsModule],
+  imports: [NutrientCounter, StrengthGainChart, ReactiveFormsModule, InfiniteScrollDirective],
   templateUrl: './progress.html',
   styleUrl: './progress.scss',
 })
@@ -118,5 +119,23 @@ export class Progress implements OnInit {
   /** Ir a pagina siguiente */
   nextPage(): void {
     this.store.nextPage();
+  }
+
+  // ==========================================
+  // METODOS DE INFINITE SCROLL
+  // ==========================================
+
+  /**
+   * Cambia el modo de visualizacion (paginacion o infinite scroll)
+   */
+  setViewMode(mode: 'pagination' | 'infinite'): void {
+    this.store.setViewMode(mode);
+  }
+
+  /**
+   * Carga mas elementos para infinite scroll
+   */
+  loadMore(): void {
+    this.store.loadMore();
   }
 }

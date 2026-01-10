@@ -1,48 +1,62 @@
-@import '../../../../../styles/00-settings/css-variables';
-@import '../../../../../styles/01-tools/mixins';
+@use '../../../../../styles/00-settings/css-variables' as *;
+@use '../../../../../styles/01-tools/mixins' as *;
 
 .breadcrumbs {
-  padding: var(--spacing-size-s) var(--spacing-size-m);
-  background-color: var(--gris-dark);
-  border-radius: var(--radius-xss);
-  max-width: 1200px;
-  margin: var(--spacing-size-m) auto;
+  // Sin fondo - integrado con el contenido
+  padding: 0.75rem 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-left: var(--spacing-size-s);
+  padding-right: var(--spacing-size-s);
+
+  @media (min-width: 480px) {
+    padding-left: var(--spacing-size-m);
+    padding-right: var(--spacing-size-m);
+  }
+
+  @media (min-width: 1024px) {
+    padding-left: var(--spacing-size-xl);
+    padding-right: var(--spacing-size-xl);
+  }
 
   &__list {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    gap: 0.25rem;
     list-style: none;
     padding: 0;
     margin: 0;
   }
 
   &__item {
-    font-size: var(--font-size-sm);
-    font-family: var(--font-primary);
-    color: var(--text-dark);
     display: flex;
     align-items: center;
+    font-size: 0.8125rem; // 13px - discreto
+    font-family: var(--font-primary);
+    color: var(--text-secondary);
 
     &:not(:last-child)::after {
       content: '/';
-      margin: 0 var(--spacing-size-xss);
-      color: var(--text-dark);
+      margin: 0 0.5rem;
+      color: var(--text-muted);
+      font-weight: 300;
     }
   }
 
   &__link {
     text-decoration: none;
-    color: var(--amarillo-normal);
-    transition: color var(--duration-fast);
+    color: var(--text-secondary);
+    transition: color 200ms ease;
 
     &:hover {
-      color: var(--amarillo-normal-hover);
+      color: var(--text-primary);
+      text-decoration: underline;
     }
   }
 
   &__current {
-    font-weight: var(--font-weight-semibold);
-    color: var(--text-dark);
+    color: var(--text-primary);
+    font-weight: 500;
   }
 }

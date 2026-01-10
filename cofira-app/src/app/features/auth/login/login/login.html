@@ -31,10 +31,10 @@
       <button type="submit" class="c-button c-button--primary c-button--large login-card__submit" [disabled]="loginForm.invalid">Iniciar Sesión</button>
     </form>
     <footer class="login-card__footer">
-      <a href="#" class="login-card__link">¿Has olvidado la contraseña?</a>
+      <a routerLink="/reset-password" class="login-card__link">¿Has olvidado la contraseña?</a>
       <p class="login-card__register-text">
         ¿No tienes cuenta?
-        <a href="#" class="login-card__link">Regístrate</a>
+        <a routerLink="/register" class="login-card__link">Regístrate</a>
       </p>
     </footer>
   </article>

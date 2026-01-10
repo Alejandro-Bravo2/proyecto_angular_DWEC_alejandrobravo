@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, firstValueFrom } from 'rxjs';
-import { delay, tap, map } from 'rxjs/operators';
+import { tap, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 export interface User {
@@ -93,6 +93,38 @@ interface RegisterRequest {
   username: string;
   email: string;
   password: string;
+}
+
+export interface RegisterWithOnboardingRequest {
+  // Registration data
+  nombre: string;
+  username: string;
+  email: string;
+  password: string;
+  // Onboarding data
+  gender: string;
+  birthDate: string;
+  heightCm: number;
+  currentWeightKg: number;
+  targetWeightKg?: number;
+  activityLevel: string;
+  workType: string;
+  sleepHoursAverage?: number;
+  primaryGoal: string;
+  fitnessLevel: string;
+  trainingDaysPerWeek: number;
+  sessionDurationMinutes?: number;
+  preferredTrainingTime?: string;
+  dietType: string;
+  mealsPerDay?: number;
+  allergies?: string[];
+  injuries?: string[];
+  equipment?: string[];
+  medicalConditions?: string[];
+  medications?: string | null;
+  previousSurgeries?: string[];
+  isPregnant?: boolean;
+  isBreastfeeding?: boolean;
 }
 
 @Injectable({
@@ -189,6 +221,26 @@ export class AuthService {
     return response;
   }
 
+  async registerWithOnboarding(data: RegisterWithOnboardingRequest): Promise<AuthResponse> {
+    const response = await firstValueFrom(
+      this.http.post<AuthResponse>(`${this.API_URL}/register-with-onboarding`, data)
+    );
+
+    // Save token and user
+    this.saveToken(response.token);
+    const user: User = {
+      id: response.id.toString(),
+      email: response.email,
+      name: response.username,
+      isOnboarded: true, // Already completed
+    };
+    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    this.currentUser.set(user);
+    this.isAuthenticated.set(true);
+
+    return response;
+  }
+
   saveToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
   }
@@ -229,10 +281,14 @@ export class AuthService {
   }
 
   requestPasswordResetCode(email: string): Observable<{ message: string }> {
-    return of({ message: 'Reset code sent to your email.' }).pipe(delay(1000));
+    return this.http.post<{ message: string }>(`${this.API_URL}/forgot-password`, { email });
   }
 
   resetPasswordWithCode(email: string, code: string, newPassword: string): Observable<{ message: string }> {
-    return of({ message: 'Password has been reset successfully.' }).pipe(delay(1000));
+    return this.http.post<{ message: string }>(`${this.API_URL}/reset-password`, {
+      email,
+      code,
+      newPassword
+    });
   }
 }

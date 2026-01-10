@@ -42,6 +42,13 @@ export class TrainingStore {
   private readonly _searchTerm = signal('');
   private readonly _currentPage = signal(1);
 
+  // Estado para infinite scroll
+  private readonly _viewMode = signal<'pagination' | 'infinite'>('pagination');
+  private readonly _infinitePage = signal(1);
+  private readonly _hasMore = signal(true);
+  private readonly _isLoadingMore = signal(false);
+  private readonly _infiniteItems = signal<Exercise[]>([]);
+
   // ==========================================
   // ESTADO PUBLICO (readonly para componentes)
   // ==========================================
@@ -63,6 +70,16 @@ export class TrainingStore {
 
   /** Elementos por pagina */
   readonly pageSize = 10;
+
+  // Estado publico para infinite scroll
+  /** Modo de visualizacion actual (paginacion o infinite scroll) */
+  readonly viewMode = this._viewMode.asReadonly();
+
+  /** Indica si hay mas elementos para cargar */
+  readonly hasMore = this._hasMore.asReadonly();
+
+  /** Estado de carga de mas elementos */
+  readonly isLoadingMore = this._isLoadingMore.asReadonly();
 
   // ==========================================
   // COMPUTED (valores derivados)
@@ -115,6 +132,19 @@ export class TrainingStore {
   readonly isEmpty = computed(() =>
     this._exercises().length === 0 && !this._loading() && !this._error()
   );
+
+  /** Elementos para infinite scroll (filtrados por busqueda) */
+  readonly infiniteScrollItems = computed(() => {
+    const term = this._searchTerm().toLowerCase().trim();
+    const items = this._infiniteItems();
+
+    if (!term) return items;
+
+    return items.filter(e =>
+      e.name.toLowerCase().includes(term) ||
+      e.reps.toLowerCase().includes(term)
+    );
+  });
 
   // ==========================================
   // METODOS DE CARGA
@@ -264,5 +294,67 @@ export class TrainingStore {
    */
   clearError(): void {
     this._error.set(null);
+  }
+
+  // ==========================================
+  // METODOS DE INFINITE SCROLL
+  // ==========================================
+
+  /**
+   * Cambia el modo de visualizacion (paginacion o infinite scroll)
+   */
+  setViewMode(mode: 'pagination' | 'infinite'): void {
+    this._viewMode.set(mode);
+    if (mode === 'infinite') {
+      this.resetInfiniteScroll();
+      this.loadMoreItems();
+    }
+  }
+
+  /**
+   * Carga mas elementos para infinite scroll
+   */
+  loadMore(): void {
+    if (this._isLoadingMore() || !this._hasMore() || this._viewMode() !== 'infinite') {
+      return;
+    }
+    this.loadMoreItems();
+  }
+
+  /**
+   * Carga la siguiente pagina de elementos
+   */
+  private loadMoreItems(): void {
+    this._isLoadingMore.set(true);
+
+    // Simular carga paginada desde los ejercicios existentes
+    // En un caso real, esto haria una llamada HTTP con page/pageSize
+    const allItems = this._exercises();
+    const currentPage = this._infinitePage();
+    const start = (currentPage - 1) * this.pageSize;
+    const end = start + this.pageSize;
+    const newItems = allItems.slice(start, end);
+
+    // Simular delay de red
+    setTimeout(() => {
+      if (newItems.length > 0) {
+        this._infiniteItems.update(items => [...items, ...newItems]);
+        this._infinitePage.update(p => p + 1);
+      }
+
+      // Verificar si hay mas elementos
+      this._hasMore.set(end < allItems.length);
+      this._isLoadingMore.set(false);
+    }, 300);
+  }
+
+  /**
+   * Resetea el estado de infinite scroll
+   */
+  private resetInfiniteScroll(): void {
+    this._infinitePage.set(1);
+    this._hasMore.set(true);
+    this._infiniteItems.set([]);
+    this._isLoadingMore.set(false);
   }
 }

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, NavigationEnd, ActivatedRoute, Data, RouterLink } from '@angular/router';
-import { filter, map } from 'rxjs/operators';
+import { Router, NavigationEnd, ActivatedRoute, RouterLink } from '@angular/router';
+import { filter, map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
 interface Breadcrumb {
@@ -16,20 +16,14 @@ interface Breadcrumb {
   templateUrl: './breadcrumbs.html',
   styleUrl: './breadcrumbs.scss',
 })
-export class Breadcrumbs implements OnInit {
+export class Breadcrumbs {
   breadcrumbs$: Observable<Breadcrumb[]>;
 
   constructor(private router: Router, private activatedRoute: ActivatedRoute) {
+    // Usamos startWith(null) para generar breadcrumbs inmediatamente en la primera carga
     this.breadcrumbs$ = this.router.events.pipe(
       filter(event => event instanceof NavigationEnd),
-      map(() => this.buildBreadcrumbs(this.activatedRoute.root))
-    );
-  }
-
-  ngOnInit(): void {
-    // Initial breadcrumbs for when the component first loads
-    this.breadcrumbs$ = this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
+      startWith(null),
       map(() => this.buildBreadcrumbs(this.activatedRoute.root))
     );
   }

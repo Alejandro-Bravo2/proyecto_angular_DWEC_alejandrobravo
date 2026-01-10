@@ -438,6 +438,7 @@ Estilo: Minimalista Apple/Ferrari
    RESPONSIVE MIXINS
    ============================================ */
 
+// Mixin principal responsive (mobile-first, min-width)
 @mixin responsive($breakpoint) {
   @if $breakpoint == 'xs' {
     @media (min-width: $breakpoint-xs) {
@@ -463,6 +464,175 @@ Estilo: Minimalista Apple/Ferrari
     @media (min-width: $breakpoint-2xl) {
       @content;
     }
+  }
+}
+
+// Mixin responsive inverso (desktop-first, max-width)
+@mixin responsive-down($breakpoint) {
+  @if $breakpoint == 'xs' {
+    @media (max-width: #{$breakpoint-xs - 1px}) {
+      @content;
+    }
+  } @else if $breakpoint == 's' {
+    @media (max-width: #{$breakpoint-s - 1px}) {
+      @content;
+    }
+  } @else if $breakpoint == 'M' {
+    @media (max-width: #{$breakpoint-M - 1px}) {
+      @content;
+    }
+  } @else if $breakpoint == 'L' {
+    @media (max-width: #{$breakpoint-L - 1px}) {
+      @content;
+    }
+  } @else if $breakpoint == 'xl' {
+    @media (max-width: #{$breakpoint-xl - 1px}) {
+      @content;
+    }
+  } @else if $breakpoint == '2xl' {
+    @media (max-width: #{$breakpoint-2xl - 1px}) {
+      @content;
+    }
+  }
+}
+
+// Ocultar en móvil, mostrar en breakpoint
+@mixin hide-until($breakpoint) {
+  display: none;
+  @include responsive($breakpoint) {
+    display: block;
+  }
+}
+
+// Mostrar en móvil, ocultar en breakpoint
+@mixin show-until($breakpoint) {
+  display: block;
+  @include responsive($breakpoint) {
+    display: none;
+  }
+}
+
+// Grid responsive automático
+@mixin responsive-grid($min-col-width: 280px, $gap: var(--spacing-size-m)) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min($min-col-width, 100%), 1fr));
+  gap: $gap;
+}
+
+// Flex responsive (columna en móvil, fila en breakpoint)
+@mixin flex-responsive($breakpoint: 'M', $gap: var(--spacing-size-m)) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+
+  @include responsive($breakpoint) {
+    flex-direction: row;
+  }
+}
+
+// Padding responsive
+@mixin padding-responsive {
+  padding: var(--spacing-size-m);
+
+  @include responsive('s') {
+    padding: var(--spacing-size-l);
+  }
+
+  @include responsive('M') {
+    padding: var(--spacing-size-xl);
+  }
+
+  @include responsive('L') {
+    padding: var(--spacing-size-xxl);
+  }
+}
+
+// Spacing section responsive
+@mixin section-responsive {
+  padding-top: var(--spacing-size-xxl);
+  padding-bottom: var(--spacing-size-xxl);
+
+  @include responsive('M') {
+    padding-top: var(--spacing-size-xxxxl);
+    padding-bottom: var(--spacing-size-xxxxl);
+  }
+}
+
+// Tipografía responsive para títulos
+@mixin heading-responsive($mobile-size: var(--font-size-2xl), $desktop-size: var(--font-size-4xl)) {
+  font-size: $mobile-size;
+
+  @include responsive('xs') {
+    font-size: var(--font-size-2xl);
+  }
+
+  @include responsive('s') {
+    font-size: var(--font-size-3xl);
+  }
+
+  @include responsive('M') {
+    font-size: $desktop-size;
+  }
+
+  @include responsive('L') {
+    font-size: var(--font-size-5xl);
+  }
+}
+
+// Container responsive con max-width adaptativo
+@mixin container-responsive {
+  width: 100%;
+  margin: 0 auto;
+  padding-left: var(--spacing-size-m);
+  padding-right: var(--spacing-size-m);
+
+  @include responsive('s') {
+    padding-left: var(--spacing-size-l);
+    padding-right: var(--spacing-size-l);
+  }
+
+  @include responsive('M') {
+    max-width: 720px;
+  }
+
+  @include responsive('L') {
+    max-width: 960px;
+  }
+
+  @include responsive('xl') {
+    max-width: 1140px;
+  }
+
+  @include responsive('2xl') {
+    max-width: 1320px;
+  }
+}
+
+// Media query para pantallas táctiles
+@mixin touch-device {
+  @media (hover: none) and (pointer: coarse) {
+    @content;
+  }
+}
+
+// Media query para dispositivos con hover
+@mixin hover-device {
+  @media (hover: hover) and (pointer: fine) {
+    @content;
+  }
+}
+
+// Preferencia de movimiento reducido
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// Modo oscuro del sistema
+@mixin dark-mode {
+  @media (prefers-color-scheme: dark) {
+    @content;
   }
 }
 

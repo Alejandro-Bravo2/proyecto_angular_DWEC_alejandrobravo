@@ -51,42 +51,95 @@
       }
     </search>
 
-    <!-- Tabla de ejercicios con datos paginados -->
-    <app-weekly-table [exercises]="store.paginatedExercises()" />
+    <!-- Toggle de modo de visualizacion -->
+    <div class="view-mode-toggle" role="group" aria-label="Modo de visualizacion">
+      <button
+        type="button"
+        [class.active]="store.viewMode() === 'pagination'"
+        (click)="setViewMode('pagination')"
+        aria-pressed="{{ store.viewMode() === 'pagination' }}"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect width="7" height="7" x="3" y="3" rx="1"/>
+          <rect width="7" height="7" x="14" y="3" rx="1"/>
+          <rect width="7" height="7" x="14" y="14" rx="1"/>
+          <rect width="7" height="7" x="3" y="14" rx="1"/>
+        </svg>
+        Paginas
+      </button>
+      <button
+        type="button"
+        [class.active]="store.viewMode() === 'infinite'"
+        (click)="setViewMode('infinite')"
+        aria-pressed="{{ store.viewMode() === 'infinite' }}"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 2v20"/>
+          <path d="m19 15-7 7-7-7"/>
+        </svg>
+        Continuo
+      </button>
+    </div>
 
-    <!-- Controles de paginacion -->
-    @if (store.totalPages() > 1) {
-      <nav class="pagination" aria-label="Paginacion de ejercicios">
-        <button
-          type="button"
-          class="pagination__btn"
-          (click)="previousPage()"
-          [disabled]="store.currentPage() === 1"
-          aria-label="Pagina anterior"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m15 18-6-6 6-6"/>
-          </svg>
-          Anterior
-        </button>
+    @if (store.viewMode() === 'pagination') {
+      <!-- Modo paginacion -->
+      <app-weekly-table [exercises]="store.paginatedExercises()" />
 
-        <span class="pagination__info">
-          Pagina {{ store.currentPage() }} de {{ store.totalPages() }}
-        </span>
+      <!-- Controles de paginacion -->
+      @if (store.totalPages() > 1) {
+        <nav class="pagination" aria-label="Paginacion de ejercicios">
+          <button
+            type="button"
+            class="pagination__btn"
+            (click)="previousPage()"
+            [disabled]="store.currentPage() === 1"
+            aria-label="Pagina anterior"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+            Anterior
+          </button>
 
-        <button
-          type="button"
-          class="pagination__btn"
-          (click)="nextPage()"
-          [disabled]="store.currentPage() >= store.totalPages()"
-          aria-label="Pagina siguiente"
-        >
-          Siguiente
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m9 18 6-6-6-6"/>
-          </svg>
-        </button>
-      </nav>
+          <span class="pagination__info">
+            Pagina {{ store.currentPage() }} de {{ store.totalPages() }}
+          </span>
+
+          <button
+            type="button"
+            class="pagination__btn"
+            (click)="nextPage()"
+            [disabled]="store.currentPage() >= store.totalPages()"
+            aria-label="Pagina siguiente"
+          >
+            Siguiente
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </button>
+        </nav>
+      }
+    } @else {
+      <!-- Modo infinite scroll -->
+      <app-weekly-table [exercises]="store.infiniteScrollItems()" />
+
+      <!-- Sentinel para infinite scroll -->
+      <div
+        class="infinite-scroll-sentinel"
+        appInfiniteScroll
+        (scrolled)="loadMore()"
+      ></div>
+
+      @if (store.isLoadingMore()) {
+        <div class="loading-more" role="status" aria-live="polite">
+          <span class="loading-more__spinner"></span>
+          Cargando mas ejercicios...
+        </div>
+      }
+
+      @if (!store.hasMore() && store.infiniteScrollItems().length > 0) {
+        <p class="end-of-list">No hay mas ejercicios</p>
+      }
     }
 
     <app-feedback-form />

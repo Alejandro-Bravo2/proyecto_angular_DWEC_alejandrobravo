@@ -14,11 +14,12 @@ import { ToastService } from '../../core/services/toast.service';
 import { UserProfileService } from '../../core/services/user-profile.service';
 import { finalize, retry, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { InfiniteScrollDirective } from '../../shared/directives/infinite-scroll.directive';
 
 @Component({
   selector: 'app-nutrition',
   standalone: true,
-  imports: [DailyMenu, NutritionSceneComponent, NutritionDashboard, WeeklyProgress, ReactiveFormsModule],
+  imports: [DailyMenu, NutritionSceneComponent, NutritionDashboard, WeeklyProgress, ReactiveFormsModule, InfiniteScrollDirective],
   templateUrl: './nutrition.html',
   styleUrl: './nutrition.scss',
 })
@@ -203,5 +204,23 @@ export class Nutrition implements OnInit {
   /** Ir a pagina siguiente */
   nextPage(): void {
     this.store.nextPage();
+  }
+
+  // ==========================================
+  // METODOS DE INFINITE SCROLL
+  // ==========================================
+
+  /**
+   * Cambia el modo de visualizacion (paginacion o infinite scroll)
+   */
+  setViewMode(mode: 'pagination' | 'infinite'): void {
+    this.store.setViewMode(mode);
+  }
+
+  /**
+   * Carga mas elementos para infinite scroll
+   */
+  loadMore(): void {
+    this.store.loadMore();
   }
 }

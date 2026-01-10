@@ -1,4 +1,4 @@
-package com.gestioneventos.cofira.dto.onboarding;
+package com.gestioneventos.cofira.dto.auth;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -8,8 +8,10 @@ import com.gestioneventos.cofira.enums.Gender;
 import com.gestioneventos.cofira.enums.PrimaryGoal;
 import com.gestioneventos.cofira.enums.WorkType;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
@@ -21,7 +23,24 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class OnboardingRequestDTO {
+public class RegisterWithOnboardingRequestDTO {
+
+    // ========== DATOS DE REGISTRO ==========
+
+    @NotBlank(message = "El nombre no puede estar vacio")
+    private String nombre;
+
+    @NotBlank(message = "El username no puede estar vacio")
+    private String username;
+
+    @NotBlank(message = "El email no puede estar vacio")
+    @Email(message = "El email debe ser valido")
+    private String email;
+
+    @NotBlank(message = "La contrasena no puede estar vacia")
+    private String password;
+
+    // ========== DATOS DE ONBOARDING ==========
 
     // Basic Physical Data
     @NotNull(message = "El genero es obligatorio")
