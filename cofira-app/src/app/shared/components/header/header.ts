@@ -1,8 +1,9 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { ThemeService } from '../../../core/services/theme.service';
 import { AuthService } from '../../../core/auth/auth.service';
+import { SubscriptionStore } from '../../../core/stores/subscription.store';
 import { TooltipDirective } from '../../directives/tooltip.directive';
 
 @Component({
@@ -15,6 +16,7 @@ import { TooltipDirective } from '../../directives/tooltip.directive';
 export class Header {
   private router = inject(Router);
   private authService = inject(AuthService);
+  readonly subscriptionStore = inject(SubscriptionStore);
 
   isMobileMenuOpen = signal(false);
 
@@ -23,6 +25,9 @@ export class Header {
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }
+
+  readonly isPremium = computed(() => this.subscriptionStore.isPremium());
+  readonly badgeText = computed(() => this.subscriptionStore.badgeText());
 
   toggleMobileMenu(): void {
     this.isMobileMenuOpen.update((value) => !value);

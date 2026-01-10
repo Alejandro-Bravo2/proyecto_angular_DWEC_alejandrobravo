@@ -46,6 +46,9 @@
 
   &__logo {
     @include tipografia-titulo;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-size-xs);
     font-size: var(--font-size-lg);
     font-weight: var(--font-weight-bold);
     color: var(--text-primary);
@@ -59,6 +62,33 @@
 
     &:hover {
       opacity: 0.7;
+    }
+  }
+
+  &__premium-badge {
+    padding: var(--spacing-size-xss) var(--spacing-size-s);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.25), rgba(255, 215, 0, 0.1));
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    border-radius: var(--radius-pill);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-wide);
+    text-transform: uppercase;
+    color: #ffd700;
+    @include transition-premium;
+    animation: shimmer 2s ease-in-out infinite;
+
+    @include responsive('xs') {
+      padding: var(--spacing-size-xss) var(--spacing-size-m);
+    }
+  }
+
+  @keyframes shimmer {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
     }
   }
 

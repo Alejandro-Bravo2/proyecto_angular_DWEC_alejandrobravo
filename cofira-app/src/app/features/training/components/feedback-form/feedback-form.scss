@@ -7,6 +7,7 @@
   padding: var(--spacing-size-xxl);
   border-radius: var(--radius-xl);
   animation: formFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  text-align: center;
 
   // Premium glass morphism background
   background: linear-gradient(
@@ -122,8 +123,9 @@
   }
 
   &__label {
-    display: flex;
+    display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: var(--spacing-size-xs);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-semibold);
@@ -201,6 +203,7 @@
   // ====================================
   &__actions {
     display: flex;
+    justify-content: center;
     gap: var(--spacing-size-m);
     margin-top: var(--spacing-size-l);
     animation: actionsFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
@@ -208,22 +211,23 @@
 
     @include responsive('s') {
       flex-direction: column;
+      align-items: center;
     }
   }
 
   &__btn {
-    flex: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--spacing-size-s);
-    padding: var(--spacing-size-l) var(--spacing-size-xl);
+    padding: var(--spacing-size-l) var(--spacing-size-xxl);
     border-radius: var(--radius-l);
     font-weight: var(--font-weight-semibold);
     font-size: var(--font-size-md);
     cursor: pointer;
     border: none;
     min-height: 56px;
+    min-width: 200px;
     position: relative;
     overflow: hidden;
     @include transition-premium;

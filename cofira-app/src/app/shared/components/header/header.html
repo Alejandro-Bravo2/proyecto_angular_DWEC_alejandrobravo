@@ -3,6 +3,9 @@
     <!-- Logo -->
     <a routerLink="/" class="header__logo">
       <span class="header__logo-text">COFIRA</span>
+      @if (isLoggedIn && isPremium()) {
+        <span class="header__premium-badge">{{ badgeText() }}</span>
+      }
     </a>
 
     <!-- Desktop Navigation -->

@@ -72,6 +72,15 @@ export const routes: Routes = [
   },
 
   // ==========================================
+  // RUTA DE CHECKOUT (requiere autenticacion)
+  // ==========================================
+  {
+    path: 'checkout',
+    loadChildren: () => import('./features/checkout/checkout.routes').then(m => m.CHECKOUT_ROUTES),
+    data: { breadcrumb: 'Pago' }
+  },
+
+  // ==========================================
   // RUTAS DE ENTRENAMIENTO (con parametro :id)
   // ==========================================
   {

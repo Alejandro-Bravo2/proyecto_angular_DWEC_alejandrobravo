@@ -1,8 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CanComponentDeactivate } from '../../../../core/guards/can-deactivate.guard';
+import { SubscriptionStore } from '../../../../core/stores/subscription.store';
+import { CheckoutService } from '../../../checkout/services/checkout.service';
+import { ToastService } from '../../../../core/services/toast.service';
 
 /**
  * Componente hijo para las preferencias de cuenta
@@ -14,15 +17,19 @@ import { CanComponentDeactivate } from '../../../../core/guards/can-deactivate.g
 @Component({
   selector: 'app-preferences-account',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, DatePipe],
   templateUrl: './preferences-account.html',
   styleUrl: './preferences-account.scss',
 })
 export class PreferencesAccount implements CanComponentDeactivate {
   private router = inject(Router);
+  private checkoutService = inject(CheckoutService);
+  private toastService = inject(ToastService);
+  readonly subscriptionStore = inject(SubscriptionStore);
 
   isEditing = signal(false);
   isSaving = signal(false);
+  isCancellingSubscription = signal(false);
 
   accountForm = new FormGroup({
     name: new FormControl('Usuario COFIRA', [Validators.required]),
@@ -67,6 +74,27 @@ export class PreferencesAccount implements CanComponentDeactivate {
       ...current,
       [setting]: !current[setting]
     }));
+  }
+
+  cancelarSubscripcion(): void {
+    if (!confirm('¿Estas seguro de que quieres cancelar tu subscripcion? Perderas acceso a las funciones premium.')) {
+      return;
+    }
+
+    this.isCancellingSubscription.set(true);
+
+    this.checkoutService.cancelarSubscripcion().subscribe({
+      next: () => {
+        this.toastService.success('Subscripcion cancelada correctamente');
+        this.subscriptionStore.cargarEstado();
+        this.isCancellingSubscription.set(false);
+      },
+      error: (err) => {
+        console.error('Error cancelando subscripcion:', err);
+        this.toastService.error('Error al cancelar la subscripcion');
+        this.isCancellingSubscription.set(false);
+      }
+    });
   }
 
   /**

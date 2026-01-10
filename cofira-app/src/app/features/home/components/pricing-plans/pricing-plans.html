@@ -1,11 +1,11 @@
-<section class="pricing">
+<section class="pricing" id="pricing">
   <article class="pricing__container">
     <!-- Header -->
     <header class="pricing__header">
       <span class="pricing__label">Planes</span>
       <h2 class="pricing__title">Elige tu camino</h2>
       <p class="pricing__subtitle">
-        Planes flexibles para cada etapa de tu transformaci&oacute;n.
+        Planes flexibles para cada etapa de tu transformacion.
       </p>
     </header>
 
@@ -19,13 +19,16 @@
           &euro;9<span class="tarjeta__precio-periodo">/mes</span>
         </data>
         <ul class="tarjeta__lista">
-          <li class="tarjeta__item">Acceso b&aacute;sico a rutinas</li>
-          <li class="tarjeta__item">Seguimiento de nutrici&oacute;n</li>
+          <li class="tarjeta__item">Acceso basico a rutinas</li>
+          <li class="tarjeta__item">Seguimiento de nutricion</li>
           <li class="tarjeta__item">Soporte por email</li>
-          <li class="tarjeta__item">App m&oacute;vil</li>
+          <li class="tarjeta__item">App movil</li>
         </ul>
         <footer class="tarjeta__acciones">
-          <button class="boton boton--secundario boton--completo">
+          <button
+            class="boton boton--secundario boton--completo"
+            (click)="selectPlan('INDIVIDUAL')"
+          >
             Comenzar
           </button>
         </footer>
@@ -35,7 +38,7 @@
       <article class="tarjeta tarjeta--precios tarjeta--destacada">
         <mark class="tarjeta__badge">Recomendado</mark>
         <h3 class="tarjeta__titulo">Mensual</h3>
-        <p class="tarjeta__subtitulo">M&aacute;s popular</p>
+        <p class="tarjeta__subtitulo">Mas popular</p>
         <data class="tarjeta__precio" value="19">
           &euro;19<span class="tarjeta__precio-periodo">/mes</span>
         </data>
@@ -44,10 +47,13 @@
           <li class="tarjeta__item">Plan nutricional avanzado</li>
           <li class="tarjeta__item">Soporte prioritario</li>
           <li class="tarjeta__item">Acceso a comunidad</li>
-          <li class="tarjeta__item">An&aacute;lisis de progreso</li>
+          <li class="tarjeta__item">Analisis de progreso</li>
         </ul>
         <footer class="tarjeta__acciones">
-          <button class="boton boton--primario boton--completo">
+          <button
+            class="boton boton--primario boton--completo"
+            (click)="selectPlan('MENSUAL')"
+          >
             Comenzar
           </button>
         </footer>
@@ -58,7 +64,7 @@
         <h3 class="tarjeta__titulo">Anual</h3>
         <p class="tarjeta__subtitulo">Mejor valor</p>
         <data class="tarjeta__precio" value="199">
-          &euro;199<span class="tarjeta__precio-periodo">/a&ntilde;o</span>
+          &euro;199<span class="tarjeta__precio-periodo">/ano</span>
         </data>
         <ul class="tarjeta__lista">
           <li class="tarjeta__item">Todo lo del plan mensual</li>
@@ -68,7 +74,10 @@
           <li class="tarjeta__item">2 meses gratis</li>
         </ul>
         <footer class="tarjeta__acciones">
-          <button class="boton boton--secundario boton--completo">
+          <button
+            class="boton boton--secundario boton--completo"
+            (click)="selectPlan('ANUAL')"
+          >
             Comenzar
           </button>
         </footer>
@@ -77,7 +86,7 @@
 
     <!-- Footer Note -->
     <footer class="pricing__footer">
-      <p>Todos los planes incluyen 14 d&iacute;as de prueba gratis. Cancela cuando quieras.</p>
+      <p>Todos los planes incluyen 14 dias de prueba gratis. Cancela cuando quieras.</p>
     </footer>
   </article>
 </section>
