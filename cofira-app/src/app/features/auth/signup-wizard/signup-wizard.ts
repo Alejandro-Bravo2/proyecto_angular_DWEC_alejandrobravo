@@ -1,7 +1,8 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AuthService, RegisterWithOnboardingRequest } from '../../../core/auth/auth.service';
 import { AsyncValidatorsService } from '../../../shared/validators/async-validators.service';
 import { passwordStrengthValidator } from '../../../shared/validators/password-strength.validator';
@@ -318,6 +319,7 @@ export class SignupWizard {
   private asyncValidators = inject(AsyncValidatorsService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
 
   // State
   currentStepIndex = signal(0);
@@ -330,6 +332,10 @@ export class SignupWizard {
   });
   isSubmitting = signal(false);
   error = signal<string | null>(null);
+
+  // Signal to track form validity (needed for computed to react to form changes)
+  registerFormValid = signal(false);
+  registerFormPending = signal(false);
 
   // Registration form (last step)
   registerForm: FormGroup;
@@ -347,7 +353,16 @@ export class SignupWizard {
       ),
       password: new FormControl('', [Validators.required, passwordStrengthValidator()]),
       confirmPassword: new FormControl('', [Validators.required]),
+      acceptTerms: new FormControl(false, [Validators.requiredTrue]),
     }, { validators: passwordMatchValidator('password', 'confirmPassword') });
+
+    // Subscribe to form status changes to update signals
+    this.registerForm.statusChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.registerFormValid.set(this.registerForm.valid);
+        this.registerFormPending.set(this.registerForm.pending);
+      });
   }
 
   // Max birth date (must be at least 16 years old)
@@ -386,7 +401,8 @@ export class SignupWizard {
   // Can proceed to next step?
   canProceed = computed(() => {
     if (this.isRegistrationStep()) {
-      return this.registerForm.valid && !this.registerForm.pending;
+      // Use signals to track form state so computed reacts to changes
+      return this.registerFormValid() && !this.registerFormPending();
     }
 
     const step = this.currentOnboardingStep();

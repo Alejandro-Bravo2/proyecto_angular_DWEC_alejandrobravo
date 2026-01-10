@@ -226,13 +226,33 @@
               <span class="signup-wizard__field-error">Las contrasenas no coinciden.</span>
             }
           </div>
-        </form>
 
-        <p class="signup-wizard__terms">
-          Al crear tu cuenta, aceptas nuestros
-          <a href="/terms" target="_blank">Terminos de Servicio</a> y
-          <a href="/privacy" target="_blank">Politica de Privacidad</a>.
-        </p>
+          <!-- Terms Checkbox -->
+          <div class="signup-wizard__field signup-wizard__field--checkbox">
+            <label class="signup-wizard__checkbox-label">
+              <input
+                type="checkbox"
+                formControlName="acceptTerms"
+                class="signup-wizard__checkbox"
+              />
+              <span class="signup-wizard__checkbox-custom">
+                @if (registerForm.get('acceptTerms')?.value) {
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                }
+              </span>
+              <span class="signup-wizard__checkbox-text">
+                Acepto los
+                <a routerLink="/terms" target="_blank">Terminos de Servicio</a> y la
+                <a routerLink="/privacy" target="_blank">Politica de Privacidad</a>
+              </span>
+            </label>
+            @if (registerForm.get('acceptTerms')?.invalid && registerForm.get('acceptTerms')?.touched) {
+              <span class="signup-wizard__field-error">Debes aceptar los terminos para continuar.</span>
+            }
+          </div>
+        </form>
       </section>
     }
 

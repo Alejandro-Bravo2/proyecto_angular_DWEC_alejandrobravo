@@ -12,18 +12,16 @@ export function passwordMatchValidator(
       return null;
     }
 
-    // Return if another validator has already found an error on the matchingControl
-    if (matchingControl.errors && !matchingControl.errors['passwordMatch']) {
+    // Only check if both fields have values
+    if (!control.value || !matchingControl.value) {
       return null;
     }
 
-    // Set error on matchingControl if validation fails
+    // Check if passwords match
     if (control.value !== matchingControl.value) {
-      matchingControl.setErrors({ passwordMatch: true });
       return { passwordMatch: true };
-    } else {
-      matchingControl.setErrors(null);
-      return null;
     }
+
+    return null;
   };
 }

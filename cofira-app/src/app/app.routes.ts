@@ -58,6 +58,20 @@ export const routes: Routes = [
   },
 
   // ==========================================
+  // RUTAS LEGALES (publicas)
+  // ==========================================
+  {
+    path: 'terms',
+    loadComponent: () => import('./features/legal/terms/terms').then(m => m.Terms),
+    data: { breadcrumb: 'Terminos de Servicio' }
+  },
+  {
+    path: 'privacy',
+    loadComponent: () => import('./features/legal/privacy/privacy').then(m => m.Privacy),
+    data: { breadcrumb: 'Politica de Privacidad' }
+  },
+
+  // ==========================================
   // RUTAS DE ENTRENAMIENTO (con parametro :id)
   // ==========================================
   {

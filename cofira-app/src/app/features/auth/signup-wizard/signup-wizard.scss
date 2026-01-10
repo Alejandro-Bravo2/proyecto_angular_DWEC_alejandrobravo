@@ -402,15 +402,60 @@
     font-style: italic;
   }
 
-  &__terms {
-    font-size: var(--font-size-sm);
-    color: var(--text-muted);
-    text-align: center;
+  // Checkbox field
+  &__field--checkbox {
     margin-top: var(--spacing-size-m);
+  }
+
+  &__checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  &__checkbox-label {
+    @include flex-fila(var(--spacing-size-s));
+    align-items: flex-start;
+    cursor: pointer;
+  }
+
+  &__checkbox-custom {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border-medium);
+    border-radius: var(--radius-s);
+    @include flex-center;
+    @include transition-base;
+    margin-top: 2px;
+
+    svg {
+      width: 14px;
+      height: 14px;
+      color: var(--blanco-puro);
+    }
+
+    .signup-wizard__checkbox:checked + & {
+      background: var(--negro-normal);
+      border-color: var(--negro-normal);
+    }
+
+    .signup-wizard__checkbox:focus + & {
+      outline: 2px solid var(--negro-normal);
+      outline-offset: 2px;
+    }
+  }
+
+  &__checkbox-text {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    line-height: 1.5;
 
     a {
       color: var(--text-primary);
       text-decoration: underline;
+      font-weight: var(--font-weight-medium);
 
       &:hover {
         text-decoration: none;
