@@ -1,10 +1,13 @@
 package com.gestioneventos.cofira.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.gestioneventos.cofira.enums.MetodoPago;
+import com.gestioneventos.cofira.enums.TipoPlan;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -24,6 +27,20 @@ public class Plan {
 
     @NotNull
     private Boolean subscripcionActiva;
+
+    @Enumerated(EnumType.STRING)
+    private TipoPlan tipoPlan;
+
+    @Enumerated(EnumType.STRING)
+    private MetodoPago metodoPago;
+
+    private LocalDateTime fechaInicio;
+
+    private LocalDateTime fechaFin;
+
+    private String ultimosDigitosTarjeta;
+
+    private String transaccionId;
 
     @OneToOne
     @JoinColumn(name = "usuario_id")

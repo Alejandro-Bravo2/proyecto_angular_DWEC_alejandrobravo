@@ -5,7 +5,7 @@
   @include flex-columna(var(--spacing-size-xs));
   align-items: center;
   text-align: center;
-  padding: var(--spacing-size-xs);
+  padding: var(--spacing-size-s);
   border-radius: var(--radius-m);
   cursor: default;
   position: relative;
@@ -17,18 +17,12 @@
   overflow: hidden;
 
   @include responsive('M') {
-    @include flex-columna(var(--spacing-size-s));
-    padding: var(--spacing-size-s);
-    border-radius: var(--radius-l);
+    padding: var(--spacing-size-m);
   }
 
-  // Premium glass effect
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.04) 0%,
-    rgba(255, 255, 255, 0.01) 100%
-  );
-  border: 1px solid rgba(255, 255, 255, 0.04);
+  // Subtle background - no border
+  background: rgba(255, 255, 255, 0.02);
+  border: none;
   @include transition-premium;
 
   // Hover glow aura
@@ -48,16 +42,9 @@
   }
 
   &:hover {
-    background: linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.08) 0%,
-      rgba(255, 255, 255, 0.03) 100%
-    );
-    border-color: rgba(255, 255, 255, 0.1);
-    transform: translateY(-4px) scale(1.02);
-    box-shadow:
-      0 12px 32px rgba(0, 0, 0, 0.15),
-      0 0 40px rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 
     &::before {
       opacity: 1;
@@ -71,23 +58,13 @@
 
   &__ring {
     position: relative;
-    width: 56px;
-    height: 56px;
+    width: 48px;
+    height: 48px;
     @include transition-premium;
 
-    @include responsive('S') {
-      width: 64px;
-      height: 64px;
-    }
-
     @include responsive('M') {
-      width: 72px;
-      height: 72px;
-    }
-
-    @include responsive('L') {
-      width: 80px;
-      height: 80px;
+      width: 56px;
+      height: 56px;
     }
 
     // Glow behind the ring

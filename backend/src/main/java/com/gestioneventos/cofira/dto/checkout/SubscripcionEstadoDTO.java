@@ -1,4 +1,4 @@
-package com.gestioneventos.cofira.dto.plan;
+package com.gestioneventos.cofira.dto.checkout;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,15 +11,14 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PlanDTO {
-    private Long id;
-    private Double precio;
-    private Boolean subscripcionActiva;
-    private Long usuarioId;
+public class SubscripcionEstadoDTO {
+    private Boolean activa;
     private String tipoPlan;
     private String nombrePlan;
-    private String metodoPago;
+    private Double precio;
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFin;
     private Integer diasRestantes;
+    private String metodoPago;
+    private String ultimosDigitosTarjeta;
 }
