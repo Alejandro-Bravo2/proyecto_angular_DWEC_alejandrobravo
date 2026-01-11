@@ -31,7 +31,7 @@ export class AsyncValidatorsService {
           }
           // API call to check if email exists (Spring Boot endpoint)
           return this.http
-            .get<any>(`${this.API_URL}/api/usuarios/email?email=${control.value}`)
+            .get<any>(`${this.API_URL}/usuarios/email?email=${control.value}`)
             .pipe(
               map(() => {
                 // If email exists (200 response), it's taken
@@ -73,7 +73,7 @@ export class AsyncValidatorsService {
           }
           // API call to check if username exists (Spring Boot endpoint)
           return this.http
-            .get<any>(`${this.API_URL}/api/usuarios/username?username=${control.value}`)
+            .get<any>(`${this.API_URL}/usuarios/username?username=${control.value}`)
             .pipe(
               map(() => {
                 // If username exists (200 response), it's taken
