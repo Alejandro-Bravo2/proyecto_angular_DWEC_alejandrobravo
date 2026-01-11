@@ -17,7 +17,8 @@ services:
       POSTGRES_DB: ${DB_NAME:-cofira}
       POSTGRES_USER: ${DB_USERNAME:-admin}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-admin123}
-    # Puerto NO expuesto en produccion (solo acceso interno)
+    ports:
+      - "${DB_PORT:-5433}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/init-scripts:/docker-entrypoint-initdb.d
@@ -58,7 +59,8 @@ services:
       GMAIL_APP_PASSWORD: ${GMAIL_APP_PASSWORD:-}
       # OpenRouter AI Configuration
       GEMINI_API: ${GEMINI_API:-}
-    # Puerto NO expuesto en produccion (nginx hace proxy)
+    ports:
+      - "8081:8080"
     networks:
       - cofira-network
     depends_on:
@@ -83,7 +85,7 @@ services:
     environment:
       API_URL: http://backend:8080
     ports:
-      - "80:80"
+      - "4200:80"
     networks:
       - cofira-network
     depends_on:
