@@ -4,6 +4,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NutrientCounter } from './components/nutrient-counter/nutrient-counter';
 import { StrengthGainChart } from './components/strength-gain-chart/strength-gain-chart';
+import { ProgressEvaluation } from './components/progress-evaluation/progress-evaluation';
 import { ProgressService, NutrientData, ProgressEntry } from './services/progress.service';
 import { ProgressStore } from './stores/progress.store';
 import { InfiniteScrollDirective } from '../../shared/directives/infinite-scroll.directive';
@@ -11,7 +12,7 @@ import { InfiniteScrollDirective } from '../../shared/directives/infinite-scroll
 @Component({
   selector: 'app-progress',
   standalone: true,
-  imports: [NutrientCounter, StrengthGainChart, ReactiveFormsModule, InfiniteScrollDirective],
+  imports: [NutrientCounter, StrengthGainChart, ProgressEvaluation, ReactiveFormsModule, InfiniteScrollDirective],
   templateUrl: './progress.html',
   styleUrl: './progress.scss',
 })

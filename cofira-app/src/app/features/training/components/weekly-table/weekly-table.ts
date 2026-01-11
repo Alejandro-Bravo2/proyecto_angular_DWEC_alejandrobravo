@@ -89,4 +89,35 @@ export class WeeklyTable {
     }
     return `${seconds}s`;
   }
+
+  /**
+   * Parsea la descripcion para extraer pasos numerados
+   * Si la descripcion tiene formato "1. ... 2. ... 3. ...", devuelve array de pasos
+   * Si no, devuelve null (para mostrar como texto normal)
+   */
+  parseDescriptionSteps(description: string | undefined): string[] | null {
+    if (!description) return null;
+
+    // Busca patrones como "1. texto 2. texto 3. texto"
+    const stepPattern = /\d+\.\s+/;
+    if (!stepPattern.test(description)) {
+      return null; // No tiene formato de pasos numerados
+    }
+
+    // Divide por numeros seguidos de punto y espacio
+    const steps = description
+      .split(/(?=\d+\.\s+)/)
+      .map(step => step.trim())
+      .filter(step => step.length > 0)
+      .map(step => step.replace(/^\d+\.\s+/, '')); // Quita el numero del inicio
+
+    return steps.length > 1 ? steps : null;
+  }
+
+  /**
+   * Verifica si la descripcion tiene formato de pasos
+   */
+  hasStepsFormat(description: string | undefined): boolean {
+    return this.parseDescriptionSteps(description) !== null;
+  }
 }

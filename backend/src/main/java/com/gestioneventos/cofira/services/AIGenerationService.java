@@ -138,13 +138,19 @@ public class AIGenerationService {
         prompt.append("          \"series\": 4,\n");
         prompt.append("          \"repeticiones\": 10,\n");
         prompt.append("          \"descansoSegundos\": 90,\n");
-        prompt.append("          \"descripcion\": \"Ejercicio para pecho\",\n");
+        prompt.append("          \"descripcion\": \"1. Acuestate en el banco con los pies firmemente apoyados en el suelo. 2. Agarra la barra con las manos separadas algo mas que el ancho de los hombros. 3. Baja la barra controladamente hasta tocar el pecho a la altura de los pezones. 4. Empuja la barra hacia arriba extendiendo los brazos sin bloquear los codos. 5. Manten los omoplatos retraidos y el pecho elevado durante todo el movimiento. 6. Respira: inhala al bajar, exhala al subir.\",\n");
         prompt.append("          \"grupoMuscular\": \"Pecho\"\n");
         prompt.append("        }\n");
         prompt.append("      ]\n");
         prompt.append("    }\n");
         prompt.append("  ]\n");
         prompt.append("}\n");
+        prompt.append("\nIMPORTANTE SOBRE LA DESCRIPCION:\n");
+        prompt.append("- La descripcion debe ser una GUIA DE TECNICA DETALLADA paso a paso (4-6 pasos numerados).\n");
+        prompt.append("- Incluye posicion inicial del cuerpo, agarre, movimiento concentrico y excentrico.\n");
+        prompt.append("- Menciona la respiracion correcta (cuando inhalar y exhalar).\n");
+        prompt.append("- Indica errores comunes a evitar y consejos de forma correcta.\n");
+        prompt.append("- NO uses descripciones genericas como 'Ejercicio para pecho'. Se especifico.\n");
         prompt.append("\nGenera ejercicios para ").append(profile.getTrainingDaysPerWeek()).append(" dias. ");
         prompt.append("Usa dias de semana validos: LUNES, MARTES, MIERCOLES, JUEVES, VIERNES, SABADO, DOMINGO.");
 
@@ -568,21 +574,21 @@ public class AIGenerationService {
                 .nombreEjercicio("Sentadillas")
                 .series(3).repeticiones(12)
                 .tiempoDescansoSegundos(60)
-                .descripcion("Ejercicio basico de piernas")
+                .descripcion("1. Coloca los pies separados al ancho de los hombros con las puntas ligeramente hacia afuera. 2. Manten la espalda recta y el pecho elevado durante todo el movimiento. 3. Baja flexionando rodillas y caderas como si fueras a sentarte, hasta que los muslos queden paralelos al suelo. 4. Asegurate de que las rodillas sigan la direccion de los pies y no sobrepasen las puntas. 5. Empuja desde los talones para volver a la posicion inicial. 6. Respira: inhala al bajar, exhala al subir.")
                 .grupoMuscular("Piernas")
                 .build()));
             ejercicios.add(ejerciciosRepository.save(Ejercicios.builder()
                 .nombreEjercicio("Flexiones")
                 .series(3).repeticiones(10)
                 .tiempoDescansoSegundos(60)
-                .descripcion("Ejercicio basico de pecho")
+                .descripcion("1. Coloca las manos en el suelo separadas algo mas que el ancho de los hombros. 2. Extiende las piernas hacia atras manteniendo el cuerpo en linea recta desde la cabeza hasta los talones. 3. Activa el core para evitar que la cadera suba o baje. 4. Baja el cuerpo flexionando los codos hasta que el pecho casi toque el suelo. 5. Empuja hacia arriba extendiendo los brazos completamente. 6. Respira: inhala al bajar, exhala al subir. Evita arquear la espalda baja.")
                 .grupoMuscular("Pecho")
                 .build()));
             ejercicios.add(ejerciciosRepository.save(Ejercicios.builder()
                 .nombreEjercicio("Plancha")
                 .series(3).repeticiones(30)
                 .tiempoDescansoSegundos(45)
-                .descripcion("Ejercicio de core - segundos")
+                .descripcion("1. Apoya los antebrazos en el suelo con los codos directamente debajo de los hombros. 2. Extiende las piernas hacia atras apoyandote en las puntas de los pies. 3. Manten el cuerpo completamente recto formando una linea desde la cabeza hasta los talones. 4. Activa el abdomen como si fueras a recibir un golpe en el estomago. 5. No dejes que la cadera suba ni baje - manten la posicion neutra. 6. Respira de forma controlada durante todo el ejercicio, sin contener la respiracion.")
                 .grupoMuscular("Core")
                 .build()));
 

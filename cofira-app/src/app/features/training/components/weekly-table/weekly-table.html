@@ -105,17 +105,23 @@
                 </svg>
                 Cómo realizar este ejercicio
               </h4>
-              <p class="details-description">
-                @if (exercise.description) {
-                  {{ exercise.description }}
+              <div class="details-description">
+                @if (exercise.description && hasStepsFormat(exercise.description)) {
+                  <ol class="technique-steps">
+                    @for (step of parseDescriptionSteps(exercise.description); track $index) {
+                      <li>{{ step }}</li>
+                    }
+                  </ol>
+                } @else if (exercise.description) {
+                  <p>{{ exercise.description }}</p>
                 } @else {
-                  <span class="details-placeholder">
-                    Realiza {{ exercise.sets }} series de {{ exercise.reps }} repeticiones. 
+                  <p class="details-placeholder">
+                    Realiza {{ exercise.sets }} series de {{ exercise.reps }} repeticiones.
                     Descansa {{ formatRestTime(exercise.restSeconds) }} entre cada serie.
                     Mantén una buena postura y controla el movimiento en todo momento.
-                  </span>
+                  </p>
                 }
-              </p>
+              </div>
               
               <div class="details-summary">
                 <div class="summary-item">

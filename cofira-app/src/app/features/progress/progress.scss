@@ -95,6 +95,20 @@
   }
 }
 
+// Progress Evaluation Component
+app-progress-evaluation {
+  display: block;
+  margin-bottom: var(--spacing-size-l);
+
+  @include responsive('s') {
+    margin-bottom: var(--spacing-size-xl);
+  }
+
+  @include responsive('M') {
+    margin-bottom: var(--spacing-size-xxl);
+  }
+}
+
 // Estilos de búsqueda responsive
 .search-input-wrapper {
   position: relative;

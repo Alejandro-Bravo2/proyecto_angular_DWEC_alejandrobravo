@@ -300,6 +300,15 @@ Estilo: Minimalista Apple/Ferrari
   color: var(--text-primary);
 }
 
+// Tipografia para subtitulos
+@mixin tipografia-subtitulo {
+  font-family: var(--font-secondary);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-tight);
+  color: var(--text-primary);
+}
+
 // Tipografia para textos (legacy)
 @mixin tipografia-texto {
   font-family: var(--font-primary);
