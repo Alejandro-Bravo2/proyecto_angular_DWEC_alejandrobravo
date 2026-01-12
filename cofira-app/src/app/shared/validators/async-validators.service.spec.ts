@@ -12,11 +12,7 @@ describe('AsyncValidatorsService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [
-        AsyncValidatorsService,
-        provideHttpClient(),
-        provideHttpClientTesting(),
-      ],
+      providers: [AsyncValidatorsService, provideHttpClient(), provideHttpClientTesting()],
     });
     service = TestBed.inject(AsyncValidatorsService);
     httpMock = TestBed.inject(HttpTestingController);

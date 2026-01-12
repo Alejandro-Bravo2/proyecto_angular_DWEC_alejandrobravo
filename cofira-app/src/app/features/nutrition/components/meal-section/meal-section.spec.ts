@@ -13,7 +13,12 @@ describe('MealSection', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MealSection],
-      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), provideNoopAnimations()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        provideNoopAnimations(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MealSection);

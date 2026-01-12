@@ -12,11 +12,7 @@ describe('Preferences', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Preferences],
-      providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        provideNoopAnimations(),
-      ],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideNoopAnimations()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(Preferences);
