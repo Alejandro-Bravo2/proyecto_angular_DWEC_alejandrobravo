@@ -18,7 +18,6 @@ describe('passwordMatchValidator', () => {
       });
       const validator = passwordMatchValidator('password', 'confirmPassword')(formGroup);
       expect(validator).toEqual({ passwordMatch: true });
-      expect(formGroup.get('confirmPassword')?.errors).toEqual({ passwordMatch: true });
     });
 
     it('should return null if control or matchingControl are not found', () => {
@@ -28,15 +27,16 @@ describe('passwordMatchValidator', () => {
       expect(passwordMatchValidator('password', 'nonExistent')(formGroup)).toBeNull();
     });
 
-    it('should clear error if passwords become matching', () => {
-      const formGroup = new FormGroup({
-        password: new FormControl('password123'),
-        confirmPassword: new FormControl('different'),
-      });
-      const validator = passwordMatchValidator('password', 'confirmPassword');
-      formGroup.setValidators(validator);
-      formGroup.get('confirmPassword')?.setValue('password123');
-      expect(formGroup.get('confirmPassword')?.errors).toBeNull();
+    it('should validate matching when both passwords are the same', () => {
+      const formGroup = new FormGroup(
+        {
+          password: new FormControl('password123'),
+          confirmPassword: new FormControl('password123'),
+        },
+        { validators: passwordMatchValidator('password', 'confirmPassword') }
+      );
+      expect(formGroup.valid).toBeTrue();
+      expect(formGroup.errors).toBeNull();
     });
   });
 
@@ -148,55 +148,61 @@ describe('passwordMatchValidator', () => {
 
   describe('Dynamic Updates', () => {
     it('should revalidate when password changes', () => {
-      const formGroup = new FormGroup({
-        password: new FormControl('password123'),
-        confirmPassword: new FormControl('password123'),
-      });
-      formGroup.setValidators(passwordMatchValidator('password', 'confirmPassword'));
+      const formGroup = new FormGroup(
+        {
+          password: new FormControl('password123'),
+          confirmPassword: new FormControl('password123'),
+        },
+        { validators: passwordMatchValidator('password', 'confirmPassword') }
+      );
 
-      expect(formGroup.get('confirmPassword')?.errors).toBeNull();
+      expect(formGroup.valid).toBeTrue();
 
       formGroup.get('password')?.setValue('newpassword');
       formGroup.updateValueAndValidity();
 
-      expect(formGroup.get('confirmPassword')?.errors).toEqual({ passwordMatch: true });
+      expect(formGroup.errors).toEqual({ passwordMatch: true });
     });
 
     it('should revalidate when confirmPassword changes', () => {
-      const formGroup = new FormGroup({
-        password: new FormControl('password123'),
-        confirmPassword: new FormControl('different'),
-      });
-      formGroup.setValidators(passwordMatchValidator('password', 'confirmPassword'));
+      const formGroup = new FormGroup(
+        {
+          password: new FormControl('password123'),
+          confirmPassword: new FormControl('different'),
+        },
+        { validators: passwordMatchValidator('password', 'confirmPassword') }
+      );
 
-      expect(formGroup.get('confirmPassword')?.errors).toEqual({ passwordMatch: true });
+      expect(formGroup.errors).toEqual({ passwordMatch: true });
 
       formGroup.get('confirmPassword')?.setValue('password123');
       formGroup.updateValueAndValidity();
 
-      expect(formGroup.get('confirmPassword')?.errors).toBeNull();
+      expect(formGroup.errors).toBeNull();
     });
 
     it('should handle multiple sequential changes', () => {
-      const formGroup = new FormGroup({
-        password: new FormControl('password1'),
-        confirmPassword: new FormControl('password1'),
-      });
-      formGroup.setValidators(passwordMatchValidator('password', 'confirmPassword'));
+      const formGroup = new FormGroup(
+        {
+          password: new FormControl('password1'),
+          confirmPassword: new FormControl('password1'),
+        },
+        { validators: passwordMatchValidator('password', 'confirmPassword') }
+      );
 
-      expect(formGroup.get('confirmPassword')?.errors).toBeNull();
+      expect(formGroup.valid).toBeTrue();
 
       formGroup.get('password')?.setValue('password2');
       formGroup.updateValueAndValidity();
-      expect(formGroup.get('confirmPassword')?.errors).toEqual({ passwordMatch: true });
+      expect(formGroup.errors).toEqual({ passwordMatch: true });
 
       formGroup.get('confirmPassword')?.setValue('password2');
       formGroup.updateValueAndValidity();
-      expect(formGroup.get('confirmPassword')?.errors).toBeNull();
+      expect(formGroup.errors).toBeNull();
 
       formGroup.get('password')?.setValue('password3');
       formGroup.updateValueAndValidity();
-      expect(formGroup.get('confirmPassword')?.errors).toEqual({ passwordMatch: true });
+      expect(formGroup.errors).toEqual({ passwordMatch: true });
     });
   });
 

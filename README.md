@@ -848,60 +848,201 @@ export class Header {
 
 #### 1.0.5 Arquitectura de Eventos
 
-La arquitectura de eventos en COFIRA sigue el patrón **unidireccional de datos**, utilizando bindings de eventos nativos del DOM como `(click)`, `(keydown)` y `(pointerdown)` directamente en las plantillas de componentes standalone.
+La arquitectura de eventos en COFIRA implementa un sistema completo de gestión de eventos que sigue el patrón **unidireccional de datos** de Angular. Este sistema utiliza bindings de eventos nativos del DOM como `(click)`, `(keydown)` y `(pointerdown)` directamente en las plantillas de componentes standalone, aprovechando las capacidades reactivas de Angular 20 con signals.
 
-##### Flujo de Eventos
+##### Flujo de Eventos y Zone.js
 
-Los eventos se capturan con la sintaxis `(eventName)="handler($event)"`, donde `$event` proporciona acceso al objeto nativo del evento (por ejemplo, `KeyboardEvent` o `PointerEvent`) para detalles como `event.key` o `event.preventDefault()`.
+Los eventos se capturan mediante la sintaxis `(eventName)="handler($event)"`, donde `$event` proporciona acceso al objeto nativo del evento. Por ejemplo, con `KeyboardEvent` se puede acceder a propiedades como `event.key`, `event.code`, `event.ctrlKey`, o `event.preventDefault()`.
 
-Esta aproximación aprovecha **Zone.js** para detección de cambios automática, emitiendo datos hacia servicios o estados reactivos (signals) sin necesidad de `@Output` en componentes simples, promoviendo simplicidad y rendimiento.
+Angular utiliza **Zone.js** como mecanismo de detección de cambios automática. Cuando un evento del DOM dispara un handler, Zone.js notifica a Angular que debe verificar si hay cambios en el estado de la aplicación. Esto permite que los cambios en signals o propiedades del componente se reflejen automáticamente en la vista sin necesidad de llamar manualmente a `detectChanges()`.
+
+En COFIRA, los eventos fluyen unidireccionalmente desde la interacción del usuario hacia la lógica de negocio:
+1. El usuario interactúa con un elemento del DOM (click, tecla, focus)
+2. El evento nativo es capturado por el template binding
+3. El handler del componente procesa el evento
+4. El estado se actualiza via signals o servicios
+5. Angular detecta el cambio y actualiza la vista
+
+##### Uso de @HostListener para Eventos Globales
+
+El decorador `@HostListener` permite escuchar eventos a nivel de documento o ventana, útil para funcionalidades como cerrar modales con ESC o detectar redimensionamiento:
+
+```typescript
+// En modal.ts - Cerrar modal con tecla Escape
+@HostListener('document:keydown.escape', ['$event'])
+onEscapeKey(event: KeyboardEvent): void {
+  event.preventDefault();
+  this.modalService.close();
+}
+
+// En header.ts - Cerrar menú móvil al redimensionar a desktop
+@HostListener('window:resize')
+onWindowResize(): void {
+  if (window.innerWidth >= 768 && this.isMobileMenuOpen()) {
+    this.closeMobileMenu();
+  }
+}
+
+// En tabs.ts - Navegación por teclado
+@HostListener('keydown', ['$event'])
+onKeydown(event: KeyboardEvent): void {
+  switch (event.key) {
+    case 'ArrowLeft':
+      event.preventDefault();
+      this.navigateToPreviousTab();
+      break;
+    case 'ArrowRight':
+      event.preventDefault();
+      this.navigateToNextTab();
+      break;
+    case 'Home':
+      event.preventDefault();
+      this.navigateToFirstTab();
+      break;
+    case 'End':
+      event.preventDefault();
+      this.navigateToLastTab();
+      break;
+  }
+}
+```
+
+##### Manipulación Segura del DOM con Renderer2
+
+Para manipulación del DOM de forma segura y compatible con SSR (Server-Side Rendering), COFIRA utiliza `Renderer2` en lugar de acceso directo al DOM:
+
+```typescript
+// En tooltip.directive.ts - Creación dinámica de elementos
+private readonly renderer = inject(Renderer2);
+
+private showTooltip(): void {
+  // Crear elemento de forma SSR-safe
+  this.tooltipElement = this.renderer.createElement('div');
+  this.renderer.addClass(this.tooltipElement, 'c-tooltip');
+  this.renderer.setAttribute(this.tooltipElement, 'role', 'tooltip');
+  this.renderer.appendChild(document.body, this.tooltipElement);
+}
+
+// En modal.ts - Bloqueo de scroll
+private onModalOpen(): void {
+  this.renderer.addClass(document.body, 'modal-open');
+}
+
+private onModalClose(): void {
+  this.renderer.removeClass(document.body, 'modal-open');
+}
+```
 
 ##### Centralización de Eventos Complejos
 
-Para flujos complejos, se centralizan eventos en servicios inyectables que usan `EventEmitter` o `RxJS Subjects`, evitando acoplamiento directo entre componentes.
+Para flujos de eventos complejos que involucran múltiples componentes, COFIRA centraliza la lógica en servicios inyectables que utilizan signals o RxJS Subjects, evitando acoplamiento directo entre componentes:
 
-**Modificadores de eventos**:
+```typescript
+// ModalService - Gestión centralizada de modales
+@Injectable({ providedIn: 'root' })
+export class ModalService {
+  private readonly _activeModal = signal<ModalState | null>(null);
+  readonly activeModal$ = this._activeModal.asReadonly();
 
-- `(keyup.enter)` - Filtra solo tecla Enter
-- `(click.alt)` - Click con Alt presionado
-- Reducen lógica condicional en handlers
+  open<T>(component: Type<T>, inputs?: Record<string, any>): void {
+    this._activeModal.set({ component, inputs: inputs ?? {} });
+  }
+
+  close(): void {
+    this._activeModal.set(null);
+  }
+}
+```
+
+**Modificadores de eventos en Angular**:
+
+- `(keydown.escape)` - Solo dispara con tecla Escape
+- `(keydown.arrowleft)` - Solo dispara con flecha izquierda
+- `(keyup.enter)` - Solo dispara al soltar Enter
+- `(click.ctrl)` - Click con Ctrl presionado
+- `(keydown.shift.tab)` - Shift + Tab combinados
 
 ##### Diagrama de Flujo de Eventos Principales
 
-```
-Usuario interactúa
- ↓
- DOM Event (click/keydown)
- ↓
- Template Binding (event)
- ↓
- Component Handler ($event)
- ↓
-Service/State Update (signals/RxJS)
- ↓
- View Re-render (OnPush/Zone.js)
+```mermaid
+flowchart TD
+    A[👤 Usuario Interactúa] --> B[📋 Evento DOM]
+    B --> C{Tipo de Evento}
+
+    C -->|click| D[Template Binding]
+    C -->|keydown| D
+    C -->|focus/blur| D
+    C -->|mouseenter| D
+
+    D --> E[Component Handler]
+    E --> F{¿preventDefault?}
+
+    F -->|Sí| G[Bloquear Default]
+    F -->|No| H[Continuar]
+    G --> H
+
+    H --> I{¿stopPropagation?}
+    I -->|Sí| J[Detener Burbujeo]
+    I -->|No| K[Continuar Propagación]
+    J --> L
+    K --> L
+
+    L[Signal/Service Update] --> M[Zone.js Detecta Cambio]
+    M --> N[View Re-render]
+    N --> O[✅ UI Actualizada]
+
+    style A fill:#e1f5fe
+    style O fill:#c8e6c9
+    style G fill:#ffecb3
+    style J fill:#ffecb3
 ```
 
-Este diagrama textual representa el ciclo: eventos nativos se propagan unidireccionalmente hacia lógica de negocio, con `preventDefault()` para bloquear comportamientos por defecto cuando sea necesario.
+Este diagrama ilustra el flujo completo de un evento desde la interacción del usuario hasta la actualización de la interfaz. Los puntos de decisión para `preventDefault()` y `stopPropagation()` son críticos para controlar el comportamiento del navegador y la propagación de eventos.
+
+##### Tabla de Eventos Utilizados en COFIRA
+
+| Componente | Eventos | Uso |
+|------------|---------|-----|
+| Header | `click`, `keydown.escape`, `window:resize` | Toggle menú, cerrar con ESC, responsive |
+| Modal | `click`, `keydown.escape`, `keydown.tab` | Cerrar modal, focus trap |
+| Tabs | `click`, `keydown.arrowleft/right`, `keydown.home/end` | Cambio de pestaña, navegación |
+| Accordion | `click`, `keydown.arrowup/down`, `keydown.home/end` | Expandir/colapsar, navegación |
+| Tooltip | `mouseenter`, `mouseleave`, `focus`, `blur` | Mostrar/ocultar tooltip |
+| Forms | `submit`, `input`, `blur` | Validación y envío |
+| Dropdowns | `click`, `document:click` | Toggle y click fuera |
 
 ##### Tabla de Compatibilidad de Navegadores
 
-| Evento | Chrome | Firefox | Safari | Edge | Notas |
-| ------------- | -------- | -------- | -------- | -------- | -------------------- |
+| Evento/API | Chrome | Firefox | Safari | Edge | Notas |
+|------------|--------|---------|--------|------|-------|
 | `click` | Todos | Todos | Todos | Todos | Universal |
 | `keydown` | Todos | Todos | Todos | Todos | Universal |
 | `keyup.enter` | 90+ | 88+ | 14+ | 90+ | Pseudoevento Angular |
-| `pointerdown` | 55+ | 59+ | 13+ | 79+ | API moderna |
+| `pointerdown` | 55+ | 59+ | 13+ | 79+ | API moderna, preferido sobre mouse |
 | `mouseenter` | Todos | Todos | Todos | Todos | No burbujea |
-| `focus` | Todos | Todos | Todos | Todos | No burbujea |
-| `blur` | Todos | Todos | Todos | Todos | No burbujea |
+| `focus` / `blur` | Todos | Todos | Todos | Todos | No burbujean |
+| `focusin` / `focusout` | Todos | Todos | 10.1+ | Todos | Sí burbujean |
 | `submit` | Todos | Todos | Todos | Todos | Solo formularios |
+| `prefers-color-scheme` | 76+ | 67+ | 12.1+ | 79+ | Media query CSS/JS |
+| `matchMedia` | 9+ | 6+ | 5.1+ | 12+ | API JavaScript |
+| `matchMedia.addEventListener` | 80+ | 78+ | 14+ | 80+ | Método moderno (reemplaza addListener) |
+| `ResizeObserver` | 64+ | 69+ | 13.1+ | 79+ | Observar redimensionamiento |
 
-**Notas de compatibilidad**:
+**Notas importantes de compatibilidad**:
 
-- Eventos de puntero (`pointerdown`, `pointermove`) son preferidos sobre eventos de mouse para soporte táctil
-- Pseudoeventos Angular como `(keyup.enter)` funcionan en todos los navegadores modernos gracias a la abstracción de Angular
-- Para IE11 (deprecated), algunos eventos de puntero requieren polyfills
+- Los eventos de puntero (`pointerdown`, `pointermove`, `pointerup`) son preferidos sobre eventos de mouse para mejor soporte táctil y stylus
+- Los pseudoeventos de Angular como `(keyup.enter)` o `(keydown.escape)` funcionan en todos los navegadores modernos gracias a la abstracción del framework
+- `matchMedia.addEventListener` es el método moderno para escuchar cambios de media queries; el método `addListener` está deprecado
+- `prefers-color-scheme` permite detectar la preferencia de tema del sistema operativo
+- Para navegadores legacy sin soporte de `ResizeObserver`, se puede usar el evento `window:resize` como fallback
+
+##### Buenas Prácticas Implementadas
+
+1. **Separación de responsabilidades**: Los eventos se manejan en el componente, la lógica de negocio en servicios
+2. **Uso de Renderer2**: Toda manipulación del DOM usa Renderer2 para compatibilidad SSR
+3. **ViewChild sobre querySelector**: Se utilizan referencias de template en lugar de document.querySelector
+4. **Limpieza de listeners**: Los listeners globales se eliminan en ngOnDestroy
+5. **Accesibilidad**: Todos los componentes interactivos soportan navegación por teclado
 
 ---
 

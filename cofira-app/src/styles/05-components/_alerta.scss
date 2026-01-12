@@ -261,3 +261,164 @@
   gap: var(--spacing-size-s);
   z-index: 9999;
 }
+
+
+/* ============================================
+   BLOQUE: .c-toast
+   Toast dinámico creado con Renderer2
+   Demuestra creación dinámica de elementos DOM
+   ============================================ */
+
+/**
+ * Contenedor de toasts dinámicos.
+ * Creado programáticamente por ToastService.showDynamic()
+ * usando Renderer2.createElement() y appendChild().
+ */
+.c-toast-container {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-size-s);
+  z-index: 10000;
+  pointer-events: none;
+
+  // Modificador: posición dinámica (esquina inferior izquierda)
+  &--dynamic {
+    bottom: var(--spacing-size-m);
+    left: var(--spacing-size-m);
+  }
+}
+
+/**
+ * Toast individual creado dinámicamente.
+ * Estructura creada con Renderer2:
+ * - div.c-toast (createElement)
+ *   - span.c-toast__icon (createElement + createText)
+ *   - span.c-toast__message (createElement + createText)
+ *   - button.c-toast__close (createElement + listen)
+ */
+.c-toast {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-size-s);
+  padding: var(--spacing-size-m) var(--spacing-size-l);
+  background-color: var(--gris-normal);
+  color: var(--text-dark);
+  border-radius: var(--radius-xss);
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
+  max-width: 400px;
+  min-width: 280px;
+
+  // Estado inicial (para animación de entrada)
+  opacity: 0;
+  transform: translateX(-100%);
+  transition:
+    opacity var(--duration-base) ease-out,
+    transform var(--duration-base) ease-out;
+
+  // Estado visible (aplicado con Renderer2.addClass)
+  &--visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  // Estado de salida (aplicado antes de removeChild)
+  &--hiding {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+
+  // Icono del toast
+  &__icon {
+    flex-shrink: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  // Mensaje del toast
+  &__message {
+    flex: 1;
+    font-size: var(--font-size-md);
+    font-family: var(--font-primary);
+    line-height: var(--line-height-tight);
+  }
+
+  // Botón de cierre (creado con Renderer2.createElement)
+  &__close {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-circle);
+    color: inherit;
+    font-size: 1.25rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color var(--duration-fast);
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    &:focus-visible {
+      outline: 2px solid currentColor;
+      outline-offset: 2px;
+    }
+  }
+
+  // ─────────────────────────────────────────
+  // Modificadores de tipo
+  // ─────────────────────────────────────────
+
+  &--success {
+    background-color: var(--amarillo-normal);
+    color: var(--negro-normal);
+    border-left: 4px solid var(--amarillo-dark);
+
+    .c-toast__icon {
+      color: var(--negro-normal);
+    }
+  }
+
+  &--error {
+    background-color: var(--button-red);
+    color: var(--blanco-puro);
+    border-left: 4px solid var(--button-red-hover);
+
+    .c-toast__close:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  &--warning {
+    background-color: var(--amarillo-dark);
+    color: var(--negro-normal);
+    border-left: 4px solid var(--amarillo-normal);
+  }
+
+  &--info {
+    background-color: var(--gris-dark);
+    color: var(--text-dark);
+    border-left: 4px solid var(--gris-normal);
+  }
+}
+
+// Responsive: En móviles, toasts ocupan todo el ancho
+@media (max-width: 480px) {
+  .c-toast-container--dynamic {
+    left: var(--spacing-size-s);
+    right: var(--spacing-size-s);
+    bottom: var(--spacing-size-s);
+  }
+
+  .c-toast {
+    max-width: none;
+    min-width: auto;
+  }
+}

@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import { OnboardingNutrition } from './onboarding-nutrition';
 
@@ -8,9 +11,9 @@ describe('OnboardingNutrition', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OnboardingNutrition]
-    })
-    .compileComponents();
+      imports: [OnboardingNutrition],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(OnboardingNutrition);
     component = fixture.componentInstance;

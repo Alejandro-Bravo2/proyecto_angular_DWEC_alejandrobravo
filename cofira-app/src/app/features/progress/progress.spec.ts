@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import { Progress } from './progress';
 
@@ -8,9 +11,9 @@ describe('Progress', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Progress]
-    })
-    .compileComponents();
+      imports: [Progress],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(Progress);
     component = fixture.componentInstance;

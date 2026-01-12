@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import { NutrientCounter } from './nutrient-counter';
 
@@ -8,9 +11,9 @@ describe('NutrientCounter', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NutrientCounter]
-    })
-    .compileComponents();
+      imports: [NutrientCounter],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(NutrientCounter);
     component = fixture.componentInstance;
