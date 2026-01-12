@@ -121,7 +121,7 @@ describe('NutritionService', () => {
       const requests = httpMock.match(`${environment.apiUrl}/nutrition/invalid`);
       expect(requests.length).toBe(1);
       requests[0].flush('Not Found', { status: 404, statusText: 'Not Found' });
-      
+
       // Handle the 2 retries
       setTimeout(() => {
         const retry1 = httpMock.match(`${environment.apiUrl}/nutrition/invalid`);
@@ -149,7 +149,7 @@ describe('NutritionService', () => {
       const requests = httpMock.match(`${environment.apiUrl}/nutrition/error`);
       expect(requests.length).toBe(1);
       requests[0].flush('Server Error', { status: 500, statusText: 'Internal Server Error' });
-      
+
       // Handle the 2 retries
       setTimeout(() => {
         const retry1 = httpMock.match(`${environment.apiUrl}/nutrition/error`);
