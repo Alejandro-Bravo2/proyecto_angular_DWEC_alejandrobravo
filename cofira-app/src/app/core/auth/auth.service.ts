@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of, firstValueFrom } from 'rxjs';
-import { tap, map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 
 export interface User {
@@ -44,7 +44,12 @@ export interface OnboardingRequest {
   heightCm: number;
   currentWeightKg: number;
   targetWeightKg?: number;
-  activityLevel: 'SEDENTARY' | 'LIGHTLY_ACTIVE' | 'MODERATELY_ACTIVE' | 'VERY_ACTIVE' | 'EXTRA_ACTIVE';
+  activityLevel:
+    | 'SEDENTARY'
+    | 'LIGHTLY_ACTIVE'
+    | 'MODERATELY_ACTIVE'
+    | 'VERY_ACTIVE'
+    | 'EXTRA_ACTIVE';
   workType: 'OFFICE_DESK' | 'STANDING' | 'PHYSICAL_LABOR';
   sleepHoursAverage?: number;
   primaryGoal: 'LOSE_WEIGHT' | 'GAIN_MUSCLE' | 'MAINTAIN' | 'IMPROVE_HEALTH';
@@ -180,7 +185,12 @@ export class AuthService {
     );
   }
 
-  register(nombre: string, username: string, email: string, password: string): Observable<AuthResponse> {
+  register(
+    nombre: string,
+    username: string,
+    email: string,
+    password: string
+  ): Observable<AuthResponse> {
     const registerRequest: RegisterRequest = { nombre, username, email, password };
     return this.http.post<AuthResponse>(`${this.API_URL}/register`, registerRequest).pipe(
       tap((response) => {
@@ -284,11 +294,15 @@ export class AuthService {
     return this.http.post<{ message: string }>(`${this.API_URL}/forgot-password`, { email });
   }
 
-  resetPasswordWithCode(email: string, code: string, newPassword: string): Observable<{ message: string }> {
+  resetPasswordWithCode(
+    email: string,
+    code: string,
+    newPassword: string
+  ): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(`${this.API_URL}/reset-password`, {
       email,
       code,
-      newPassword
+      newPassword,
     });
   }
 }

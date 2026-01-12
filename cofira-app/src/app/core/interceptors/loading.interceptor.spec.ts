@@ -1,8 +1,9 @@
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpRequest, HttpHandlerFn, HttpEvent, HttpResponse } from '@angular/common/http';
 import { loadingInterceptor } from './loading.interceptor';
 import { LoadingService } from '../services/loading.service';
-import { Observable, of, throwError, delay } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
+import { delay } from 'rxjs/operators';
 
 describe('LoadingInterceptor', () => {
   let loadingService: jasmine.SpyObj<LoadingService>;
@@ -31,30 +32,35 @@ describe('LoadingInterceptor', () => {
       });
     });
 
-    it('should call hide() after request completes successfully', (done) => {
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+    it('should call hide() after request completes successfully', fakeAsync(() => {
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext).subscribe(() => {
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(mockRequest, mockNext).subscribe();
       });
-    });
 
-    it('should call hide() after request fails', (done) => {
+      tick(1);
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should call hide() after request fails', fakeAsync(() => {
       const error = new Error('Request failed');
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(throwError(() => error));
+      mockNext = jasmine
+        .createSpy('mockNext')
+        .and.returnValue(throwError(() => error).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
         loadingInterceptor(mockRequest, mockNext).subscribe({
           error: () => {
-            expect(loadingService.hide).toHaveBeenCalled();
-            done();
+            /* expected error */
           },
         });
       });
-    });
+
+      tick(1);
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
 
     it('should call show() exactly once per request', (done) => {
       mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
@@ -67,230 +73,231 @@ describe('LoadingInterceptor', () => {
       });
     });
 
-    it('should call hide() exactly once per request', (done) => {
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+    it('should call hide() exactly once per request', fakeAsync(() => {
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext).subscribe(() => {
-          expect(loadingService.hide).toHaveBeenCalledTimes(1);
-          done();
-        });
+        loadingInterceptor(mockRequest, mockNext).subscribe();
       });
-    });
 
-    it('should call show() before hide()', (done) => {
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+      tick(1);
+      expect(loadingService.hide).toHaveBeenCalledTimes(1);
+    }));
+
+    it('should call show() before hide()', fakeAsync(() => {
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
       const callOrder: string[] = [];
 
       loadingService.show.and.callFake(() => callOrder.push('show'));
       loadingService.hide.and.callFake(() => callOrder.push('hide'));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext).subscribe(() => {
-          expect(callOrder).toEqual(['show', 'hide']);
-          done();
-        });
+        loadingInterceptor(mockRequest, mockNext).subscribe();
       });
-    });
+
+      tick(1);
+      expect(callOrder).toEqual(['show', 'hide']);
+    }));
   });
 
   describe('Multiple Concurrent Requests', () => {
-    it('should call show() for each concurrent request', (done) => {
-      const mockNext1 = jasmine.createSpy('mockNext1').and.returnValue(of({} as HttpEvent<any>));
-      const mockNext2 = jasmine.createSpy('mockNext2').and.returnValue(of({} as HttpEvent<any>));
-      const mockNext3 = jasmine.createSpy('mockNext3').and.returnValue(of({} as HttpEvent<any>));
-
-      let completedRequests = 0;
-      const checkDone = () => {
-        completedRequests++;
-        if (completedRequests === 3) {
-          expect(loadingService.show).toHaveBeenCalledTimes(3);
-          done();
-        }
-      };
+    it('should call show() for each concurrent request', () => {
+      const response = new HttpResponse({ body: {} });
+      const mockNext1 = jasmine.createSpy('mockNext1').and.returnValue(of(response));
+      const mockNext2 = jasmine.createSpy('mockNext2').and.returnValue(of(response));
+      const mockNext3 = jasmine.createSpy('mockNext3').and.returnValue(of(response));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext1).subscribe(() => checkDone());
-        loadingInterceptor(mockRequest, mockNext2).subscribe(() => checkDone());
-        loadingInterceptor(mockRequest, mockNext3).subscribe(() => checkDone());
+        loadingInterceptor(mockRequest, mockNext1).subscribe();
+        loadingInterceptor(mockRequest, mockNext2).subscribe();
+        loadingInterceptor(mockRequest, mockNext3).subscribe();
       });
+
+      expect(loadingService.show).toHaveBeenCalledTimes(3);
     });
 
-    it('should call hide() for each concurrent request', (done) => {
-      const mockNext1 = jasmine.createSpy('mockNext1').and.returnValue(of({} as HttpEvent<any>));
-      const mockNext2 = jasmine.createSpy('mockNext2').and.returnValue(of({} as HttpEvent<any>));
-      const mockNext3 = jasmine.createSpy('mockNext3').and.returnValue(of({} as HttpEvent<any>));
-
-      let completedRequests = 0;
-      const checkDone = () => {
-        completedRequests++;
-        if (completedRequests === 3) {
-          expect(loadingService.hide).toHaveBeenCalledTimes(3);
-          done();
-        }
-      };
+    it('should call hide() for each concurrent request', fakeAsync(() => {
+      const response = new HttpResponse({ body: {} });
+      const mockNext1 = jasmine.createSpy('mockNext1').and.returnValue(of(response).pipe(delay(0)));
+      const mockNext2 = jasmine.createSpy('mockNext2').and.returnValue(of(response).pipe(delay(0)));
+      const mockNext3 = jasmine.createSpy('mockNext3').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext1).subscribe(() => checkDone());
-        loadingInterceptor(mockRequest, mockNext2).subscribe(() => checkDone());
-        loadingInterceptor(mockRequest, mockNext3).subscribe(() => checkDone());
+        loadingInterceptor(mockRequest, mockNext1).subscribe();
+        loadingInterceptor(mockRequest, mockNext2).subscribe();
+        loadingInterceptor(mockRequest, mockNext3).subscribe();
       });
-    });
 
-    it('should handle mix of successful and failed requests', (done) => {
-      const mockNext1 = jasmine.createSpy('mockNext1').and.returnValue(of({} as HttpEvent<any>));
+      tick(1);
+      expect(loadingService.hide).toHaveBeenCalledTimes(3);
+    }));
+
+    it('should handle mix of successful and failed requests', fakeAsync(() => {
+      const response = new HttpResponse({ body: {} });
+      const mockNext1 = jasmine.createSpy('mockNext1').and.returnValue(of(response).pipe(delay(0)));
       const mockNext2 = jasmine
         .createSpy('mockNext2')
-        .and.returnValue(throwError(() => new Error('Error')));
-      const mockNext3 = jasmine.createSpy('mockNext3').and.returnValue(of({} as HttpEvent<any>));
-
-      let completedRequests = 0;
-      const checkDone = () => {
-        completedRequests++;
-        if (completedRequests === 3) {
-          expect(loadingService.show).toHaveBeenCalledTimes(3);
-          expect(loadingService.hide).toHaveBeenCalledTimes(3);
-          done();
-        }
-      };
+        .and.returnValue(throwError(() => new Error('Error')).pipe(delay(0)));
+      const mockNext3 = jasmine.createSpy('mockNext3').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext1).subscribe(() => checkDone());
+        loadingInterceptor(mockRequest, mockNext1).subscribe();
         loadingInterceptor(mockRequest, mockNext2).subscribe({
-          error: () => checkDone(),
+          error: () => {
+            /* expected */
+          },
         });
-        loadingInterceptor(mockRequest, mockNext3).subscribe(() => checkDone());
+        loadingInterceptor(mockRequest, mockNext3).subscribe();
       });
-    });
+
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalledTimes(3);
+      expect(loadingService.hide).toHaveBeenCalledTimes(3);
+    }));
   });
 
   describe('Different HTTP Methods', () => {
-    it('should handle GET requests', (done) => {
+    it('should handle GET requests', fakeAsync(() => {
       const getRequest = new HttpRequest('GET', '/api/users');
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(getRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(getRequest, mockNext).subscribe();
       });
-    });
 
-    it('should handle POST requests', (done) => {
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should handle POST requests', fakeAsync(() => {
       const postRequest = new HttpRequest('POST', '/api/users', { name: 'Test' });
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(postRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(postRequest, mockNext).subscribe();
       });
-    });
 
-    it('should handle PUT requests', (done) => {
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should handle PUT requests', fakeAsync(() => {
       const putRequest = new HttpRequest('PUT', '/api/users/1', { name: 'Updated' });
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(putRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(putRequest, mockNext).subscribe();
       });
-    });
 
-    it('should handle PATCH requests', (done) => {
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should handle PATCH requests', fakeAsync(() => {
       const patchRequest = new HttpRequest('PATCH', '/api/users/1', { name: 'Patched' });
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(patchRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(patchRequest, mockNext).subscribe();
       });
-    });
 
-    it('should handle DELETE requests', (done) => {
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should handle DELETE requests', fakeAsync(() => {
       const deleteRequest = new HttpRequest('DELETE', '/api/users/1');
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(deleteRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(deleteRequest, mockNext).subscribe();
       });
-    });
+
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
   });
 
   describe('Error Handling', () => {
-    it('should hide loading on HTTP error', (done) => {
+    it('should hide loading on HTTP error', fakeAsync(() => {
       mockNext = jasmine
         .createSpy('mockNext')
-        .and.returnValue(throwError(() => new Error('HTTP Error')));
+        .and.returnValue(throwError(() => new Error('HTTP Error')).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
         loadingInterceptor(mockRequest, mockNext).subscribe({
           error: () => {
-            expect(loadingService.hide).toHaveBeenCalled();
-            done();
+            /* expected */
           },
         });
       });
-    });
 
-    it('should hide loading on network error', (done) => {
+      tick(1);
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should hide loading on network error', fakeAsync(() => {
       mockNext = jasmine
         .createSpy('mockNext')
-        .and.returnValue(throwError(() => new Error('Network Error')));
+        .and.returnValue(throwError(() => new Error('Network Error')).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
         loadingInterceptor(mockRequest, mockNext).subscribe({
           error: () => {
-            expect(loadingService.hide).toHaveBeenCalled();
-            done();
+            /* expected */
           },
         });
       });
-    });
 
-    it('should hide loading on timeout error', (done) => {
+      tick(1);
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should hide loading on timeout error', fakeAsync(() => {
       mockNext = jasmine
         .createSpy('mockNext')
-        .and.returnValue(throwError(() => new Error('Timeout')));
+        .and.returnValue(throwError(() => new Error('Timeout')).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
         loadingInterceptor(mockRequest, mockNext).subscribe({
           error: () => {
-            expect(loadingService.hide).toHaveBeenCalled();
-            done();
+            /* expected */
           },
         });
       });
-    });
 
-    it('should not call hide() twice if error occurs', (done) => {
+      tick(1);
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should not call hide() twice if error occurs', fakeAsync(() => {
       mockNext = jasmine
         .createSpy('mockNext')
-        .and.returnValue(throwError(() => new Error('Error')));
+        .and.returnValue(throwError(() => new Error('Error')).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
         loadingInterceptor(mockRequest, mockNext).subscribe({
           error: () => {
-            expect(loadingService.hide).toHaveBeenCalledTimes(1);
-            done();
+            /* expected */
           },
         });
       });
-    });
+
+      tick(1);
+      expect(loadingService.hide).toHaveBeenCalledTimes(1);
+    }));
   });
 
   describe('Response Handling', () => {
@@ -367,136 +374,151 @@ describe('LoadingInterceptor', () => {
   });
 
   describe('Service Integration', () => {
-    it('should inject LoadingService', (done) => {
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+    it('should inject LoadingService', () => {
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(mockRequest, mockNext).subscribe();
       });
+
+      expect(loadingService.show).toHaveBeenCalled();
     });
 
-    it('should work with LoadingService methods', (done) => {
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+    it('should work with LoadingService methods', fakeAsync(() => {
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(mockRequest, mockNext).subscribe();
       });
-    });
+
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
   });
 
   describe('Observable Behavior', () => {
-    it('should complete the observable after hiding loading', (done) => {
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+    it('should complete the observable after hiding loading', fakeAsync(() => {
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
+      let completed = false;
 
       TestBed.runInInjectionContext(() => {
         loadingInterceptor(mockRequest, mockNext).subscribe({
           complete: () => {
-            expect(loadingService.hide).toHaveBeenCalled();
-            done();
+            completed = true;
           },
         });
       });
-    });
 
-    it('should propagate errors after hiding loading', (done) => {
+      tick(1);
+      expect(completed).toBeTrue();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should propagate errors after hiding loading', fakeAsync(() => {
       const testError = new Error('Test Error');
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(throwError(() => testError));
+      mockNext = jasmine
+        .createSpy('mockNext')
+        .and.returnValue(throwError(() => testError).pipe(delay(0)));
+      let receivedError: unknown = null;
 
       TestBed.runInInjectionContext(() => {
         loadingInterceptor(mockRequest, mockNext).subscribe({
           error: (error) => {
-            expect(loadingService.hide).toHaveBeenCalled();
-            expect(error.message).toBe('Test Error');
-            done();
+            receivedError = error;
           },
         });
       });
-    });
+
+      tick(1);
+      expect(loadingService.hide).toHaveBeenCalled();
+      expect((receivedError as Error)?.message).toBe('Test Error');
+    }));
   });
 
   describe('Edge Cases', () => {
-    it('should handle empty response', (done) => {
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(null as any));
+    it('should handle empty response', fakeAsync(() => {
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(null as any).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(mockRequest, mockNext).subscribe();
       });
-    });
 
-    it('should handle undefined response', (done) => {
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(undefined as any));
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should handle undefined response', fakeAsync(() => {
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(undefined as any).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(mockRequest, mockNext).subscribe();
       });
-    });
 
-    it('should handle very fast requests', (done) => {
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should handle very fast requests', fakeAsync(() => {
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(mockRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(mockRequest, mockNext).subscribe();
       });
-    });
+
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
   });
 
   describe('Request URL Patterns', () => {
-    it('should handle requests to internal API', (done) => {
+    it('should handle requests to internal API', fakeAsync(() => {
       const internalRequest = new HttpRequest('GET', 'http://localhost:3000/api/users');
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(internalRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(internalRequest, mockNext).subscribe();
       });
-    });
 
-    it('should handle requests to external API', (done) => {
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should handle requests to external API', fakeAsync(() => {
       const externalRequest = new HttpRequest('GET', 'https://api.external.com/data');
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(externalRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(externalRequest, mockNext).subscribe();
       });
-    });
 
-    it('should handle relative URLs', (done) => {
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
+
+    it('should handle relative URLs', fakeAsync(() => {
       const relativeRequest = new HttpRequest('GET', '/api/users');
-      mockNext = jasmine.createSpy('mockNext').and.returnValue(of({} as HttpEvent<any>));
+      const response = new HttpResponse({ body: {} });
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(of(response).pipe(delay(0)));
 
       TestBed.runInInjectionContext(() => {
-        loadingInterceptor(relativeRequest, mockNext).subscribe(() => {
-          expect(loadingService.show).toHaveBeenCalled();
-          expect(loadingService.hide).toHaveBeenCalled();
-          done();
-        });
+        loadingInterceptor(relativeRequest, mockNext).subscribe();
       });
-    });
+
+      tick(1);
+      expect(loadingService.show).toHaveBeenCalled();
+      expect(loadingService.hide).toHaveBeenCalled();
+    }));
   });
 });

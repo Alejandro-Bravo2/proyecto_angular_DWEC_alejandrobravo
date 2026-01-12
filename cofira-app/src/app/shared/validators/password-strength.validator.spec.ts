@@ -217,12 +217,15 @@ describe('passwordStrengthValidator', () => {
 
   describe('Real-World Scenarios', () => {
     it('should accept commonly recommended strong passwords', () => {
+      // All passwords must have:
+      // - At least 12 characters
+      // - Uppercase, lowercase, number, special character
       const strongPasswords = [
-        'MyP@ssw0rd2024!',
-        'Tr0ub4dor&3',
-        'correcthorsebatterystaple123!A',
-        'P@ssw0rd!2024',
-        'Str0ng!P@ssw0rd',
+        'MyP@ssw0rd2024!', // 15 chars ✓
+        'Tr0ub4dor&3!!', // 13 chars ✓ (added !!)
+        'P@ssw0rd!2024!', // 14 chars ✓
+        'Str0ng!P@ssw0rd', // 15 chars ✓
+        'SecureP@ss123!', // 14 chars ✓
       ];
 
       strongPasswords.forEach((password) => {

@@ -1,4 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import { IngredientsModal } from './ingredients-modal';
 
@@ -8,9 +11,9 @@ describe('IngredientsModal', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IngredientsModal]
-    })
-    .compileComponents();
+      imports: [IngredientsModal],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(IngredientsModal);
     component = fixture.componentInstance;

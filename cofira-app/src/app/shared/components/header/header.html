@@ -84,11 +84,19 @@
       </button>
       }
 
-      <!-- Mobile Menu Button -->
+      <!--
+        Mobile Menu Button (Hamburguesa)
+        - #menuToggle: ViewChild para acceso programático y focus
+        - aria-expanded: Estado del menú para lectores de pantalla
+        - aria-controls: Referencia al elemento que controla
+        - Icono animado hamburguesa ↔ X via CSS [aria-expanded="true"]
+      -->
       <button
+        #menuToggle
         class="header__hamburger"
         (click)="toggleMobileMenu()"
         [attr.aria-expanded]="isMobileMenuOpen()"
+        aria-controls="mobile-nav"
         aria-label="Menú de navegación"
         appTooltip="Abrir menú"
         tooltipPosition="bottom"
@@ -100,9 +108,20 @@
     </section>
   </section>
 
-  <!-- Mobile Navigation -->
+  <!--
+    Mobile Navigation
+    - #mobileNav: ViewChild para animaciones y gestión del foco
+    - appClickOutside: Cierra el menú al hacer click fuera
+    - id="mobile-nav": Referenciado por aria-controls del botón
+  -->
   @if (isMobileMenuOpen()) {
-  <nav class="header__nav header__nav--mobile" (click)="closeMobileMenu()">
+  <nav
+    #mobileNav
+    id="mobile-nav"
+    class="header__nav header__nav--mobile"
+    appClickOutside
+    (clickedOutside)="onClickOutside()"
+  >
     @if (isLoggedIn) {
     <a routerLink="/entrenamiento" routerLinkActive="header__nav-link--active" class="header__nav-link">
       Entrenamiento

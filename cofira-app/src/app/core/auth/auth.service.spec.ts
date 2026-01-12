@@ -2,10 +2,22 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
+import { environment } from '../../../environments/environment';
 
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
+
+  // Mock de AuthResponse según la interfaz real del backend
+  const mockAuthResponse = {
+    token: 'mock-jwt-token',
+    type: 'Bearer',
+    id: 1,
+    username: 'testuser',
+    email: 'test@example.com',
+    rol: 'USER',
+    isOnboarded: false,
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -26,96 +38,81 @@ describe('AuthService', () => {
 
   describe('register', () => {
     it('should register a new user successfully', (done) => {
-      const mockResponse = {
-        token: 'mock-jwt-token',
-        user: { name: 'Test User', email: 'test@example.com' },
-      };
-
-      service.register('Test User', 'test@example.com', 'password123').subscribe({
+      service.register('Test User', 'testuser', 'test@example.com', 'password123').subscribe({
         next: (response) => {
-          expect(response).toEqual(mockResponse);
+          expect(response.token).toBe('mock-jwt-token');
+          expect(response.email).toBe('test@example.com');
           expect(localStorage.getItem('authToken')).toBe('mock-jwt-token');
           done();
         },
       });
 
-      const req = httpMock.expectOne('http://localhost:3000/register');
+      const req = httpMock.expectOne(`${environment.apiUrl}/auth/register`);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({
-        name: 'Test User',
+        nombre: 'Test User',
+        username: 'testuser',
         email: 'test@example.com',
         password: 'password123',
       });
-      req.flush(mockResponse);
+      req.flush(mockAuthResponse);
     });
 
     it('should handle registration error', (done) => {
-      service.register('Test User', 'test@example.com', 'password123').subscribe({
+      service.register('Test User', 'testuser', 'test@example.com', 'password123').subscribe({
         error: (error) => {
           expect(error.status).toBe(400);
           done();
         },
       });
 
-      const req = httpMock.expectOne('http://localhost:3000/register');
+      const req = httpMock.expectOne(`${environment.apiUrl}/auth/register`);
       req.flush({ message: 'Email already exists' }, { status: 400, statusText: 'Bad Request' });
     });
   });
 
   describe('login', () => {
     it('should login user successfully', (done) => {
-      const mockUser = {
-        id: 1,
-        name: 'Test User',
-        email: 'test@example.com',
-        password: 'password123',
-      };
-
-      service.login('test@example.com', 'password123').subscribe({
+      service.login('testuser', 'password123').subscribe({
         next: (response) => {
-          expect(response.token).toBe('jwt-token-1');
-          expect(response.user.email).toBe('test@example.com');
-          expect(localStorage.getItem('authToken')).toBe('jwt-token-1');
+          expect(response.token).toBe('mock-jwt-token');
+          expect(response.email).toBe('test@example.com');
+          expect(localStorage.getItem('authToken')).toBe('mock-jwt-token');
           done();
         },
       });
 
-      const req = httpMock.expectOne('http://localhost:3000/users?email=test@example.com');
-      expect(req.request.method).toBe('GET');
-      req.flush([mockUser]);
+      const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({
+        username: 'testuser',
+        password: 'password123',
+      });
+      req.flush(mockAuthResponse);
     });
 
     it('should handle login with wrong password', (done) => {
-      const mockUser = {
-        id: 1,
-        name: 'Test User',
-        email: 'test@example.com',
-        password: 'password123',
-      };
-
-      service.login('test@example.com', 'wrongpassword').subscribe({
+      service.login('testuser', 'wrongpassword').subscribe({
         error: (error) => {
           expect(error.status).toBe(401);
-          expect(error.message).toBe('Invalid credentials');
           done();
         },
       });
 
-      const req = httpMock.expectOne('http://localhost:3000/users?email=test@example.com');
-      req.flush([mockUser]);
+      const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
+      req.flush({ message: 'Invalid credentials' }, { status: 401, statusText: 'Unauthorized' });
     });
 
-    it('should handle login with non-existent email', (done) => {
-      service.login('nonexistent@example.com', 'password123').subscribe({
+    it('should handle login with non-existent user', (done) => {
+      service.login('nonexistent', 'password123').subscribe({
         error: (error) => {
           expect(error.status).toBe(401);
-          expect(error.message).toBe('Invalid credentials');
           done();
         },
       });
 
-      const req = httpMock.expectOne('http://localhost:3000/users?email=nonexistent@example.com');
-      req.flush([]);
+      const req = httpMock.expectOne(`${environment.apiUrl}/auth/login`);
+      req.flush({ message: 'User not found' }, { status: 401, statusText: 'Unauthorized' });
     });
   });
 

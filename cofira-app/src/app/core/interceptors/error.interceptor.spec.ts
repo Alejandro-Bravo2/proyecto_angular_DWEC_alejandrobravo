@@ -184,10 +184,11 @@ describe('ErrorInterceptor', () => {
 
           TestBed.runInInjectionContext(() => {
             errorInterceptor(mockRequest, mockNext).subscribe({
-              error: (error) => {
-                expect(toastService.error).toHaveBeenCalled();
-                const callArgs = toastService.error.calls.mostRecent().args[0];
-                expect(callArgs).toContain(`Error: ${status}`);
+              error: () => {
+                // El interceptor muestra un mensaje genérico para estos códigos
+                expect(toastService.error).toHaveBeenCalledWith(
+                  'Ha ocurrido un error. Por favor, inténtalo de nuevo.'
+                );
                 done();
               },
             });

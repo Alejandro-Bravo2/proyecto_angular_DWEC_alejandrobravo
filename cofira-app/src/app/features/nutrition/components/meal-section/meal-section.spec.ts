@@ -1,4 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { MealSection } from './meal-section';
 
@@ -8,9 +12,9 @@ describe('MealSection', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MealSection]
-    })
-    .compileComponents();
+      imports: [MealSection],
+      providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([]), provideNoopAnimations()],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(MealSection);
     component = fixture.componentInstance;
