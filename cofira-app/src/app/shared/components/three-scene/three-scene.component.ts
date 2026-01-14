@@ -12,6 +12,21 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import { ThemeService } from '../../../core/services/theme.service';
 
+/**
+ * Componente de escena 3D para la sección de entrenamiento.
+ *
+ * @description
+ * Este componente demuestra el uso correcto de ViewChild con ElementRef:
+ * - ViewChild con static: true para acceso antes de ngAfterViewInit
+ * - Null checks antes de acceder a nativeElement
+ * - Proper cleanup en ngOnDestroy
+ * - NgZone.runOutsideAngular para rendimiento de animaciones
+ *
+ * @example
+ * ```html
+ * <app-three-scene></app-three-scene>
+ * ```
+ */
 @Component({
   selector: 'app-three-scene',
   standalone: true,
@@ -20,6 +35,11 @@ import { ThemeService } from '../../../core/services/theme.service';
   styleUrls: ['./three-scene.component.scss']
 })
 export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
+  /**
+   * Referencia al elemento canvas para renderizado Three.js WebGL.
+   * @description Usa static: true para acceso inmediato antes de ngAfterViewInit.
+   * El canvas se usa para inicializar WebGLRenderer y manejar eventos de resize.
+   */
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
 
   private renderer!: THREE.WebGLRenderer;
@@ -69,7 +89,17 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+   * Hook AfterViewInit - Inicializa la escena Three.js cuando el canvas está disponible.
+   * @description Verifica que el ViewChild esté inicializado antes de proceder.
+   */
   ngAfterViewInit(): void {
+    // Null check: Verificar que el canvas esté disponible antes de inicializar
+    if (!this.canvasRef?.nativeElement) {
+      console.error('ThreeSceneComponent: Canvas element not found');
+      return;
+    }
+
     this.initThree();
     this.createCentralStructure();
     this.createOrbitingElements();
@@ -79,6 +109,7 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
     this.playIntroAnimation();
     this.isInitialized = true;
 
+    // Ejecutar animación fuera de Angular para mejor rendimiento
     this.ngZone.runOutsideAngular(() => {
       this.animate();
     });

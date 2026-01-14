@@ -12,6 +12,22 @@ import * as THREE from 'three';
 import gsap from 'gsap';
 import { ThemeService } from '../../../core/services/theme.service';
 
+/**
+ * Componente de escena 3D para la sección de nutrición.
+ *
+ * @description
+ * Este componente demuestra el uso correcto de ViewChild con ElementRef:
+ * - ViewChild con static: true para acceso antes de ngAfterViewInit
+ * - Null checks antes de acceder a nativeElement
+ * - Proper cleanup en ngOnDestroy
+ * - NgZone.runOutsideAngular para rendimiento de animaciones
+ *
+ * @example
+ * ```html
+ * <app-nutrition-scene></app-nutrition-scene>
+ * <app-nutrition-scene [compact]="true"></app-nutrition-scene>
+ * ```
+ */
 @Component({
   selector: 'app-nutrition-scene',
   standalone: true,
@@ -20,6 +36,11 @@ import { ThemeService } from '../../../core/services/theme.service';
   styleUrls: ['./nutrition-scene.component.scss']
 })
 export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
+  /**
+   * Referencia al elemento canvas para renderizado Three.js WebGL.
+   * @description Usa static: true para acceso inmediato antes de ngAfterViewInit.
+   * El canvas se usa para inicializar WebGLRenderer y manejar eventos de resize.
+   */
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
 
   readonly compact = input(false);
@@ -70,7 +91,17 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+   * Hook AfterViewInit - Inicializa la escena Three.js cuando el canvas está disponible.
+   * @description Verifica que el ViewChild esté inicializado antes de proceder.
+   */
   ngAfterViewInit(): void {
+    // Null check: Verificar que el canvas esté disponible antes de inicializar
+    if (!this.canvasRef?.nativeElement) {
+      console.error('NutritionSceneComponent: Canvas element not found');
+      return;
+    }
+
     this.initThree();
     this.createApple();
     this.createBowl();
@@ -80,6 +111,7 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
     this.playIntroAnimation();
     this.isInitialized = true;
 
+    // Ejecutar animación fuera de Angular para mejor rendimiento
     this.ngZone.runOutsideAngular(() => {
       this.animate();
     });
