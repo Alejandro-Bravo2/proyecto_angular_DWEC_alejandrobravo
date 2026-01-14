@@ -1010,6 +1010,10 @@ Este diagrama ilustra el flujo completo de un evento desde la interacción del u
 | Tooltip | `mouseenter`, `mouseleave`, `focus`, `blur` | Mostrar/ocultar tooltip |
 | Forms | `submit`, `input`, `blur` | Validación y envío |
 | Dropdowns | `click`, `document:click` | Toggle y click fuera |
+| Photo Analyzer | `dragover`, `dragleave`, `drop` | Drag & drop de imágenes |
+| Weekly Table | `click` con `stopPropagation` | Toggle de ejercicios |
+| Toast Service | `click` | Cerrar notificaciones |
+| Onboarding | `input`, `change` | Formularios de registro |
 
 ##### Tabla de Compatibilidad de Navegadores
 
@@ -1027,6 +1031,11 @@ Este diagrama ilustra el flujo completo de un evento desde la interacción del u
 | `matchMedia` | 9+ | 6+ | 5.1+ | 12+ | API JavaScript |
 | `matchMedia.addEventListener` | 80+ | 78+ | 14+ | 80+ | Método moderno (reemplaza addListener) |
 | `ResizeObserver` | 64+ | 69+ | 13.1+ | 79+ | Observar redimensionamiento |
+| `keydown.tab` | Todos | Todos | Todos | Todos | Pseudoevento Angular para focus trap |
+| `keydown.shift.tab` | Todos | Todos | Todos | Todos | Navegación reversa de foco |
+| `dragover` | 4+ | 3.5+ | 3.1+ | 12+ | HTML5 Drag & Drop API |
+| `drop` | 4+ | 3.5+ | 3.1+ | 12+ | HTML5 Drag & Drop API |
+| `dragleave` | 4+ | 3.5+ | 3.1+ | 12+ | HTML5 Drag & Drop API |
 
 **Notas importantes de compatibilidad**:
 

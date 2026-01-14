@@ -110,8 +110,8 @@
 
   <!--
     Mobile Navigation
-    - #mobileNav: ViewChild para animaciones y gestión del foco
-    - appClickOutside: Cierra el menú al hacer click fuera
+    - #mobileNav: ViewChild para verificar clicks dentro/fuera
+    - Click fuera manejado por @HostListener('document:click') en header.ts
     - id="mobile-nav": Referenciado por aria-controls del botón
   -->
   @if (isMobileMenuOpen()) {
@@ -119,8 +119,6 @@
     #mobileNav
     id="mobile-nav"
     class="header__nav header__nav--mobile"
-    appClickOutside
-    (clickedOutside)="onClickOutside()"
   >
     @if (isLoggedIn) {
     <a routerLink="/entrenamiento" routerLinkActive="header__nav-link--active" class="header__nav-link">

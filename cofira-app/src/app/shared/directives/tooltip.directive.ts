@@ -8,7 +8,7 @@ import {
   Renderer2,
   PLATFORM_ID
 } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, DOCUMENT } from '@angular/common';
 
 type TooltipPosition = 'top' | 'bottom' | 'left' | 'right';
 
@@ -56,6 +56,12 @@ export class TooltipDirective implements OnDestroy {
   private readonly elementRef = inject(ElementRef);
   private readonly renderer = inject(Renderer2);
   private readonly platformId = inject(PLATFORM_ID);
+
+  /**
+   * Token DOCUMENT inyectado para acceso SSR-safe al documento.
+   * @description Evita el uso directo de 'document' global
+   */
+  private readonly document = inject(DOCUMENT);
 
   // Estado interno del tooltip
   private tooltipElement: HTMLElement | null = null;
@@ -166,8 +172,8 @@ export class TooltipDirective implements OnDestroy {
       this.tooltipId
     );
 
-    // Agregar al DOM usando Renderer2
-    this.renderer.appendChild(document.body, this.tooltipElement);
+    // Agregar al DOM usando Renderer2 con DOCUMENT token (SSR-safe)
+    this.renderer.appendChild(this.document.body, this.tooltipElement);
 
     // Posicionar el tooltip usando Renderer2
     this.positionTooltip();
@@ -193,8 +199,8 @@ export class TooltipDirective implements OnDestroy {
       const tooltipToRemove = this.tooltipElement;
       setTimeout(() => {
         if (tooltipToRemove && tooltipToRemove.parentNode) {
-          // Eliminar del DOM usando Renderer2
-          this.renderer.removeChild(document.body, tooltipToRemove);
+          // Eliminar del DOM usando Renderer2 con DOCUMENT token (SSR-safe)
+          this.renderer.removeChild(this.document.body, tooltipToRemove);
         }
       }, 200); // Duración de la animación fade-out
 
@@ -268,8 +274,9 @@ export class TooltipDirective implements OnDestroy {
   ngOnDestroy(): void {
     this.cancelScheduledShow();
     // Eliminación inmediata al destruir (sin animación)
+    // Usar this.document para SSR-safety
     if (this.tooltipElement && this.tooltipElement.parentNode) {
-      this.renderer.removeChild(document.body, this.tooltipElement);
+      this.renderer.removeChild(this.document.body, this.tooltipElement);
       this.tooltipElement = null;
     }
     // Limpiar aria-describedby
