@@ -4,7 +4,7 @@
 
 # ============================================================================
 
-## 📋 Prerequisites
+## Prerequisites
 
 - **Node.js** >= 20.x
 - **Java** >= 17
@@ -12,7 +12,7 @@
 - **PostgreSQL** 16+ (or use Docker)
 - **Git**
 
-## 🚀 Quick Start with Docker
+## Quick Start with Docker
 
 The fastest way to run the entire application:
 
@@ -38,7 +38,7 @@ Access the application:
 - **API Documentation:** http://localhost:8080/swagger-ui.html
 - **PgAdmin:** http://localhost:5050
 
-## 🛠️ Development Setup
+## Development Setup
 
 ### 1. Environment Configuration
 
@@ -111,7 +111,7 @@ npm start
 npm run dev
 ```
 
-## 🧪 Running Tests
+## Running Tests
 
 ### Frontend Tests
 
@@ -140,7 +140,7 @@ cd backend
 ./gradlew test jacocoTestReport
 ```
 
-## 📦 Building for Production
+## Building for Production
 
 ### Frontend
 
@@ -173,7 +173,7 @@ docker build -t cofira-backend:latest ./backend
 docker-compose build
 ```
 
-## 🌐 Production Deployment
+## Production Deployment
 
 ### Using Docker
 
@@ -214,7 +214,7 @@ scp build/libs/cofira-*.jar user@server:/opt/cofira/
 # Create systemd service (see deployment docs)
 ```
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -255,7 +255,7 @@ API_URL=https://api.yourdomain.com
 # 2. Use Flyway or Liquibase for migrations
 ```
 
-## 🔐 Security Checklist
+## Security Checklist
 
 Before deploying to production:
 
@@ -268,7 +268,7 @@ Before deploying to production:
 - [ ] Regular security updates
 - [ ] Backup database regularly
 
-## 📊 Monitoring
+## Monitoring
 
 ### Health Checks
 
@@ -296,7 +296,7 @@ docker logs cofira-backend
 docker-compose logs -f
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Database Connection Issues
 
@@ -336,18 +336,18 @@ docker-compose build --no-cache
 docker-compose down -v
 ```
 
-## 📚 Additional Resources
+## Additional Resources
 
 - [API Documentation](./API-DOCS.md)
 - [Development Guide](./DEVELOPMENT.md)
 - [Architecture Overview](./DESIGN_SYSTEM.md)
 - [Contributing Guidelines](./CONTRIBUTING.md)
 
-## 🆘 Support
+## Support
 
 - **Issues:** https://github.com/Alejandro-Bravo2/proyecto_angular_DWEC_alejandrobravo/issues
 - **Discussions:** https://github.com/Alejandro-Bravo2/proyecto_angular_DWEC_alejandrobravo/discussions
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.

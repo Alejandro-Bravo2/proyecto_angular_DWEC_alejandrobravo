@@ -2,20 +2,20 @@
 
 Este proyecto incluye una configuración completa de Docker Compose para levantar todos los servicios necesarios de forma automática.
 
-## 🚀 Servicios Incluidos
+## Servicios Incluidos
 
 1. **PostgreSQL** - Base de datos en el puerto 5432
 2. **PgAdmin** - Administrador de base de datos en el puerto 5050
 3. **Backend** - API Spring Boot en el puerto 8080
 4. **Frontend** - Aplicación Angular en el puerto 4200
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
 - Docker Desktop instalado y ejecutándose
 - Docker Compose v2.0 o superior
 - Al menos 4GB de RAM disponible para Docker
 
-## 🔧 Configuración Inicial
+## Configuración Inicial
 
 1. **Copia el archivo de variables de entorno** (opcional, ya existe con valores por defecto):
    ```bash
@@ -32,7 +32,7 @@ Este proyecto incluye una configuración completa de Docker Compose para levanta
    SERVER_PORT=8080
    ```
 
-## 🚀 Iniciar Todos los Servicios
+## Iniciar Todos los Servicios
 
 Para levantar toda la aplicación (base de datos, backend y frontend) ejecuta:
 
@@ -41,24 +41,24 @@ docker-compose up --build
 ```
 
 Este comando hará:
-- ✅ Construir las imágenes Docker del backend y frontend
-- ✅ Descargar la imagen de PostgreSQL
-- ✅ Crear la red y volúmenes necesarios
-- ✅ Iniciar todos los servicios en el orden correcto
-- ✅ Esperar a que cada servicio esté listo antes de iniciar el siguiente
+- Construir las imágenes Docker del backend y frontend
+- Descargar la imagen de PostgreSQL
+- Crear la red y volúmenes necesarios
+- Iniciar todos los servicios en el orden correcto
+- Esperar a que cada servicio esté listo antes de iniciar el siguiente
 
 **Para ejecutar en segundo plano** (detached mode):
 ```bash
 docker-compose up --build -d
 ```
 
-## 🔍 Verificar el Estado de los Servicios
+## Verificar el Estado de los Servicios
 
 ```bash
 docker-compose ps
 ```
 
-## 📱 Acceder a los Servicios
+## Acceder a los Servicios
 
 Una vez levantados todos los servicios, puedes acceder a:
 
@@ -70,7 +70,7 @@ Una vez levantados todos los servicios, puedes acceder a:
 | **PgAdmin** | http://localhost:5050 | admin@admin.com / admin123 |
 | **PostgreSQL** | localhost:5432 | admin / admin123 |
 
-## 🔐 Configurar PgAdmin
+## Configurar PgAdmin
 
 1. Accede a http://localhost:5050
 2. Inicia sesión con las credenciales (ver tabla arriba)
@@ -81,7 +81,7 @@ Una vez levantados todos los servicios, puedes acceder a:
    - **Usuario**: `admin`
    - **Contraseña**: `admin123`
 
-## 📝 Ver Logs
+## Ver Logs
 
 **Ver logs de todos los servicios:**
 ```bash
@@ -95,7 +95,7 @@ docker-compose logs -f frontend
 docker-compose logs -f postgres
 ```
 
-## 🛑 Detener los Servicios
+## Detener los Servicios
 
 **Detener sin eliminar los contenedores:**
 ```bash
@@ -112,7 +112,7 @@ docker-compose down
 docker-compose down -v
 ```
 
-## 🔄 Reiniciar un Servicio Específico
+## Reiniciar un Servicio Específico
 
 ```bash
 # Reiniciar el backend
@@ -125,7 +125,7 @@ docker-compose restart frontend
 docker-compose restart postgres
 ```
 
-## 🏗️ Reconstruir Imágenes
+## Reconstruir Imágenes
 
 Si haces cambios en el código y quieres reconstruir las imágenes:
 
@@ -138,7 +138,7 @@ docker-compose up --build backend
 docker-compose up --build frontend
 ```
 
-## 🧹 Limpiar Todo
+## Limpiar Todo
 
 Para eliminar todo (contenedores, volúmenes, redes e imágenes):
 
@@ -146,7 +146,7 @@ Para eliminar todo (contenedores, volúmenes, redes e imágenes):
 docker-compose down -v --rmi all
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Error: "port is already allocated"
 Si ves este error, significa que el puerto ya está en uso. Opciones:
@@ -168,7 +168,7 @@ Reconstruye las imágenes:
 docker-compose up --build
 ```
 
-## 📊 Health Checks
+## Health Checks
 
 Todos los servicios tienen health checks configurados:
 
@@ -176,22 +176,22 @@ Todos los servicios tienen health checks configurados:
 - **Backend**: Verifica cada 30s el endpoint `/actuator/health`
 - **Frontend**: Verifica cada 30s que Nginx responda
 
-## 💡 Consejos
+## Consejos
 
 1. **Primera ejecución**: La primera vez tomará más tiempo porque descarga todas las imágenes y construye el proyecto
 2. **Desarrollo**: Usa `docker-compose up` (sin `-d`) para ver los logs en tiempo real
 3. **Producción**: Usa `docker-compose up -d` para ejecutar en segundo plano
 4. **Actualizar dependencias**: Reconstruye con `--build` después de cambiar `package.json` o `build.gradle`
 
-## 🔒 Seguridad
+## Seguridad
 
-⚠️ **IMPORTANTE**: Los valores por defecto son para desarrollo. En producción:
+**IMPORTANTE**: Los valores por defecto son para desarrollo. En producción:
 1. Cambia todas las contraseñas
 2. Usa un JWT_SECRET seguro y único
 3. No expongas puertos innecesarios
 4. Usa HTTPS con certificados válidos
 
-## 📚 Más Información
+## Más Información
 
 - [Documentación de Docker Compose](https://docs.docker.com/compose/)
 - [Documentación de Spring Boot](https://spring.io/projects/spring-boot)

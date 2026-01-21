@@ -12,8 +12,6 @@ body {
   background-color: var(--bg-body);
   color: var(--text-primary);
   font-family: var(--font-primary);
-  transition: background-color var(--duration-base) ease,
-              color var(--duration-base) ease;
 }
 
 // ========================================
@@ -22,7 +20,6 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-secondary);
   color: var(--text-primary);
-  transition: color var(--duration-base) ease;
 }
 
 // ========================================
@@ -30,7 +27,6 @@ h1, h2, h3, h4, h5, h6 {
 // ========================================
 p, span, li {
   color: var(--text-primary);
-  transition: color var(--duration-base) ease;
 }
 
 // ========================================
@@ -40,14 +36,23 @@ input, textarea, select {
   background-color: var(--bg-input);
   color: var(--text-primary);
   border-color: var(--border-color);
-  transition: background-color var(--duration-base) ease,
-              color var(--duration-base) ease,
-              border-color var(--duration-base) ease;
 }
 
 // ========================================
 // SECCIONES Y CONTENEDORES
 // ========================================
 section, article, aside {
-  transition: background-color var(--duration-base) ease;
+  // Sin transiciones automáticas para evitar CLS
+}
+
+// ========================================
+// TRANSICIONES DE TEMA (Solo cuando se cambia el tema)
+// ========================================
+// Esta clase se aplica temporalmente durante el cambio de tema
+// para animar suavemente los colores. Se añade/remueve con JS.
+.tema-transicion,
+.tema-transicion * {
+  transition: background-color var(--duration-base) ease,
+              color var(--duration-base) ease,
+              border-color var(--duration-base) ease !important;
 }

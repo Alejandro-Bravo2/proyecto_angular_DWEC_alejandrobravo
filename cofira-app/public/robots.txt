@@ -1,0 +1,14 @@
+# COFIRA - Robots.txt
+# Instrucciones para crawlers de motores de búsqueda
+
+User-agent: *
+Allow: /
+Disallow: /api
+Disallow: /api/
+Disallow: /auth/
+Disallow: /checkout/
+Disallow: /onboarding/
+Disallow: /preferencias/
+
+# Sitemap
+Sitemap: https://cofira.com/sitemap.xml

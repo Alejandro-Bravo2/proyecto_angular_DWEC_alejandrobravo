@@ -1,29 +1,29 @@
 ---
-name: ✨ Feature Request
+name: Feature Request
 about: Suggest an idea for this project
 title: "[FEATURE] "
 labels: enhancement
 assignees: ""
 ---
 
-## ✨ Feature Description
+## Feature Description
 
 <!-- A clear and concise description of the feature -->
 
-## 🎯 Problem Statement
+## Problem Statement
 
 <!-- Is your feature request related to a problem? Please describe -->
 <!-- e.g., I'm always frustrated when [...] -->
 
-## 💡 Proposed Solution
+## Proposed Solution
 
 <!-- Describe the solution you'd like -->
 
-## 🔄 Alternatives Considered
+## Alternatives Considered
 
 <!-- Describe alternative solutions or features you've considered -->
 
-## 📋 Acceptance Criteria
+## Acceptance Criteria
 
 <!-- What needs to be done for this feature to be considered complete? -->
 
@@ -31,11 +31,11 @@ assignees: ""
 - [ ] Criterion 2
 - [ ] Criterion 3
 
-## 📸 Mockups/Examples
+## Mockups/Examples
 
 <!-- If applicable, add mockups, sketches, or examples from other apps -->
 
-## 🎨 Design Considerations
+## Design Considerations
 
 <!-- Any design or UX considerations -->
 
@@ -45,7 +45,7 @@ assignees: ""
 - [ ] Mobile responsive
 - [ ] Dark mode support
 
-## 🔧 Technical Considerations
+## Technical Considerations
 
 <!-- Technical aspects to consider -->
 
@@ -54,7 +54,7 @@ assignees: ""
 - **Dependencies**: List any dependencies or prerequisites
 - **Breaking changes**: Yes / No
 
-## 📊 Impact
+## Impact
 
 - [ ] Improves user experience
 - [ ] Adds new functionality
@@ -62,17 +62,17 @@ assignees: ""
 - [ ] Improves security
 - [ ] Reduces technical debt
 
-## 🎯 User Story
+## User Story
 
 As a [type of user]
 I want [goal/desire]
 So that [benefit/value]
 
-## 📝 Additional Context
+## Additional Context
 
 <!-- Add any other context, research, or information about the feature request here -->
 
-## 🔗 Related Issues
+## Related Issues
 
 <!-- Link to related issues or features -->
 

@@ -1,0 +1,62 @@
+// ============================================================================
+// COFIRA - Fuentes Locales
+// ============================================================================
+// Montserrat: Fuente principal del cuerpo
+// Poppins: Fuente para títulos y encabezados
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// MONTSERRAT - Fuente Principal
+// ----------------------------------------------------------------------------
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/assets/fonts/montserrat/montserrat-400.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('/assets/fonts/montserrat/montserrat-500.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/assets/fonts/montserrat/montserrat-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/assets/fonts/montserrat/montserrat-700.woff2') format('woff2');
+}
+
+// ----------------------------------------------------------------------------
+// POPPINS - Fuente para Títulos
+// ----------------------------------------------------------------------------
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('/assets/fonts/poppins/poppins-600.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/assets/fonts/poppins/poppins-700.woff2') format('woff2');
+}

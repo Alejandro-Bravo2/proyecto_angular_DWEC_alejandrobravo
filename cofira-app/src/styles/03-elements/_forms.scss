@@ -14,7 +14,7 @@ select {
   font-family: var(--font-primary);
   font-size: var(--font-size-md);
   line-height: var(--line-height-normal);
-  color: var(--text-light);
+  color: var(--text-primary);
 }
 
 input::placeholder,
@@ -32,7 +32,7 @@ label {
   font-family: var(--font-primary);
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-regular);
-  color: var(--text-light);
+  color: var(--text-primary);
   display: block;
   margin-bottom: var(--spacing-size-xss);
 }
@@ -52,7 +52,7 @@ legend {
   font-family: var(--font-secondary);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
-  color: var(--text-light);
+  color: var(--text-primary);
   padding: 0;
   margin-bottom: var(--spacing-size-s);
 }

@@ -10,6 +10,7 @@
 // ============================================================================
 // 00 - SETTINGS: Variables globales, configuración
 // ============================================================================
+@import 'styles/00-settings/fonts';              // Fuentes locales (Montserrat + Poppins)
 @import 'styles/00-settings/css-variables';      // Variables SCSS (fuente única de verdad)
 @import 'styles/00-settings/variables';          // CSS Custom Properties
 
@@ -60,7 +61,7 @@
 // Configuración global adicional - Minimalista
 // ============================================================================
 
-// Fonts loaded via index.html: Montserrat (body) + Poppins (headings)
+// Fonts loaded locally: Montserrat (body) + Poppins (headings) - Ver 00-settings/_fonts.scss
 
 // Smooth scrolling
 html {

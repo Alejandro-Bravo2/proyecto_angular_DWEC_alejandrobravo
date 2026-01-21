@@ -35,91 +35,91 @@ Ejecuta los tests en modo interactivo sin coverage.
 - **Functions:** 30.37% (96/316)
 - **Lines:** 44.98% (377/838)
 
-**Estado:** ✅ Coverage > 45% alcanzado
+**Estado:** Coverage > 45% alcanzado
 
 ## Estructura de Tests
 
 ### Tests de Servicios (Core)
 
-- ✅ `auth.service.spec.ts` - Autenticación completa
+- `auth.service.spec.ts` - Autenticación completa
 
   - Login con credenciales válidas/inválidas
   - Registro de usuarios
   - Gestión de tokens
   - Logout y limpieza de sesión
 
-- ✅ `theme.service.spec.ts` - Gestión de temas
+- `theme.service.spec.ts` - Gestión de temas
 
   - Toggle entre light/dark
   - Persistencia en localStorage
   - Inicialización desde sistema
 
-- ✅ `loading.service.spec.ts` - Estado de carga
+- `loading.service.spec.ts` - Estado de carga
   - Show/Hide loading
   - Estado reactivo con observables
 
 ### Tests de Guards
 
-- ✅ `auth-guard.spec.ts` - Protección de rutas
+- `auth-guard.spec.ts` - Protección de rutas
   - Redirección cuando no autenticado
   - Acceso cuando autenticado
 
 ### Tests de Interceptors
 
-- ✅ `auth.interceptor.spec.ts` - Headers de autenticación
-- ✅ `error.interceptor.spec.ts` - Manejo de errores HTTP
-- ✅ `loading.interceptor.spec.ts` - Estado de carga automático
-- ✅ `logging.interceptor.spec.ts` - Logging de peticiones
+- `auth.interceptor.spec.ts` - Headers de autenticación
+- `error.interceptor.spec.ts` - Manejo de errores HTTP
+- `loading.interceptor.spec.ts` - Estado de carga automático
+- `logging.interceptor.spec.ts` - Logging de peticiones
 
 ### Tests de Componentes Compartidos
 
-- ✅ `header.spec.ts` - Navegación principal
+- `header.spec.ts` - Navegación principal
 
   - Toggle de menú móvil
   - Toggle de tema
   - Logout
   - Estado de autenticación
 
-- ✅ `footer.spec.ts` - Pie de página
-- ✅ `loading-spinner.spec.ts` - Spinner de carga
-- ✅ `modal.spec.ts` - Sistema de modales
-- ✅ `toast-container.spec.ts` - Notificaciones
-- ✅ `breadcrumbs.spec.ts` - Migas de pan
+- `footer.spec.ts` - Pie de página
+- `loading-spinner.spec.ts` - Spinner de carga
+- `modal.spec.ts` - Sistema de modales
+- `toast-container.spec.ts` - Notificaciones
+- `breadcrumbs.spec.ts` - Migas de pan
 
 ### Tests de Componentes UI
 
-- ✅ `button.spec.ts` - Botones reutilizables
-- ✅ `input.spec.ts` - Inputs de formulario
-- ✅ `checkbox.spec.ts` - Checkboxes
-- ✅ `radio-button.spec.ts` - Radio buttons
-- ✅ `dropdown.spec.ts` - Desplegables
-- ✅ `calendar.spec.ts` - Selector de fecha
+- `button.spec.ts` - Botones reutilizables
+- `input.spec.ts` - Inputs de formulario
+- `checkbox.spec.ts` - Checkboxes
+- `radio-button.spec.ts` - Radio buttons
+- `dropdown.spec.ts` - Desplegables
+- `calendar.spec.ts` - Selector de fecha
 
 ### Tests de Features
 
 #### Nutrition
 
-- ✅ `nutrient-counter.spec.ts` - Contador de macros con gráfico
-- ✅ `daily-menu.spec.ts` - Menú diario
-- ✅ `add-meal-form.spec.ts` - Formulario de comidas
+- `nutrient-counter.spec.ts` - Contador de macros con gráfico
+- `daily-menu.spec.ts` - Menú diario
+- `add-meal-form.spec.ts` - Formulario de comidas
 
 #### Training
 
-- ✅ `weekly-table.spec.ts` - Tabla de ejercicios
-- ✅ `exercise-row.spec.ts` - Fila de ejercicio
-- ✅ `progress-card.spec.ts` - Tarjeta de progreso
+- `weekly-table.spec.ts` - Tabla de ejercicios
+- `exercise-row.spec.ts` - Fila de ejercicio
+- `progress-card.spec.ts` - Tarjeta de progreso
 
 #### Progress
 
-- ✅ `strength-gain-chart.spec.ts` - Gráfico de fuerza
-- ✅ `add-progress-form.spec.ts` - Formulario de progreso
+- `strength-gain-chart.spec.ts` - Gráfico de fuerza
+- `add-progress-form.spec.ts` - Formulario de progreso
 
 ### Tests de Validadores
 
-- ✅ `password-strength.validator.spec.ts` - Validación de contraseña
-- ✅ `spanish-formats.validator.spec.ts` - Formatos españoles (DNI, teléfono)
-- ✅ `cross-field.validators.spec.ts` - Validadores cruzados
-- ✅ `async-validators.service.spec.ts` - Validadores asíncronos
+- `password-strength.validator.spec.ts` - Validación de contraseña
+- `spanish-formats.validator.spec.ts` - Formatos españoles (DNI, teléfono)
+- `cross-field.validators.spec.ts` - Validadores cruzados
+- `async-validators.service.spec.ts` - Validadores asíncronos
 
 ## Cómo Mejorar el Coverage
 

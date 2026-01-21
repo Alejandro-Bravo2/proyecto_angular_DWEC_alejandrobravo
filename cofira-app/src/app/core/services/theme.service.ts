@@ -149,6 +149,7 @@ export class ThemeService implements OnDestroy {
 
   /**
    * Alterna entre tema claro y oscuro.
+   * Aplica temporalmente la clase 'tema-transicion' para animar el cambio.
    *
    * @example
    * ```typescript
@@ -157,7 +158,16 @@ export class ThemeService implements OnDestroy {
    */
   toggleTheme(): void {
     const newTheme: Theme = this.currentTheme() === 'light' ? 'dark' : 'light';
+
+    // Añadir clase para animar transición (evita CLS en carga inicial)
+    this.renderer.addClass(this.document.body, 'tema-transicion');
+
     this.setTheme(newTheme);
+
+    // Quitar clase después de la transición (300ms = --duration-base)
+    setTimeout(() => {
+      this.renderer.removeClass(this.document.body, 'tema-transicion');
+    }, 300);
   }
 
   /**

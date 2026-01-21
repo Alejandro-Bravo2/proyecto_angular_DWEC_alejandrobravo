@@ -9,6 +9,7 @@
   left: 0;
   right: 0;
   height: 60px;
+  min-height: 60px; // Prevenir CLS durante carga
   z-index: var(--z-fixed);
   background: var(--glass-bg);
   backdrop-filter: blur(20px);

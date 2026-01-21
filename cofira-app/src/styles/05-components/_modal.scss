@@ -13,6 +13,8 @@ body.modal-open {
   position: fixed;
   width: 100%;
   height: 100%;
+  // Compensar scrollbar para evitar CLS (Layout Shift)
+  padding-right: var(--scrollbar-width, 17px);
 }
 
 // Variable z-index para tooltip (si no existe)

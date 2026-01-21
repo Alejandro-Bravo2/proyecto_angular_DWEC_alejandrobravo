@@ -1,35 +1,35 @@
 ---
-name: 🐛 Bug Report
+name: Bug Report
 about: Create a report to help us improve
 title: "[BUG] "
 labels: bug
 assignees: ""
 ---
 
-## 🐛 Bug Description
+## Bug Description
 
 <!-- A clear and concise description of what the bug is -->
 
-## 📋 Steps to Reproduce
+## Steps to Reproduce
 
 1. Go to '...'
 2. Click on '...'
 3. Scroll down to '...'
 4. See error
 
-## ✅ Expected Behavior
+## Expected Behavior
 
 <!-- What you expected to happen -->
 
-## ❌ Actual Behavior
+## Actual Behavior
 
 <!-- What actually happened -->
 
-## 📸 Screenshots
+## Screenshots
 
 <!-- If applicable, add screenshots to help explain your problem -->
 
-## 🌐 Environment
+## Environment
 
 **Frontend:**
 
@@ -49,21 +49,21 @@ assignees: ""
 - COFIRA version: [e.g. 1.0.0]
 - Commit hash: [e.g. abc123]
 
-## 📝 Console Logs
+## Console Logs
 
 ```
 <!-- Paste any relevant console errors here -->
 ```
 
-## 🔍 Additional Context
+## Additional Context
 
 <!-- Add any other context about the problem here -->
 
-## 💡 Possible Solution
+## Possible Solution
 
 <!-- If you have ideas on how to fix this, please share -->
 
-## 📊 Impact
+## Impact
 
 - [ ] Blocks critical functionality
 - [ ] Affects multiple users
@@ -71,7 +71,7 @@ assignees: ""
 - [ ] Minor inconvenience
 - [ ] Enhancement/Nice to have
 
-## 🔗 Related Issues
+## Related Issues
 
 <!-- Link to related issues if any -->
 

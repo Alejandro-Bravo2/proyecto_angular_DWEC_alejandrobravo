@@ -1,0 +1,56 @@
+{
+  "agents": {
+    "perf-optimizer-1768918693868-rfmd": {
+      "agentId": "perf-optimizer-1768918693868-rfmd",
+      "agentType": "worker",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "role": "specialist",
+        "hiveRole": "specialist"
+      },
+      "createdAt": "2026-01-20T14:18:13.868Z",
+      "domain": "hive-mind"
+    },
+    "perf-optimizer-1768918693868-x5zd": {
+      "agentId": "perf-optimizer-1768918693868-x5zd",
+      "agentType": "worker",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "role": "specialist",
+        "hiveRole": "specialist"
+      },
+      "createdAt": "2026-01-20T14:18:13.868Z",
+      "domain": "hive-mind"
+    },
+    "perf-optimizer-1768918693868-l1vt": {
+      "agentId": "perf-optimizer-1768918693868-l1vt",
+      "agentType": "worker",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "role": "specialist",
+        "hiveRole": "specialist"
+      },
+      "createdAt": "2026-01-20T14:18:13.868Z",
+      "domain": "hive-mind"
+    },
+    "perf-optimizer-1768918693868-0qcy": {
+      "agentId": "perf-optimizer-1768918693868-0qcy",
+      "agentType": "worker",
+      "status": "idle",
+      "health": 1,
+      "taskCount": 0,
+      "config": {
+        "role": "specialist",
+        "hiveRole": "specialist"
+      },
+      "createdAt": "2026-01-20T14:18:13.868Z",
+      "domain": "hive-mind"
+    }
+  }
+}

@@ -5,14 +5,114 @@
   <title>COFIRA - Tu entrenamiento, nutrición y progreso</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="COFIRA: Sistema integral de entrenamiento, nutrición y seguimiento de progreso personalizado">
-  <meta name="theme-color" content="#FDB913">
+  <meta name="description" content="COFIRA: Sistema integral de entrenamiento, nutrición y seguimiento de progreso personalizado. Planifica tus rutinas, controla tu alimentación y visualiza tu evolución.">
+  <meta name="keywords" content="fitness, entrenamiento, nutrición, progreso, salud, ejercicio, dieta, rutinas, gym">
+  <meta name="author" content="COFIRA">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="COFIRA">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="application-name" content="COFIRA">
+  <meta name="format-detection" content="telephone=no">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="canonical" href="https://cofira.com/">
 
-  <!-- Google Fonts: Montserrat (body) y Poppins (headings) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://cofira.com/">
+  <meta property="og:title" content="COFIRA - Tu entrenamiento, nutrición y progreso">
+  <meta property="og:description" content="Sistema integral de entrenamiento, nutrición y seguimiento de progreso personalizado. Alcanza tus objetivos fitness.">
+  <meta property="og:image" content="https://cofira.com/assets/images/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="es_ES">
+  <meta property="og:site_name" content="COFIRA">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://cofira.com/">
+  <meta name="twitter:title" content="COFIRA - Tu entrenamiento, nutrición y progreso">
+  <meta name="twitter:description" content="Sistema integral de entrenamiento, nutrición y seguimiento de progreso personalizado.">
+  <meta name="twitter:image" content="https://cofira.com/assets/images/og-image.jpg">
+
+  <!-- Preload fuentes críticas (mejora LCP y evita FOIT) -->
+  <link rel="preload" href="/assets/fonts/montserrat/montserrat-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/montserrat/montserrat-500.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/montserrat/montserrat-600.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/poppins/poppins-600.woff2" as="font" type="font/woff2" crossorigin>
+
+  <!-- CSS crítico inline para prevenir CLS (Layout Shifts) -->
+  <style>
+    /* Reservar espacio para componentes ANTES de la hidratación de Angular */
+    app-root {
+      display: block;
+      min-height: 100vh;
+    }
+
+    app-header {
+      display: block;
+      min-height: 60px;
+      contain: layout style paint;
+    }
+
+    app-footer {
+      display: block;
+      min-height: 501px;
+      contain: layout style paint;
+    }
+
+    /* Responsive heights */
+    @media (max-width: 48rem) {
+      app-footer {
+        min-height: 530px;
+      }
+    }
+
+    @media (min-width: 48.01rem) and (max-width: 64rem) {
+      app-footer {
+        min-height: 500px;
+      }
+    }
+
+    @media (min-width: 64.01rem) and (max-width: 75rem) {
+      app-footer {
+        min-height: 484px;
+      }
+    }
+
+    @media (min-width: 75.01rem) {
+      app-footer {
+        min-height: 486px;
+      }
+    }
+  </style>
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "COFIRA",
+    "description": "Sistema integral de entrenamiento, nutrición y seguimiento de progreso personalizado",
+    "url": "https://cofira.com",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "COFIRA",
+      "url": "https://cofira.com"
+    }
+  }
+  </script>
 </head>
 <body>
   <app-root></app-root>

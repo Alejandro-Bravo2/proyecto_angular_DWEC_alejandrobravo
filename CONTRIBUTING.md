@@ -4,7 +4,7 @@
 
 # ============================================================================
 
-## 🤝 How to Contribute
+## How to Contribute
 
 We love your input! We want to make contributing to COFIRA as easy and transparent as possible, whether it's:
 
@@ -14,7 +14,7 @@ We love your input! We want to make contributing to COFIRA as easy and transpare
 - Proposing new features
 - Becoming a maintainer
 
-## 📋 Development Process
+## Development Process
 
 We use GitHub to host code, to track issues and feature requests, as well as accept pull requests.
 
@@ -27,7 +27,7 @@ We use GitHub to host code, to track issues and feature requests, as well as acc
 5. Make sure your code lints
 6. Issue that pull request!
 
-## 🔧 Development Setup
+## Development Setup
 
 ```bash
 # Clone your fork
@@ -46,13 +46,13 @@ cd ../backend && ./gradlew build
 
 # Make your changes and commit
 git add .
-git commit -m "✨ Add amazing feature"
+git commit -m "Add amazing feature"
 
 # Push to your fork
 git push origin feature/amazing-feature
 ```
 
-## 📝 Commit Messages
+## Commit Messages
 
 We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
 
@@ -66,26 +66,26 @@ We follow the [Conventional Commits](https://www.conventionalcommits.org/) speci
 
 ### Types
 
-- ✨ `feat`: A new feature
-- 🐛 `fix`: A bug fix
-- 📝 `docs`: Documentation only changes
-- 🎨 `style`: Changes that don't affect code meaning (formatting, etc.)
-- ♻️ `refactor`: Code change that neither fixes a bug nor adds a feature
-- ⚡ `perf`: Performance improvements
-- ✅ `test`: Adding missing tests or correcting existing tests
-- 🔧 `chore`: Changes to build process or auxiliary tools
-- 🔒 `security`: Security improvements
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that don't affect code meaning (formatting, etc.)
+- `refactor`: Code change that neither fixes a bug nor adds a feature
+- `perf`: Performance improvements
+- `test`: Adding missing tests or correcting existing tests
+- `chore`: Changes to build process or auxiliary tools
+- `security`: Security improvements
 
 ### Examples
 
 ```bash
-git commit -m "✨ feat(auth): add JWT authentication"
-git commit -m "🐛 fix(training): resolve exercise loading issue"
-git commit -m "📝 docs: update installation guide"
-git commit -m "♻️ refactor(nutrition): improve meal service structure"
+git commit -m "feat(auth): add JWT authentication"
+git commit -m "fix(training): resolve exercise loading issue"
+git commit -m "docs: update installation guide"
+git commit -m "refactor(nutrition): improve meal service structure"
 ```
 
-## 🧪 Testing Guidelines
+## Testing Guidelines
 
 ### Frontend Tests
 
@@ -126,7 +126,7 @@ cd backend
 - Integration tests for controllers
 - Maintain coverage above 70%
 
-## 📐 Code Style
+## Code Style
 
 ### Frontend (TypeScript/Angular)
 
@@ -150,7 +150,7 @@ npm run format
 - DTOs for data transfer
 - Service layer for business logic
 
-## 🌲 Branch Naming
+## Branch Naming
 
 - `feature/feature-name` - New features
 - `fix/bug-description` - Bug fixes
@@ -159,7 +159,7 @@ npm run format
 - `test/what-tested` - Test additions
 - `chore/what-changed` - Maintenance tasks
 
-## 🔍 Code Review Process
+## Code Review Process
 
 1. Create a Pull Request with a clear title and description
 2. Link related issues
@@ -170,7 +170,7 @@ npm run format
 7. Squash commits if needed
 8. Merge when approved
 
-## 📊 Pull Request Template
+## Pull Request Template
 
 ```markdown
 ## Description
@@ -209,7 +209,7 @@ Brief description of changes
 Closes #issue-number
 ```
 
-## 🐛 Bug Reports
+## Bug Reports
 
 **Great Bug Reports** tend to have:
 
@@ -251,7 +251,7 @@ If applicable, add screenshots.
 Any other context about the problem.
 ```
 
-## 💡 Feature Requests
+## Feature Requests
 
 **Great Feature Requests** include:
 
@@ -276,31 +276,31 @@ Alternative solutions or features considered.
 Any other context, screenshots, or mockups.
 ```
 
-## 📜 License
+## License
 
 By contributing, you agree that your contributions will be licensed under the MIT License.
 
-## 🎯 Areas for Contribution
+## Areas for Contribution
 
 We especially welcome contributions in:
 
-- 📱 Mobile responsiveness improvements
-- ♿ Accessibility enhancements
-- 🌍 Internationalization (i18n)
-- 🎨 UI/UX improvements
-- 📊 Performance optimizations
-- 📚 Documentation improvements
-- 🧪 Test coverage increases
-- 🔒 Security enhancements
+- Mobile responsiveness improvements
+- Accessibility enhancements
+- Internationalization (i18n)
+- UI/UX improvements
+- Performance optimizations
+- Documentation improvements
+- Test coverage increases
+- Security enhancements
 
-## 🆘 Getting Help
+## Getting Help
 
-- 📖 Read the [documentation](./README.md)
-- 💬 Join discussions in [GitHub Discussions](https://github.com/Alejandro-Bravo2/proyecto_angular_DWEC_alejandrobravo/discussions)
-- 🐛 Report bugs in [Issues](https://github.com/Alejandro-Bravo2/proyecto_angular_DWEC_alejandrobravo/issues)
-- 📧 Contact maintainers
+- Read the [documentation](./README.md)
+- Join discussions in [GitHub Discussions](https://github.com/Alejandro-Bravo2/proyecto_angular_DWEC_alejandrobravo/discussions)
+- Report bugs in [Issues](https://github.com/Alejandro-Bravo2/proyecto_angular_DWEC_alejandrobravo/issues)
+- Contact maintainers
 
-## 🙏 Recognition
+## Recognition
 
 Contributors will be recognized in:
 
@@ -308,4 +308,4 @@ Contributors will be recognized in:
 - Release notes
 - Project documentation
 
-Thank you for making COFIRA better! 🎉
+Thank you for making COFIRA better!

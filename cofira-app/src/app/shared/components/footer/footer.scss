@@ -5,6 +5,13 @@
   background-color: var(--bg-body);
   border-top: 1px solid var(--border-color);
   padding: var(--spacing-size-xl) 0 var(--spacing-size-m);
+  // Prevenir CLS: ALTURA FIJA (no min-height) para eliminar layout shifts
+  height: auto;
+  // Aislar el footer para prevenir layout shifts que afecten otros elementos
+  contain: layout style paint;
+  // Forzar capa de composición para evitar reflows
+  will-change: transform;
+  transform: translateZ(0);
 
   @include responsive('xs') {
     padding: var(--spacing-size-xxl) 0 var(--spacing-size-l);

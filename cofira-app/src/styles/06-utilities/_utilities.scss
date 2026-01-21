@@ -249,19 +249,31 @@
   border: 0;
 }
 
-// Skip link para navegacion por teclado
-.skip-link {
+// Skip link para navegacion por teclado (accesibilidad WCAG)
+.enlace-saltar {
   position: absolute;
-  top: -40px;
-  left: 0;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
   background: var(--negro-normal);
-  color: var(--text-dark);
-  padding: var(--spacing-size-s);
-  z-index: 9999;
+  color: var(--blanco-puro);
+  padding: var(--spacing-size-s) var(--spacing-size-m);
+  border-radius: var(--radius-s);
+  z-index: 10000;
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  transition: top var(--duration-fast) ease;
 
   &:focus {
-    top: 0;
+    top: var(--spacing-size-s);
+    outline: 2px solid var(--blanco-puro);
+    outline-offset: 2px;
   }
+}
+
+// Alias en inglés para compatibilidad
+.skip-link {
+  @extend .enlace-saltar;
 }
 
 

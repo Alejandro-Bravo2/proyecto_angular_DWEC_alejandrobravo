@@ -1,11 +1,17 @@
+<!-- Skip link para accesibilidad (usuarios de teclado) -->
+<a href="#contenido-principal" class="enlace-saltar">
+  Ir al contenido principal
+</a>
+
 <app-header />
 
-<main class="main-content">
+<main id="contenido-principal" class="main-content" role="main">
   <app-breadcrumbs />
   <router-outlet />
 </main>
 
-<app-footer />
+<!-- Footer cargado dinámicamente para prevenir CLS -->
+<ng-container #footerContainer></ng-container>
 
 <app-loading-spinner />
 <app-toast-container />
