@@ -5020,6 +5020,30 @@ ng build --stats-json
 npx webpack-bundle-analyzer dist/cofira-app/stats.json
 ```
 
+
+### Testing usando Lighthouse
+
+[Lighthouse](https://developer.chrome.com/docs/lighthouse/overview/) es una herramienta automatizada de Google para evaluar la calidad de las páginas web. Se ejecutó una auditoría en la página de registro (`/register`) con los siguientes resultados:
+
+| Métrica | Puntuación | Estado |
+|---------|------------|--------|
+| **Performance** | 83 | 🟠 Bueno |
+| **Accessibility** | 98 | 🟢 Excelente |
+| **Best Practices** | 100 | 🟢 Perfecto |
+| **SEO** | 91 | 🟢 Excelente |
+
+![Resultados de auditoría Lighthouse en página de registro](assets/image.png)
+
+#### Interpretación de resultados
+
+- **Performance (83)**: Buen rendimiento general. El aviso sobre IndexedDB indica que datos en caché podrían afectar la medición; se recomienda auditar en modo incógnito para resultados más precisos.
+- **Accessibility (98)**: La aplicación cumple casi todos los estándares WCAG, facilitando el uso para personas con discapacidades.
+- **Best Practices (100)**: Cumplimiento total de las mejores prácticas web modernas.
+- **SEO (91)**: Buena optimización para motores de búsqueda.
+
+
+```
+
 ---
 
 <div align="center">
