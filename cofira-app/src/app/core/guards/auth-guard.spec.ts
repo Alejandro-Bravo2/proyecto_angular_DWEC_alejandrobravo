@@ -1,80 +1,69 @@
 import { TestBed } from '@angular/core/testing';
-import {
-  CanActivateFn,
-  Router,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-  UrlTree,
-} from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-
+import { Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { authGuard } from './auth-guard';
 import { AuthService } from '../auth/auth.service';
 
 describe('authGuard', () => {
-  let authService: jasmine.SpyObj<AuthService>;
-  let router: Router;
+  let mockAuthService: jasmine.SpyObj<AuthService>;
+  let mockRouter: jasmine.SpyObj<Router>;
   let mockRoute: ActivatedRouteSnapshot;
   let mockState: RouterStateSnapshot;
 
-  const executeGuard: CanActivateFn = (...guardParameters) =>
-    TestBed.runInInjectionContext(() => authGuard(...guardParameters));
-
   beforeEach(() => {
-    authService = jasmine.createSpyObj('AuthService', ['isLoggedIn']);
+    mockAuthService = jasmine.createSpyObj('AuthService', ['isLoggedIn']);
+    mockRouter = jasmine.createSpyObj('Router', ['createUrlTree']);
 
     TestBed.configureTestingModule({
       providers: [
-        provideHttpClient(),
-        provideHttpClientTesting(),
-        { provide: AuthService, useValue: authService },
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: Router, useValue: mockRouter },
       ],
     });
 
-    router = TestBed.inject(Router);
     mockRoute = {} as ActivatedRouteSnapshot;
     mockState = { url: '/entrenamiento' } as RouterStateSnapshot;
   });
 
-  it('should be created', () => {
-    expect(executeGuard).toBeTruthy();
-  });
-
   it('should allow access when user is logged in', () => {
-    authService.isLoggedIn.and.returnValue(true);
+    mockAuthService.isLoggedIn.and.returnValue(true);
 
-    const result = executeGuard(mockRoute, mockState);
+    const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 
-    expect(result).toBeTrue();
+    expect(result).toBe(true);
+    expect(mockRouter.createUrlTree).not.toHaveBeenCalled();
   });
 
   it('should redirect to login when user is not logged in', () => {
-    authService.isLoggedIn.and.returnValue(false);
+    mockAuthService.isLoggedIn.and.returnValue(false);
+    const fakeUrlTree = {} as ReturnType<Router['createUrlTree']>;
+    mockRouter.createUrlTree.and.returnValue(fakeUrlTree);
 
-    const result = executeGuard(mockRoute, mockState);
+    const result = TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 
-    expect(result).toBeInstanceOf(UrlTree);
-    expect((result as UrlTree).toString()).toContain('/login');
+    expect(result).toBe(fakeUrlTree);
+    expect(mockRouter.createUrlTree).toHaveBeenCalledWith(['/login'], {
+      queryParams: { returnUrl: '/entrenamiento' },
+    });
   });
 
-  it('should include returnUrl query param when redirecting', () => {
-    authService.isLoggedIn.and.returnValue(false);
-    mockState = { url: '/preferencias/cuenta' } as RouterStateSnapshot;
+  it('should pass correct return URL in query params', () => {
+    mockAuthService.isLoggedIn.and.returnValue(false);
+    const fakeUrlTree = {} as ReturnType<Router['createUrlTree']>;
+    mockRouter.createUrlTree.and.returnValue(fakeUrlTree);
 
-    const result = executeGuard(mockRoute, mockState);
+    const customState = { url: '/seguimiento/personal' } as RouterStateSnapshot;
+    TestBed.runInInjectionContext(() => authGuard(mockRoute, customState));
 
-    expect(result).toBeInstanceOf(UrlTree);
-    const urlTree = result as UrlTree;
-    expect(urlTree.queryParams['returnUrl']).toBe('/preferencias/cuenta');
+    expect(mockRouter.createUrlTree).toHaveBeenCalledWith(['/login'], {
+      queryParams: { returnUrl: '/seguimiento/personal' },
+    });
   });
 
-  it('should handle root URL correctly', () => {
-    authService.isLoggedIn.and.returnValue(false);
-    mockState = { url: '/' } as RouterStateSnapshot;
+  it('should call isLoggedIn on AuthService', () => {
+    mockAuthService.isLoggedIn.and.returnValue(true);
 
-    const result = executeGuard(mockRoute, mockState);
+    TestBed.runInInjectionContext(() => authGuard(mockRoute, mockState));
 
-    expect(result).toBeInstanceOf(UrlTree);
+    expect(mockAuthService.isLoggedIn).toHaveBeenCalled();
   });
 });

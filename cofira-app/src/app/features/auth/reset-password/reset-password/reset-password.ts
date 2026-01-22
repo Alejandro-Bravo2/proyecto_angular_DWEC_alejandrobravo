@@ -16,7 +16,7 @@ import { ToastService } from '../../../../core/services/toast.service';
   styleUrl: './reset-password.scss',
 })
 export class ResetPassword {
-  codeSent: boolean = false;
+  codeSent = false;
 
   emailForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),

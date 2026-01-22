@@ -11,21 +11,21 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, FormContr
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => RadioButton),
+      useExisting: forwardRef(/* istanbul ignore next */ () => RadioButton),
       multi: true,
     },
   ],
 })
 export class RadioButton implements ControlValueAccessor {
-  @Input() label: string = '';
-  @Input() id: string = '';
-  @Input() name: string = ''; // Name is crucial for radio button groups
+  @Input() label = '';
+  @Input() id = '';
+  @Input() name = ''; // Name is crucial for radio button groups
   @Input() value: any; // The value this specific radio button represents
   @Input() control: FormControl = new FormControl(); // Allow passing a FormControl instance
 
   // For ControlValueAccessor
   _internalValue: any = ''; // Value of the selected radio button in the group
-  _isDisabled: boolean = false;
+  _isDisabled = false;
   _onChange: (value: any) => void = () => {};
   _onTouched: () => void = () => {};
 

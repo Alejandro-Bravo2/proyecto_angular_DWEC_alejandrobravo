@@ -404,9 +404,9 @@ describe('Integration Tests', () => {
     });
 
     it('should validate complete Barcelona address', () => {
-      // 44444444 % 23 = 9 -> D
+      // 44444444 % 23 = 3 -> A
       const form = new FormGroup({
-        nif: new FormControl('44444444D', [nifValidator()]),
+        nif: new FormControl('44444444A', [nifValidator()]),
         phone: new FormControl('612345678', [phoneValidator()]),
         postalCode: new FormControl('08002', [postalCodeValidator()]),
       });

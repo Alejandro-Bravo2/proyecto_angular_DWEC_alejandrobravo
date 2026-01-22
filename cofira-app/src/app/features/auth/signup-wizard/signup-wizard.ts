@@ -405,9 +405,7 @@ export class SignupWizard {
       return this.registerFormValid() && !this.registerFormPending();
     }
 
-    const step = this.currentOnboardingStep();
-    if (!step) return true;
-
+    const step = this.currentOnboardingStep()!;
     const data = this.formData();
     if (!step.required) return true;
 

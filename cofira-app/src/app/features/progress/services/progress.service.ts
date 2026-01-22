@@ -4,7 +4,6 @@ import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { BaseHttpService } from '../../../core/services/base-http.service';
 import { LoadingService } from '../../../core/services/loading.service';
-import { environment } from '../../../../environments/environment';
 
 // DTOs que coinciden con el backend
 export interface ObjetivosDTO {
@@ -112,7 +111,7 @@ export class ProgressService extends BaseHttpService {
    * Obtiene entradas de progreso (formato legacy)
    * @deprecated Implementar endpoint específico en backend si se necesita
    */
-  getProgressEntries(userId: string): Observable<ProgressEntry[]> {
+  getProgressEntries(_userId: string): Observable<ProgressEntry[]> {
     // Por ahora retornar array vacío
     return of([]);
   }
@@ -121,7 +120,7 @@ export class ProgressService extends BaseHttpService {
    * Obtiene progreso por ejercicio (formato legacy)
    * @deprecated Implementar endpoint específico en backend
    */
-  getProgressByExercise(userId: string, exerciseName: string): Observable<ProgressEntry[]> {
+  getProgressByExercise(_userId: string, _exerciseName: string): Observable<ProgressEntry[]> {
     return of([]);
   }
 
@@ -140,7 +139,7 @@ export class ProgressService extends BaseHttpService {
    * Actualiza entrada de progreso (formato legacy)
    * @deprecated Implementar endpoint específico en backend
    */
-  updateProgressEntry(entryId: string, entry: Partial<ProgressEntry>): Observable<ProgressEntry> {
+  updateProgressEntry(_entryId: string, _entry: Partial<ProgressEntry>): Observable<ProgressEntry> {
     return of({} as ProgressEntry);
   }
 
@@ -148,7 +147,7 @@ export class ProgressService extends BaseHttpService {
    * Elimina entrada de progreso (formato legacy)
    * @deprecated Implementar endpoint específico en backend
    */
-  deleteProgressEntry(entryId: string): Observable<void> {
+  deleteProgressEntry(_entryId: string): Observable<void> {
     return of(void 0);
   }
 
@@ -156,10 +155,10 @@ export class ProgressService extends BaseHttpService {
    * Obtiene datos de nutrientes por fecha
    * Intenta cargar los targets del perfil del usuario como objetivos
    */
-  getNutrientDataByDate(userId: string, date: string): Observable<NutrientData> {
+  getNutrientDataByDate(_userId: string, date: string): Observable<NutrientData> {
     // Intenta obtener los targets del perfil del usuario
     return this.get<any>(`onboarding/nutrition-targets`).pipe(
-      map(targets => ({
+      map(_result => ({
         date: date,
         protein: 0,
         carbs: 0,
@@ -167,9 +166,9 @@ export class ProgressService extends BaseHttpService {
         fiber: 0,
         water: 0,
         calories: 0,
-        calorieGoal: targets?.dailyCalories ? Math.round(targets.dailyCalories) : 2000
+        calorieGoal: _result?.dailyCalories ? Math.round(_result.dailyCalories) : 2000
       })),
-      catchError(() => of({
+      catchError(_err => of({
         date: date,
         protein: 0,
         carbs: 0,
@@ -186,7 +185,7 @@ export class ProgressService extends BaseHttpService {
    * Obtiene progreso de fuerza (formato legacy)
    * @deprecated Implementar endpoint específico en backend
    */
-  getStrengthProgress(userId: string, exerciseName: string): Observable<StrengthProgress> {
+  getStrengthProgress(_userId: string, exerciseName: string): Observable<StrengthProgress> {
     return of({
       exerciseName: exerciseName,
       data: []
@@ -197,7 +196,7 @@ export class ProgressService extends BaseHttpService {
    * Obtiene ejercicios del usuario (formato legacy)
    * @deprecated Usar TrainingService.listarRutinas() y extraer ejercicios
    */
-  getUserExercises(userId: string): Observable<string[]> {
+  getUserExercises(_userId: string): Observable<string[]> {
     return of([]);
   }
 }

@@ -25,7 +25,7 @@ export class OnboardingContainer implements OnInit {
     { path: 'pricing', label: 'Rango de precios' },
     { path: 'muscles', label: 'Grupos musculares' },
   ];
-  currentStepIndex: number = 0; // 0-indexed
+  currentStepIndex = 0; // 0-indexed
 
   constructor(
     private router: Router,

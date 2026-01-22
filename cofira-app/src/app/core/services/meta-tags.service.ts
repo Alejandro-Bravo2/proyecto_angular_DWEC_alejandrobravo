@@ -29,7 +29,7 @@ const META_TAGS_DEFECTO: MetaTagsConfig = {
 /**
  * Configuración de meta tags por ruta.
  */
-const META_TAGS_POR_RUTA: { [key: string]: Partial<MetaTagsConfig> } = {
+const META_TAGS_POR_RUTA: Record<string, Partial<MetaTagsConfig>> = {
   '/': {
     titulo: 'COFIRA - Tu entrenamiento, nutrición y progreso',
     descripcion: 'Sistema integral de entrenamiento, nutrición y seguimiento de progreso personalizado. Alcanza tus objetivos fitness.'

@@ -8,9 +8,12 @@ import {
   effect
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import * as THREE from 'three';
-import gsap from 'gsap';
 import { ThemeService } from '../../../core/services/theme.service';
+
+/**
+ * Tipo para el módulo Three.js cargado dinámicamente
+ */
+type ThreeModule = typeof import('three');
 
 /**
  * Componente de escena 3D para la sección de entrenamiento.
@@ -42,18 +45,23 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
    */
   @ViewChild('canvas', { static: true }) canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  private renderer!: THREE.WebGLRenderer;
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private mainGroup!: THREE.Group;
-  private centralSphere!: THREE.Group;
-  private orbitingObjects: THREE.Group[] = [];
-  private particles!: THREE.Points;
-  private connectionLines!: THREE.LineSegments;
-  private frameId: number = 0;
-  private mouseX: number = 0;
-  private mouseY: number = 0;
-  private clock = new THREE.Clock();
+  /** Módulo Three.js cargado dinámicamente */
+  private THREE!: ThreeModule;
+  /** Módulo gsap cargado dinámicamente */
+  private gsap: any;
+
+  private renderer: any;
+  private scene: any;
+  private camera: any;
+  private mainGroup: any;
+  private centralSphere: any;
+  private orbitingObjects: any[] = [];
+  private particles: any;
+  private connectionLines: any;
+  private frameId = 0;
+  private mouseX = 0;
+  private mouseY = 0;
+  private clock: any;
   private isInitialized = false;
 
   private boundOnWindowResize = this.onWindowResize.bind(this);
@@ -91,14 +99,25 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Hook AfterViewInit - Inicializa la escena Three.js cuando el canvas está disponible.
-   * @description Verifica que el ViewChild esté inicializado antes de proceder.
+   * @description Usa dynamic imports para cargar Three.js y gsap de forma diferida,
+   * reduciendo el bundle inicial de la aplicación en ~600KB.
    */
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     // Null check: Verificar que el canvas esté disponible antes de inicializar
     if (!this.canvasRef?.nativeElement) {
       console.error('ThreeSceneComponent: Canvas element not found');
       return;
     }
+
+    // Cargar módulos de forma diferida (lazy loading)
+    const [threeModule, gsapModule] = await Promise.all([
+      import('three'),
+      import('gsap')
+    ]);
+
+    this.THREE = threeModule;
+    this.gsap = gsapModule.default;
+    this.clock = new this.THREE.Clock();
 
     this.initThree();
     this.createCentralStructure();
@@ -121,20 +140,24 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
     }
     window.removeEventListener('resize', this.boundOnWindowResize);
     window.removeEventListener('mousemove', this.boundOnMouseMove);
-    gsap.killTweensOf(this.mainGroup?.position);
-    gsap.killTweensOf(this.mainGroup?.rotation);
-    gsap.killTweensOf(this.mainGroup?.scale);
+    if (this.gsap) {
+      this.gsap.killTweensOf(this.mainGroup?.position);
+      this.gsap.killTweensOf(this.mainGroup?.rotation);
+      this.gsap.killTweensOf(this.mainGroup?.scale);
+    }
     this.disposeScene();
   }
 
   private disposeScene(): void {
-    this.scene?.traverse((child) => {
-      if (child instanceof THREE.Mesh || child instanceof THREE.Line || child instanceof THREE.Points || child instanceof THREE.LineSegments) {
+    if (!this.THREE) return;
+
+    this.scene?.traverse((child: any) => {
+      if (child instanceof this.THREE.Mesh || child instanceof this.THREE.Line || child instanceof this.THREE.Points || child instanceof this.THREE.LineSegments) {
         child.geometry?.dispose();
         if (Array.isArray(child.material)) {
-          child.material.forEach(m => m.dispose());
+          child.material.forEach((m: any) => m.dispose());
         } else if (child.material) {
-          (child.material as THREE.Material).dispose();
+          child.material.dispose();
         }
       }
     });
@@ -146,7 +169,7 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
     const width = canvas.parentElement?.clientWidth || window.innerWidth;
     const height = canvas.parentElement?.clientHeight || window.innerHeight;
 
-    this.renderer = new THREE.WebGLRenderer({
+    this.renderer = new this.THREE.WebGLRenderer({
       canvas,
       antialias: true,
       alpha: true,
@@ -157,13 +180,13 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setClearColor(0x000000, 0);
 
-    this.scene = new THREE.Scene();
+    this.scene = new this.THREE.Scene();
 
-    this.camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+    this.camera = new this.THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
     this.camera.position.z = 8;
     this.camera.position.y = 1;
 
-    this.mainGroup = new THREE.Group();
+    this.mainGroup = new this.THREE.Group();
     this.scene.add(this.mainGroup);
   }
 
@@ -174,7 +197,7 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
 
   private createCentralStructure(): void {
     const colors = this.getColors();
-    this.centralSphere = new THREE.Group();
+    this.centralSphere = new this.THREE.Group();
 
     // === MANCUERNA / PESA 3D ===
 
@@ -186,81 +209,81 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
     const innerWeightRadius = 0.45;
 
     // BARRA CENTRAL - Cilindro horizontal
-    const barGeometry = new THREE.CylinderGeometry(barRadius, barRadius, barLength, 12);
-    const barEdges = new THREE.EdgesGeometry(barGeometry);
-    const barMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.primary),
+    const barGeometry = new this.THREE.CylinderGeometry(barRadius, barRadius, barLength, 12);
+    const barEdges = new this.THREE.EdgesGeometry(barGeometry);
+    const barMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.primary),
       transparent: true,
       opacity: 1
     });
-    const barLines = new THREE.LineSegments(barEdges, barMaterial);
+    const barLines = new this.THREE.LineSegments(barEdges, barMaterial);
     barLines.rotation.z = Math.PI / 2; // Horizontal
     this.centralSphere.add(barLines);
 
     // DISCO IZQUIERDO - Exterior
-    const leftWeightGeometry = new THREE.CylinderGeometry(weightRadius, weightRadius, weightThickness, 16);
-    const leftWeightEdges = new THREE.EdgesGeometry(leftWeightGeometry);
-    const leftWeightMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.primary),
+    const leftWeightGeometry = new this.THREE.CylinderGeometry(weightRadius, weightRadius, weightThickness, 16);
+    const leftWeightEdges = new this.THREE.EdgesGeometry(leftWeightGeometry);
+    const leftWeightMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.primary),
       transparent: true,
       opacity: 1
     });
-    const leftWeight = new THREE.LineSegments(leftWeightEdges, leftWeightMaterial);
+    const leftWeight = new this.THREE.LineSegments(leftWeightEdges, leftWeightMaterial);
     leftWeight.rotation.z = Math.PI / 2;
     leftWeight.position.x = -barLength / 2 + weightThickness / 2;
     this.centralSphere.add(leftWeight);
 
     // DISCO IZQUIERDO - Interior (más pequeño)
-    const leftInnerGeometry = new THREE.CylinderGeometry(innerWeightRadius, innerWeightRadius, weightThickness + 0.1, 16);
-    const leftInnerEdges = new THREE.EdgesGeometry(leftInnerGeometry);
-    const leftInnerMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.secondary),
+    const leftInnerGeometry = new this.THREE.CylinderGeometry(innerWeightRadius, innerWeightRadius, weightThickness + 0.1, 16);
+    const leftInnerEdges = new this.THREE.EdgesGeometry(leftInnerGeometry);
+    const leftInnerMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.secondary),
       transparent: true,
       opacity: 0.7
     });
-    const leftInner = new THREE.LineSegments(leftInnerEdges, leftInnerMaterial);
+    const leftInner = new this.THREE.LineSegments(leftInnerEdges, leftInnerMaterial);
     leftInner.rotation.z = Math.PI / 2;
     leftInner.position.x = -barLength / 2 + weightThickness / 2 - 0.2;
     this.centralSphere.add(leftInner);
 
     // DISCO DERECHO - Exterior
-    const rightWeightGeometry = new THREE.CylinderGeometry(weightRadius, weightRadius, weightThickness, 16);
-    const rightWeightEdges = new THREE.EdgesGeometry(rightWeightGeometry);
-    const rightWeightMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.primary),
+    const rightWeightGeometry = new this.THREE.CylinderGeometry(weightRadius, weightRadius, weightThickness, 16);
+    const rightWeightEdges = new this.THREE.EdgesGeometry(rightWeightGeometry);
+    const rightWeightMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.primary),
       transparent: true,
       opacity: 1
     });
-    const rightWeight = new THREE.LineSegments(rightWeightEdges, rightWeightMaterial);
+    const rightWeight = new this.THREE.LineSegments(rightWeightEdges, rightWeightMaterial);
     rightWeight.rotation.z = Math.PI / 2;
     rightWeight.position.x = barLength / 2 - weightThickness / 2;
     this.centralSphere.add(rightWeight);
 
     // DISCO DERECHO - Interior (más pequeño)
-    const rightInnerGeometry = new THREE.CylinderGeometry(innerWeightRadius, innerWeightRadius, weightThickness + 0.1, 16);
-    const rightInnerEdges = new THREE.EdgesGeometry(rightInnerGeometry);
-    const rightInnerMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.secondary),
+    const rightInnerGeometry = new this.THREE.CylinderGeometry(innerWeightRadius, innerWeightRadius, weightThickness + 0.1, 16);
+    const rightInnerEdges = new this.THREE.EdgesGeometry(rightInnerGeometry);
+    const rightInnerMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.secondary),
       transparent: true,
       opacity: 0.7
     });
-    const rightInner = new THREE.LineSegments(rightInnerEdges, rightInnerMaterial);
+    const rightInner = new this.THREE.LineSegments(rightInnerEdges, rightInnerMaterial);
     rightInner.rotation.z = Math.PI / 2;
     rightInner.position.x = barLength / 2 - weightThickness / 2 + 0.2;
     this.centralSphere.add(rightInner);
 
     // AGARRES / GRIPS en la barra (detalles)
-    const gripGeometry = new THREE.TorusGeometry(barRadius + 0.02, 0.015, 8, 16);
-    const gripMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.accent),
+    const gripGeometry = new this.THREE.TorusGeometry(barRadius + 0.02, 0.015, 8, 16);
+    const gripMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.accent),
       transparent: true,
       opacity: 0.6
     });
 
     // Múltiples anillos de agarre en el centro
     for (let i = -3; i <= 3; i++) {
-      const gripEdges = new THREE.EdgesGeometry(gripGeometry);
-      const grip = new THREE.LineSegments(gripEdges, gripMaterial.clone());
+      const gripEdges = new this.THREE.EdgesGeometry(gripGeometry);
+      const grip = new this.THREE.LineSegments(gripEdges, gripMaterial.clone());
       grip.rotation.y = Math.PI / 2;
       grip.position.x = i * 0.15;
       this.centralSphere.add(grip);
@@ -283,50 +306,50 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
 
     orbits.forEach((orbit, orbitIndex) => {
       // Crear anillo de órbita visible (más sutil)
-      const ringPoints: THREE.Vector3[] = [];
+      const ringPoints: any[] = [];
       for (let i = 0; i <= 64; i++) {
         const angle = (i / 64) * Math.PI * 2;
-        ringPoints.push(new THREE.Vector3(
+        ringPoints.push(new this.THREE.Vector3(
           Math.cos(angle) * orbit.radius,
           orbit.yOffset,
           Math.sin(angle) * orbit.radius
         ));
       }
-      const ringGeometry = new THREE.BufferGeometry().setFromPoints(ringPoints);
-      const ringMaterial = new THREE.LineBasicMaterial({
-        color: new THREE.Color(colors.accent),
+      const ringGeometry = new this.THREE.BufferGeometry().setFromPoints(ringPoints);
+      const ringMaterial = new this.THREE.LineBasicMaterial({
+        color: new this.THREE.Color(colors.accent),
         transparent: true,
         opacity: 0.2
       });
-      const ring = new THREE.Line(ringGeometry, ringMaterial);
+      const ring = new this.THREE.Line(ringGeometry, ringMaterial);
       ring.rotation.x = orbitIndex * 0.15;
       this.scene.add(ring);
 
       // Crear elementos orbitantes - DISCOS DE PESAS
       for (let i = 0; i < orbit.count; i++) {
         const angle = (i / orbit.count) * Math.PI * 2;
-        const group = new THREE.Group();
+        const group = new this.THREE.Group();
 
         // Disco de pesa (cilindro plano) - exterior
-        const discGeometry = new THREE.CylinderGeometry(orbit.size, orbit.size, orbit.size * 0.3, 12);
-        const discEdges = new THREE.EdgesGeometry(discGeometry);
-        const discMaterial = new THREE.LineBasicMaterial({
-          color: new THREE.Color(colors.primary),
+        const discGeometry = new this.THREE.CylinderGeometry(orbit.size, orbit.size, orbit.size * 0.3, 12);
+        const discEdges = new this.THREE.EdgesGeometry(discGeometry);
+        const discMaterial = new this.THREE.LineBasicMaterial({
+          color: new this.THREE.Color(colors.primary),
           transparent: true,
           opacity: 0.8
         });
-        const disc = new THREE.LineSegments(discEdges, discMaterial);
+        const disc = new this.THREE.LineSegments(discEdges, discMaterial);
         group.add(disc);
 
         // Agujero central del disco (torus pequeño)
-        const holeGeometry = new THREE.TorusGeometry(orbit.size * 0.3, orbit.size * 0.05, 6, 12);
-        const holeEdges = new THREE.EdgesGeometry(holeGeometry);
-        const holeMaterial = new THREE.LineBasicMaterial({
-          color: new THREE.Color(colors.secondary),
+        const holeGeometry = new this.THREE.TorusGeometry(orbit.size * 0.3, orbit.size * 0.05, 6, 12);
+        const holeEdges = new this.THREE.EdgesGeometry(holeGeometry);
+        const holeMaterial = new this.THREE.LineBasicMaterial({
+          color: new this.THREE.Color(colors.secondary),
           transparent: true,
           opacity: 0.6
         });
-        const hole = new THREE.LineSegments(holeEdges, holeMaterial);
+        const hole = new this.THREE.LineSegments(holeEdges, holeMaterial);
         hole.rotation.x = Math.PI / 2;
         group.add(hole);
 
@@ -364,18 +387,18 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
       positions[i * 3 + 2] = radius * Math.cos(phi);
     }
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const geometry = new this.THREE.BufferGeometry();
+    geometry.setAttribute('position', new this.THREE.BufferAttribute(positions, 3));
 
-    const material = new THREE.PointsMaterial({
-      color: new THREE.Color(colors.particles),
+    const material = new this.THREE.PointsMaterial({
+      color: new this.THREE.Color(colors.particles),
       size: 0.04,
       transparent: true,
       opacity: 0.6,
       sizeAttenuation: true
     });
 
-    this.particles = new THREE.Points(geometry, material);
+    this.particles = new this.THREE.Points(geometry, material);
     this.scene.add(this.particles);
   }
 
@@ -398,22 +421,22 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
       );
     }
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
+    const geometry = new this.THREE.BufferGeometry();
+    geometry.setAttribute('position', new this.THREE.Float32BufferAttribute(linePositions, 3));
 
-    const material = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.lines),
+    const material = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.lines),
       transparent: true,
       opacity: 0.25
     });
 
-    this.connectionLines = new THREE.LineSegments(geometry, material);
+    this.connectionLines = new this.THREE.LineSegments(geometry, material);
     this.mainGroup.add(this.connectionLines);
   }
 
   private playIntroAnimation(): void {
     // Animación épica de entrada de la estructura central
-    gsap.fromTo(this.centralSphere.scale,
+    this.gsap.fromTo(this.centralSphere.scale,
       { x: 0.5, y: 0.5, z: 0.5 },
       {
         x: 1,
@@ -425,7 +448,7 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
       }
     );
 
-    gsap.to(this.centralSphere.rotation, {
+    this.gsap.to(this.centralSphere.rotation, {
       y: Math.PI * 2,
       duration: 4,
       ease: 'power2.out',
@@ -434,7 +457,7 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
 
     // Animación de elementos orbitantes
     this.orbitingObjects.forEach((obj, index) => {
-      gsap.fromTo(obj.scale,
+      this.gsap.fromTo(obj.scale,
         { x: 0, y: 0, z: 0 },
         {
           x: 1,
@@ -448,8 +471,8 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
     });
 
     // Fade in de partículas
-    if (this.particles.material instanceof THREE.PointsMaterial) {
-      gsap.fromTo(this.particles.material,
+    if (this.particles.material instanceof this.THREE.PointsMaterial) {
+      this.gsap.fromTo(this.particles.material,
         { opacity: 0 },
         {
           opacity: 0.6,
@@ -461,8 +484,8 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
     }
 
     // Fade in de líneas de conexión
-    if (this.connectionLines.material instanceof THREE.LineBasicMaterial) {
-      gsap.fromTo(this.connectionLines.material,
+    if (this.connectionLines.material instanceof this.THREE.LineBasicMaterial) {
+      this.gsap.fromTo(this.connectionLines.material,
         { opacity: 0 },
         {
           opacity: 0.25,
@@ -475,13 +498,15 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
   }
 
   private updateColors(isDark: boolean): void {
+    if (!this.THREE || !this.gsap) return;
+
     const colors = isDark ? this.colors.dark : this.colors.light;
     const duration = 0.5;
 
     // Actualizar estructura central (mancuerna)
-    this.centralSphere?.children.forEach((child) => {
-      if (child instanceof THREE.LineSegments) {
-        const material = child.material as THREE.LineBasicMaterial;
+    this.centralSphere?.children.forEach((child: any) => {
+      if (child instanceof this.THREE.LineSegments) {
+        const material = child.material;
         // Determinar el color basado en la opacidad actual
         let targetColor = colors.primary;
         if (material.opacity < 0.8 && material.opacity >= 0.6) {
@@ -489,10 +514,10 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
         } else if (material.opacity < 0.6) {
           targetColor = colors.accent;
         }
-        gsap.to(material.color, {
-          r: new THREE.Color(targetColor).r,
-          g: new THREE.Color(targetColor).g,
-          b: new THREE.Color(targetColor).b,
+        this.gsap.to(material.color, {
+          r: new this.THREE.Color(targetColor).r,
+          g: new this.THREE.Color(targetColor).g,
+          b: new this.THREE.Color(targetColor).b,
           duration
         });
       }
@@ -500,13 +525,13 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
 
     // Actualizar elementos orbitantes
     this.orbitingObjects.forEach(obj => {
-      obj.children.forEach(child => {
-        if (child instanceof THREE.LineSegments) {
-          const material = child.material as THREE.LineBasicMaterial;
-          gsap.to(material.color, {
-            r: new THREE.Color(colors.primary).r,
-            g: new THREE.Color(colors.primary).g,
-            b: new THREE.Color(colors.primary).b,
+      obj.children.forEach((child: any) => {
+        if (child instanceof this.THREE.LineSegments) {
+          const material = child.material;
+          this.gsap.to(material.color, {
+            r: new this.THREE.Color(colors.primary).r,
+            g: new this.THREE.Color(colors.primary).g,
+            b: new this.THREE.Color(colors.primary).b,
             duration
           });
         }
@@ -514,21 +539,21 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
     });
 
     // Actualizar partículas
-    if (this.particles?.material instanceof THREE.PointsMaterial) {
-      gsap.to(this.particles.material.color, {
-        r: new THREE.Color(colors.particles).r,
-        g: new THREE.Color(colors.particles).g,
-        b: new THREE.Color(colors.particles).b,
+    if (this.particles?.material instanceof this.THREE.PointsMaterial) {
+      this.gsap.to(this.particles.material.color, {
+        r: new this.THREE.Color(colors.particles).r,
+        g: new this.THREE.Color(colors.particles).g,
+        b: new this.THREE.Color(colors.particles).b,
         duration
       });
     }
 
     // Actualizar líneas de conexión
-    if (this.connectionLines?.material instanceof THREE.LineBasicMaterial) {
-      gsap.to(this.connectionLines.material.color, {
-        r: new THREE.Color(colors.lines).r,
-        g: new THREE.Color(colors.lines).g,
-        b: new THREE.Color(colors.lines).b,
+    if (this.connectionLines?.material instanceof this.THREE.LineBasicMaterial) {
+      this.gsap.to(this.connectionLines.material.color, {
+        r: new this.THREE.Color(colors.lines).r,
+        g: new this.THREE.Color(colors.lines).g,
+        b: new this.THREE.Color(colors.lines).b,
         duration
       });
     }
@@ -584,8 +609,8 @@ export class ThreeSceneComponent implements AfterViewInit, OnDestroy {
       obj.position.z = Math.sin(data['orbitAngle']) * data['orbitRadius'];
 
       // Aplicar inclinación de órbita
-      const tiltedY = obj.position.y * Math.cos(data['orbitTilt']) - obj.position.z * Math.sin(data['orbitTilt']);
-      const tiltedZ = obj.position.y * Math.sin(data['orbitTilt']) + obj.position.z * Math.cos(data['orbitTilt']);
+      const _tiltedY = obj.position.y * Math.cos(data['orbitTilt']) - obj.position.z * Math.sin(data['orbitTilt']);
+      const _tiltedZ = obj.position.y * Math.sin(data['orbitTilt']) + obj.position.z * Math.cos(data['orbitTilt']);
       obj.position.y = data['yOffset'] + Math.sin(elapsedTime + data['orbitAngle']) * 0.2;
 
       // Rotación propia

@@ -35,7 +35,7 @@ import { ToastService } from '../../../core/services/toast.service';
  */
 export const exerciseDetailResolver: ResolveFn<EjerciciosDTO | null> = (
   route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
+  _state: RouterStateSnapshot
 ): Observable<EjerciciosDTO | null> => {
   const trainingService = inject(TrainingService);
   const router = inject(Router);

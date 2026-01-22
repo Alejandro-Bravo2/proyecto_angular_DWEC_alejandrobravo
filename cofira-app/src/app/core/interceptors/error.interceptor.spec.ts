@@ -457,6 +457,132 @@ describe('ErrorInterceptor', () => {
     });
   });
 
+  describe('Validation Requests', () => {
+    it('should not show toast for status 0 on username validation request', (done) => {
+      const validationRequest = new HttpRequest('GET', '/api/usuarios/username/test');
+      const errorResponse = new HttpErrorResponse({
+        status: 0,
+        statusText: 'Connection Error',
+      });
+
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(throwError(() => errorResponse));
+
+      TestBed.runInInjectionContext(() => {
+        errorInterceptor(validationRequest, mockNext).subscribe({
+          error: (error) => {
+            expect(toastService.error).not.toHaveBeenCalled();
+            expect(error.message).toBe('No se pudo verificar la disponibilidad. Por favor, intenta de nuevo.');
+            done();
+          },
+        });
+      });
+    });
+
+    it('should not show toast for status 0 on email validation request', (done) => {
+      const validationRequest = new HttpRequest('GET', '/api/usuarios/email/test@test.com');
+      const errorResponse = new HttpErrorResponse({
+        status: 0,
+        statusText: 'Connection Error',
+      });
+
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(throwError(() => errorResponse));
+
+      TestBed.runInInjectionContext(() => {
+        errorInterceptor(validationRequest, mockNext).subscribe({
+          error: (error) => {
+            expect(toastService.error).not.toHaveBeenCalled();
+            expect(error.message).toContain('No se pudo verificar');
+            done();
+          },
+        });
+      });
+    });
+
+    it('should not show toast for status 404 on username validation request', (done) => {
+      const validationRequest = new HttpRequest('GET', '/api/usuarios/username/available');
+      const errorResponse = new HttpErrorResponse({
+        status: 404,
+        statusText: 'Not Found',
+      });
+
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(throwError(() => errorResponse));
+
+      TestBed.runInInjectionContext(() => {
+        errorInterceptor(validationRequest, mockNext).subscribe({
+          error: (error) => {
+            expect(toastService.warning).not.toHaveBeenCalled();
+            expect(toastService.error).not.toHaveBeenCalled();
+            expect(error.message).toBe('Recurso no encontrado');
+            done();
+          },
+        });
+      });
+    });
+
+    it('should not show toast for status 404 on email validation request', (done) => {
+      const validationRequest = new HttpRequest('GET', '/api/usuarios/email/test@domain.com');
+      const errorResponse = new HttpErrorResponse({
+        status: 404,
+        statusText: 'Not Found',
+      });
+
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(throwError(() => errorResponse));
+
+      TestBed.runInInjectionContext(() => {
+        errorInterceptor(validationRequest, mockNext).subscribe({
+          error: (error) => {
+            expect(toastService.warning).not.toHaveBeenCalled();
+            expect(error.message).toBe('Recurso no encontrado');
+            done();
+          },
+        });
+      });
+    });
+  });
+
+  describe('409 - Conflict', () => {
+    it('should not show toast for 409 on logout request', (done) => {
+      const logoutRequest = new HttpRequest('POST', '/api/auth/logout', {});
+      const errorResponse = new HttpErrorResponse({
+        status: 409,
+        statusText: 'Conflict',
+      });
+
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(throwError(() => errorResponse));
+
+      TestBed.runInInjectionContext(() => {
+        errorInterceptor(logoutRequest, mockNext).subscribe({
+          error: (error) => {
+            expect(toastService.error).not.toHaveBeenCalled();
+            expect(toastService.warning).not.toHaveBeenCalled();
+            expect(error.message).toBe('Sesión ya cerrada');
+            done();
+          },
+        });
+      });
+    });
+
+    it('should show error toast for 409 on non-logout request', (done) => {
+      const normalRequest = new HttpRequest('POST', '/api/users', {});
+      const errorResponse = new HttpErrorResponse({
+        status: 409,
+        statusText: 'Conflict',
+      });
+
+      mockNext = jasmine.createSpy('mockNext').and.returnValue(throwError(() => errorResponse));
+
+      TestBed.runInInjectionContext(() => {
+        errorInterceptor(normalRequest, mockNext).subscribe({
+          error: (error) => {
+            expect(toastService.error).toHaveBeenCalledWith('Conflicto: El recurso ya existe o está en uso.');
+            expect(error.message).toBe('Conflicto: El recurso ya existe o está en uso.');
+            done();
+          },
+        });
+      });
+    });
+  });
+
   describe('Request Types', () => {
     it('should handle errors from GET requests', (done) => {
       const getRequest = new HttpRequest('GET', '/api/users');

@@ -35,11 +35,11 @@ import { ToastService } from '../../../core/services/toast.service';
  * ```
  */
 export const nutritionResolver: ResolveFn<AlimentoDTO[]> = (
-  route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
+  _route: ActivatedRouteSnapshot,
+  _state: RouterStateSnapshot
 ): Observable<AlimentoDTO[]> => {
   const nutritionService = inject(NutritionService);
-  const router = inject(Router);
+  const _router = inject(Router);
   const loadingService = inject(LoadingService);
   const toastService = inject(ToastService);
 

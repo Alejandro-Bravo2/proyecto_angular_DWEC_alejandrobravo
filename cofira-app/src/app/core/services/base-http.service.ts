@@ -6,8 +6,8 @@ import { LoadingService } from './loading.service';
 import { environment } from '../../../environments/environment';
 
 export interface HttpOptions {
-  params?: HttpParams | { [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean> };
-  headers?: { [header: string]: string | string[] };
+  params?: HttpParams | Record<string, string | number | boolean | readonly (string | number | boolean)[]>;
+  headers?: Record<string, string | string[]>;
 }
 
 @Injectable({

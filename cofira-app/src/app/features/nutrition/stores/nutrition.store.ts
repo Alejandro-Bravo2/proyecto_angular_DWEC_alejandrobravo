@@ -214,7 +214,7 @@ export class NutritionStore {
   /**
    * Carga los días disponibles y las comidas del usuario
    */
-  load(userId: string): void {
+  load(_userId: string): void {
     this._loading.set(true);
     this._error.set(null);
 
@@ -272,14 +272,14 @@ export class NutritionStore {
   private transformDiaToMeals(dia: any): Meal[] {
     const meals: Meal[] = [];
     const mealTypes = [
-      { key: 'desayuno', type: 'breakfast' as const, label: 'Desayuno' },
-      { key: 'almuerzo', type: 'snack' as const, label: 'Almuerzo' },
-      { key: 'comida', type: 'lunch' as const, label: 'Comida' },
-      { key: 'merienda', type: 'snack' as const, label: 'Merienda' },
-      { key: 'cena', type: 'dinner' as const, label: 'Cena' }
+      { key: 'desayuno', type: 'breakfast' as const, _label: 'Desayuno' },
+      { key: 'almuerzo', type: 'snack' as const, _label: 'Almuerzo' },
+      { key: 'comida', type: 'lunch' as const, _label: 'Comida' },
+      { key: 'merienda', type: 'snack' as const, _label: 'Merienda' },
+      { key: 'cena', type: 'dinner' as const, _label: 'Cena' }
     ];
 
-    mealTypes.forEach(({ key, type, label }) => {
+    mealTypes.forEach(({ key, type, _label }) => {
       const comida = dia[key];
       if (comida && comida.alimentos && comida.alimentos.length > 0) {
         meals.push({

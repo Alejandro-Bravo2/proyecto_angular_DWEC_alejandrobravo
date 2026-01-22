@@ -5,7 +5,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { WeeklyTable } from './components/weekly-table/weekly-table';
 import { FeedbackForm } from './components/feedback-form/feedback-form';
 import { ProgressCard } from './components/progress-card/progress-card';
-import { TrainingService, Exercise, WorkoutProgress } from './services/training.service';
+import { TrainingService, WorkoutProgress } from './services/training.service';
 import { TrainingStore } from './stores/training.store';
 import { EmptyState } from '../../shared/components/ui/empty-state/empty-state';
 import { InfiniteScrollDirective } from '../../shared/directives/infinite-scroll.directive';

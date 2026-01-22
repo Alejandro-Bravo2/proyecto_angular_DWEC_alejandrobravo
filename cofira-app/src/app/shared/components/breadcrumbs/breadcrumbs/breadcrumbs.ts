@@ -30,7 +30,7 @@ export class Breadcrumbs {
 
   private buildBreadcrumbs(
     route: ActivatedRoute,
-    url: string = '',
+    url = '',
     breadcrumbs: Breadcrumb[] = []
   ): Breadcrumb[] {
     const children: ActivatedRoute[] = route.children;
@@ -39,19 +39,17 @@ export class Breadcrumbs {
       return breadcrumbs;
     }
 
-    for (const child of children) {
-      const routeURL: string = child.snapshot.url.map(segment => segment.path).join('/');
-      if (routeURL !== '') {
-        url += `/${routeURL}`;
-      }
-
-      const label = child.snapshot.data['breadcrumb'] || routeURL;
-      if (label && label !== '') { // Only add if a label exists
-        breadcrumbs.push({ label, url });
-      }
-
-      return this.buildBreadcrumbs(child, url, breadcrumbs);
+    const child = children[0];
+    const routeURL: string = child.snapshot.url.map(segment => segment.path).join('/');
+    if (routeURL !== '') {
+      url += `/${routeURL}`;
     }
-    return breadcrumbs;
+
+    const label = child.snapshot.data['breadcrumb'] || routeURL;
+    if (label && label !== '') {
+      breadcrumbs.push({ label, url });
+    }
+
+    return this.buildBreadcrumbs(child, url, breadcrumbs);
   }
 }

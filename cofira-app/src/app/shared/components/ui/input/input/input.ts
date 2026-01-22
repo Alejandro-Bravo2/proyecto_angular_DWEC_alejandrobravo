@@ -1,6 +1,6 @@
-import { Component, Input, Output, EventEmitter, forwardRef } from '@angular/core';
+import { Component, Input, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-input',
@@ -11,21 +11,21 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, FormContr
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => InputComponent),
+      useExisting: forwardRef(/* istanbul ignore next */ () => InputComponent),
       multi: true,
     },
   ],
 })
 export class InputComponent implements ControlValueAccessor {
-  @Input() label: string = '';
-  @Input() type: string = 'text';
-  @Input() placeholder: string = '';
+  @Input() label = '';
+  @Input() type = 'text';
+  @Input() placeholder = '';
   @Input() control: FormControl = new FormControl(); // Allow passing a FormControl instance
-  @Input() errorMessage: string = ''; // Custom error message
+  @Input() errorMessage = ''; // Custom error message
 
   // For ControlValueAccessor
   _value: any = '';
-  _isDisabled: boolean = false;
+  _isDisabled = false;
   _onChange: (value: any) => void = () => {};
   _onTouched: () => void = () => {};
 

@@ -1,4 +1,4 @@
-import { Component, inject, output, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, output, signal, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ProgressService, ProgressEntry } from '../../services/progress.service';
@@ -12,7 +12,7 @@ import { ToastService } from '../../../../core/services/toast.service';
   styleUrl: './add-progress-form.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddProgressForm {
+export class AddProgressForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private progressService = inject(ProgressService);
   private toastService = inject(ToastService);

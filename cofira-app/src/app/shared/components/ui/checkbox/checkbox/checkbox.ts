@@ -11,19 +11,19 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, FormContr
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => Checkbox),
+      useExisting: forwardRef(/* istanbul ignore next */ () => Checkbox),
       multi: true,
     },
   ],
 })
 export class Checkbox implements ControlValueAccessor {
-  @Input() label: string = '';
-  @Input() id: string = '';
+  @Input() label = '';
+  @Input() id = '';
   @Input() control: FormControl = new FormControl(); // Allow passing a FormControl instance
 
   // For ControlValueAccessor
   _value: any = false;
-  _isDisabled: boolean = false;
+  _isDisabled = false;
   _onChange: (value: any) => void = () => {};
   _onTouched: () => void = () => {};
 

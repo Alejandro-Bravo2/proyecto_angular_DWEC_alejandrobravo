@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
@@ -141,7 +141,7 @@ export class TrainingService extends BaseHttpService {
       `${this.aiApiUrl}/generate`,
       request
     ).pipe(
-      tap(response => {
+      tap(_response => {
         this.isGenerating.set(false);
         this.loadWeeklySchedule();
       }),
@@ -245,7 +245,7 @@ export class TrainingService extends BaseHttpService {
     return this.get<EjerciciosDTO>(`ejercicios/${id}`);
   }
 
-  getExercises(userId: string, date?: string): Observable<Exercise[]> {
+  getExercises(_userId: string, date?: string): Observable<Exercise[]> {
     const targetDate = date || new Date().toISOString().split('T')[0];
     const dayOfWeek = this.getDayOfWeekInSpanish(new Date(targetDate));
 
@@ -273,7 +273,7 @@ export class TrainingService extends BaseHttpService {
         // Transform backend exercises to frontend Exercise format
         return diaEjercicio.ejercicios.map(ej => ({
           id: ej.id.toString(),
-          userId: userId,
+          userId: _userId,
           name: ej.nombreEjercicio,
           sets: ej.series,
           reps: `${ej.repeticiones}`,
@@ -362,7 +362,7 @@ export class TrainingService extends BaseHttpService {
     );
   }
 
-  updateExercise(exerciseId: string, data: Partial<Exercise>): Observable<Exercise> {
+  updateExercise(_exerciseId: string, _data: Partial<Exercise>): Observable<Exercise> {
     return of({} as Exercise);
   }
 
@@ -373,10 +373,10 @@ export class TrainingService extends BaseHttpService {
     } as WorkoutFeedback);
   }
 
-  getWorkoutProgress(userId: string): Observable<WorkoutProgress> {
+  getWorkoutProgress(_userId: string): Observable<WorkoutProgress> {
     return this.listarRutinas().pipe(
       map(rutinas => ({
-        userId: userId,
+        userId: _userId,
         totalWorkouts: rutinas.length,
         completedExercises: 0,
         streak: 0,

@@ -77,7 +77,7 @@ export class PasswordStrength {
   /**
    * Calcula la fortaleza de la contraseña
    * @param password - La contraseña a evaluar
-   * @returns Nivel de fortaleza (0-4)
+   * @returns Nivel de fortaleza (0-3)
    */
   private calculateStrength(password: string): number {
     if (!password) return 0;
@@ -93,16 +93,14 @@ export class PasswordStrength {
     if (/\d/.test(password)) score++;
     if (/[^a-zA-Z\d]/.test(password)) score++;
 
-    // Convertir score (0-6) a nivel (0-4)
+    // Convertir score (0-5) a nivel (0-3)
     // 0-1: 0 (ninguna)
-    // 2-3: 1 (débil)
+    // 2-3: 1 (debil)
     // 4: 2 (regular)
-    // 5: 3 (buena)
-    // 6: 4 (fuerte)
+    // 5: 3 (buena/fuerte)
     if (score <= 1) return 0;
     if (score <= 3) return 1;
     if (score === 4) return 2;
-    if (score === 5) return 3;
-    return 4;
+    return 3;
   }
 }

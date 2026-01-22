@@ -44,7 +44,7 @@ export class TooltipDirective implements OnDestroy {
   /**
    * Posición del tooltip relativa al elemento (top, bottom, left, right)
    */
-  tooltipPosition = input<TooltipPosition>('top', { alias: 'tooltipPosition' });
+  tooltipPosition = input<TooltipPosition>('top');
 
   /**
    * Delay en milisegundos antes de mostrar el tooltip (por defecto 300ms)
@@ -216,11 +216,10 @@ export class TooltipDirective implements OnDestroy {
    * Usa Renderer2.setStyle() para aplicar estilos de forma segura.
    */
   private positionTooltip(): void {
-    if (!this.tooltipElement) return;
-
+    // tooltipElement siempre existe cuando se llama desde showTooltip()
     const hostElement = this.elementRef.nativeElement as HTMLElement;
     const hostRect = hostElement.getBoundingClientRect();
-    const tooltipRect = this.tooltipElement.getBoundingClientRect();
+    const tooltipRect = this.tooltipElement!.getBoundingClientRect();
     const position = this.tooltipPosition();
 
     let top = 0;

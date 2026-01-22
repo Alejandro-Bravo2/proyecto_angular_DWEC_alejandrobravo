@@ -10,6 +10,9 @@
     "test:coverage": "ng test --code-coverage --no-watch --browsers=ChromeHeadless",
     "test:watch": "ng test --code-coverage",
     "lint": "ng lint",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:headed": "playwright test --headed",
     "api": "node server.js",
     "api:simple": "json-server --watch db.json --port 3000",
     "dev": "concurrently \"npm run api\" \"npm start\""
@@ -52,6 +55,7 @@
     "@angular/build": "^20.3.12",
     "@angular/cli": "^20.3.12",
     "@angular/compiler-cli": "^20.3.0",
+    "@playwright/test": "^1.57.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/jasmine": "~5.1.0",
     "@types/jsonwebtoken": "^9.0.10",
@@ -65,6 +69,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "playwright": "^1.57.0",
     "typescript": "~5.9.2",
     "typescript-eslint": "8.46.4"
   }

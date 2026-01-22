@@ -1,0 +1,44 @@
+# Netlify configuration for COFIRA Angular SPA
+
+[build]
+  command = "npm run build"
+  publish = "dist/cofira-app/browser"
+
+# SPA routing: redirect all requests to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin", "user"]}
+
+# API proxy (if backend is deployed separately)
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.cofira.example.com/:splat"
+  status = 200
+  force = true
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "no-referrer-when-downgrade"
+
+# Cache static assets
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

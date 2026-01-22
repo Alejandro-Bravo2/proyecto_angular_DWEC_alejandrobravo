@@ -39,8 +39,12 @@
   <meta name="twitter:description" content="Sistema integral de entrenamiento, nutrición y seguimiento de progreso personalizado.">
   <meta name="twitter:image" content="https://cofira.com/assets/images/og-image.jpg">
 
+  <!-- Preconnect para API backend (reduce latencia de conexión) -->
+  <link rel="preconnect" href="http://localhost:3000">
+  <link rel="dns-prefetch" href="http://localhost:3000">
+
   <!-- Preload fuentes críticas (mejora LCP y evita FOIT) -->
-  <link rel="preload" href="/assets/fonts/montserrat/montserrat-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/montserrat/montserrat-400.woff2" as="font" type="font/woff2" crossorigin fetchpriority="high">
   <link rel="preload" href="/assets/fonts/montserrat/montserrat-500.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/montserrat/montserrat-600.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="/assets/fonts/poppins/poppins-600.woff2" as="font" type="font/woff2" crossorigin>

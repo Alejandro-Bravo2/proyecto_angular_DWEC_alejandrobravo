@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormArray, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { OnboardingService } from '../../../services/onboarding.service';
 import { atLeastOneSelectedValidator } from '../../../../../shared/validators/form-array.validators';

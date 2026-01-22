@@ -8,9 +8,12 @@ import {
   effect,
   input
 } from '@angular/core';
-import * as THREE from 'three';
-import gsap from 'gsap';
 import { ThemeService } from '../../../core/services/theme.service';
+
+/**
+ * Tipo para el módulo Three.js cargado dinámicamente
+ */
+type ThreeModule = typeof import('three');
 
 /**
  * Componente de escena 3D para la sección de nutrición.
@@ -45,18 +48,23 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
 
   readonly compact = input(false);
 
-  private renderer!: THREE.WebGLRenderer;
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private mainGroup!: THREE.Group;
-  private appleGroup!: THREE.Group;
-  private bowlGroup!: THREE.Group;
-  private floatingFruits: THREE.Group[] = [];
-  private particles!: THREE.Points;
-  private frameId: number = 0;
-  private mouseX: number = 0;
-  private mouseY: number = 0;
-  private clock = new THREE.Clock();
+  /** Módulo Three.js cargado dinámicamente */
+  private THREE!: ThreeModule;
+  /** Módulo gsap cargado dinámicamente */
+  private gsap: any;
+
+  private renderer: any;
+  private scene: any;
+  private camera: any;
+  private mainGroup: any;
+  private appleGroup: any;
+  private bowlGroup: any;
+  private floatingFruits: any[] = [];
+  private particles: any;
+  private frameId = 0;
+  private mouseX = 0;
+  private mouseY = 0;
+  private clock: any;
   private isInitialized = false;
 
   private boundOnWindowResize = this.onWindowResize.bind(this);
@@ -93,14 +101,24 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Hook AfterViewInit - Inicializa la escena Three.js cuando el canvas está disponible.
-   * @description Verifica que el ViewChild esté inicializado antes de proceder.
+   * @description Usa dynamic imports para cargar Three.js y gsap de forma diferida.
    */
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     // Null check: Verificar que el canvas esté disponible antes de inicializar
     if (!this.canvasRef?.nativeElement) {
       console.error('NutritionSceneComponent: Canvas element not found');
       return;
     }
+
+    // Cargar módulos de forma diferida (lazy loading)
+    const [threeModule, gsapModule] = await Promise.all([
+      import('three'),
+      import('gsap')
+    ]);
+
+    this.THREE = threeModule;
+    this.gsap = gsapModule.default;
+    this.clock = new this.THREE.Clock();
 
     this.initThree();
     this.createApple();
@@ -123,20 +141,24 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
     }
     window.removeEventListener('resize', this.boundOnWindowResize);
     window.removeEventListener('mousemove', this.boundOnMouseMove);
-    gsap.killTweensOf(this.mainGroup?.position);
-    gsap.killTweensOf(this.mainGroup?.rotation);
-    gsap.killTweensOf(this.mainGroup?.scale);
+    if (this.gsap) {
+      this.gsap.killTweensOf(this.mainGroup?.position);
+      this.gsap.killTweensOf(this.mainGroup?.rotation);
+      this.gsap.killTweensOf(this.mainGroup?.scale);
+    }
     this.disposeScene();
   }
 
   private disposeScene(): void {
-    this.scene?.traverse((child) => {
-      if (child instanceof THREE.Mesh || child instanceof THREE.Line || child instanceof THREE.Points || child instanceof THREE.LineSegments) {
+    if (!this.THREE) return;
+
+    this.scene?.traverse((child: any) => {
+      if (child instanceof this.THREE.Mesh || child instanceof this.THREE.Line || child instanceof this.THREE.Points || child instanceof this.THREE.LineSegments) {
         child.geometry?.dispose();
         if (Array.isArray(child.material)) {
-          child.material.forEach(m => m.dispose());
+          child.material.forEach((m: any) => m.dispose());
         } else if (child.material) {
-          (child.material as THREE.Material).dispose();
+          child.material.dispose();
         }
       }
     });
@@ -148,7 +170,7 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
     const width = canvas.parentElement?.clientWidth || window.innerWidth;
     const height = canvas.parentElement?.clientHeight || window.innerHeight;
 
-    this.renderer = new THREE.WebGLRenderer({
+    this.renderer = new this.THREE.WebGLRenderer({
       canvas,
       antialias: true,
       alpha: true,
@@ -158,14 +180,14 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setClearColor(0x000000, 0);
 
-    this.scene = new THREE.Scene();
+    this.scene = new this.THREE.Scene();
 
     const fov = this.compact() ? 60 : 50;
-    this.camera = new THREE.PerspectiveCamera(fov, width / height, 0.1, 1000);
+    this.camera = new this.THREE.PerspectiveCamera(fov, width / height, 0.1, 1000);
     this.camera.position.z = this.compact() ? 6 : 8;
     this.camera.position.y = 0.5;
 
-    this.mainGroup = new THREE.Group();
+    this.mainGroup = new this.THREE.Group();
     this.scene.add(this.mainGroup);
   }
 
@@ -176,10 +198,10 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
 
   private createApple(): void {
     const colors = this.getColors();
-    this.appleGroup = new THREE.Group();
+    this.appleGroup = new this.THREE.Group();
 
     // Apple body using lathe geometry for organic shape
-    const applePoints: THREE.Vector2[] = [];
+    const applePoints: any[] = [];
     for (let i = 0; i <= 20; i++) {
       const t = i / 20;
       const angle = t * Math.PI;
@@ -191,46 +213,46 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
       if (t > 0.85) {
         radius *= 1 - (t - 0.85) * 3; // Taper at bottom
       }
-      applePoints.push(new THREE.Vector2(radius, (t - 0.5) * 1.2));
+      applePoints.push(new this.THREE.Vector2(radius, (t - 0.5) * 1.2));
     }
 
-    const appleGeometry = new THREE.LatheGeometry(applePoints, 16);
-    const appleEdges = new THREE.EdgesGeometry(appleGeometry, 15);
-    const appleMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.primary),
+    const appleGeometry = new this.THREE.LatheGeometry(applePoints, 16);
+    const appleEdges = new this.THREE.EdgesGeometry(appleGeometry, 15);
+    const appleMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.primary),
       transparent: true,
       opacity: 1
     });
-    const apple = new THREE.LineSegments(appleEdges, appleMaterial);
+    const apple = new this.THREE.LineSegments(appleEdges, appleMaterial);
     this.appleGroup.add(apple);
 
     // Apple stem
-    const stemGeometry = new THREE.CylinderGeometry(0.03, 0.05, 0.25, 6);
-    const stemEdges = new THREE.EdgesGeometry(stemGeometry);
-    const stemMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.secondary),
+    const stemGeometry = new this.THREE.CylinderGeometry(0.03, 0.05, 0.25, 6);
+    const stemEdges = new this.THREE.EdgesGeometry(stemGeometry);
+    const stemMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.secondary),
       transparent: true,
       opacity: 0.8
     });
-    const stem = new THREE.LineSegments(stemEdges, stemMaterial);
+    const stem = new this.THREE.LineSegments(stemEdges, stemMaterial);
     stem.position.y = 0.65;
     stem.rotation.z = 0.1;
     this.appleGroup.add(stem);
 
     // Apple leaf
-    const leafShape = new THREE.Shape();
+    const leafShape = new this.THREE.Shape();
     leafShape.moveTo(0, 0);
     leafShape.quadraticCurveTo(0.15, 0.1, 0.3, 0);
     leafShape.quadraticCurveTo(0.15, -0.05, 0, 0);
 
-    const leafGeometry = new THREE.ShapeGeometry(leafShape);
-    const leafEdges = new THREE.EdgesGeometry(leafGeometry);
-    const leafMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.accent),
+    const leafGeometry = new this.THREE.ShapeGeometry(leafShape);
+    const leafEdges = new this.THREE.EdgesGeometry(leafGeometry);
+    const leafMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.accent),
       transparent: true,
       opacity: 0.7
     });
-    const leaf = new THREE.LineSegments(leafEdges, leafMaterial);
+    const leaf = new this.THREE.LineSegments(leafEdges, leafMaterial);
     leaf.position.set(0.05, 0.7, 0);
     leaf.rotation.z = -0.3;
     leaf.rotation.y = 0.5;
@@ -243,37 +265,37 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
 
   private createBowl(): void {
     const colors = this.getColors();
-    this.bowlGroup = new THREE.Group();
+    this.bowlGroup = new this.THREE.Group();
 
     // Bowl using lathe geometry
-    const bowlPoints: THREE.Vector2[] = [];
+    const bowlPoints: any[] = [];
     for (let i = 0; i <= 15; i++) {
       const t = i / 15;
       const radius = 0.3 + t * 0.8;
       const y = t * t * 0.6;
-      bowlPoints.push(new THREE.Vector2(radius, y));
+      bowlPoints.push(new this.THREE.Vector2(radius, y));
     }
 
-    const bowlGeometry = new THREE.LatheGeometry(bowlPoints, 24);
-    const bowlEdges = new THREE.EdgesGeometry(bowlGeometry, 15);
-    const bowlMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.primary),
+    const bowlGeometry = new this.THREE.LatheGeometry(bowlPoints, 24);
+    const bowlEdges = new this.THREE.EdgesGeometry(bowlGeometry, 15);
+    const bowlMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.primary),
       transparent: true,
       opacity: 0.9
     });
-    const bowl = new THREE.LineSegments(bowlEdges, bowlMaterial);
+    const bowl = new this.THREE.LineSegments(bowlEdges, bowlMaterial);
     bowl.position.y = -0.3;
     this.bowlGroup.add(bowl);
 
     // Bowl rim ring
-    const rimGeometry = new THREE.TorusGeometry(1.1, 0.03, 8, 32);
-    const rimEdges = new THREE.EdgesGeometry(rimGeometry);
-    const rimMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.secondary),
+    const rimGeometry = new this.THREE.TorusGeometry(1.1, 0.03, 8, 32);
+    const rimEdges = new this.THREE.EdgesGeometry(rimGeometry);
+    const rimMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.secondary),
       transparent: true,
       opacity: 0.7
     });
-    const rim = new THREE.LineSegments(rimEdges, rimMaterial);
+    const rim = new this.THREE.LineSegments(rimEdges, rimMaterial);
     rim.rotation.x = Math.PI / 2;
     rim.position.y = 0.3;
     this.bowlGroup.add(rim);
@@ -287,15 +309,15 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
     this.mainGroup.add(this.bowlGroup);
   }
 
-  private createSmallFruit(parent: THREE.Group, size: number, pos: { x: number; y: number; z: number }, colors: any): void {
-    const fruitGeometry = new THREE.SphereGeometry(size, 8, 6);
-    const fruitEdges = new THREE.EdgesGeometry(fruitGeometry);
-    const fruitMaterial = new THREE.LineBasicMaterial({
-      color: new THREE.Color(colors.fruit),
+  private createSmallFruit(parent: any, size: number, pos: { x: number; y: number; z: number }, colors: any): void {
+    const fruitGeometry = new this.THREE.SphereGeometry(size, 8, 6);
+    const fruitEdges = new this.THREE.EdgesGeometry(fruitGeometry);
+    const fruitMaterial = new this.THREE.LineBasicMaterial({
+      color: new this.THREE.Color(colors.fruit),
       transparent: true,
       opacity: 0.6
     });
-    const fruit = new THREE.LineSegments(fruitEdges, fruitMaterial);
+    const fruit = new this.THREE.LineSegments(fruitEdges, fruitMaterial);
     fruit.position.set(pos.x, pos.y, pos.z);
     parent.add(fruit);
   }
@@ -312,20 +334,20 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
       { type: 'orange', pos: { x: 2, y: -0.8, z: 0.5 }, size: 0.3 },
     ];
 
-    fruitConfigs.forEach((config, index) => {
-      const fruitGroup = new THREE.Group();
+    fruitConfigs.forEach((config, _index) => {
+      const fruitGroup = new this.THREE.Group();
 
       if (config.type === 'orange' || config.type === 'lemon') {
         // Citrus fruit - sphere with segments
         const segments = config.type === 'lemon' ? 6 : 8;
-        const geometry = new THREE.SphereGeometry(config.size, segments, segments);
-        const edges = new THREE.EdgesGeometry(geometry);
-        const material = new THREE.LineBasicMaterial({
-          color: new THREE.Color(colors.primary),
+        const geometry = new this.THREE.SphereGeometry(config.size, segments, segments);
+        const edges = new this.THREE.EdgesGeometry(geometry);
+        const material = new this.THREE.LineBasicMaterial({
+          color: new this.THREE.Color(colors.primary),
           transparent: true,
           opacity: 0.7
         });
-        const fruit = new THREE.LineSegments(edges, material);
+        const fruit = new this.THREE.LineSegments(edges, material);
 
         // If lemon, scale to make it elliptical
         if (config.type === 'lemon') {
@@ -335,14 +357,14 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
       } else if (config.type === 'grape') {
         // Grape cluster - multiple small spheres
         for (let i = 0; i < 5; i++) {
-          const grapeGeometry = new THREE.SphereGeometry(config.size, 6, 4);
-          const grapeEdges = new THREE.EdgesGeometry(grapeGeometry);
-          const grapeMaterial = new THREE.LineBasicMaterial({
-            color: new THREE.Color(colors.secondary),
+          const grapeGeometry = new this.THREE.SphereGeometry(config.size, 6, 4);
+          const grapeEdges = new this.THREE.EdgesGeometry(grapeGeometry);
+          const grapeMaterial = new this.THREE.LineBasicMaterial({
+            color: new this.THREE.Color(colors.secondary),
             transparent: true,
             opacity: 0.6
           });
-          const grape = new THREE.LineSegments(grapeEdges, grapeMaterial);
+          const grape = new this.THREE.LineSegments(grapeEdges, grapeMaterial);
           grape.position.set(
             (Math.random() - 0.5) * 0.2,
             i * 0.12 - 0.2,
@@ -352,19 +374,19 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
         }
       } else if (config.type === 'banana') {
         // Banana - curved cylinder
-        const curve = new THREE.QuadraticBezierCurve3(
-          new THREE.Vector3(-0.3, 0, 0),
-          new THREE.Vector3(0, 0.15, 0),
-          new THREE.Vector3(0.3, 0, 0)
+        const curve = new this.THREE.QuadraticBezierCurve3(
+          new this.THREE.Vector3(-0.3, 0, 0),
+          new this.THREE.Vector3(0, 0.15, 0),
+          new this.THREE.Vector3(0.3, 0, 0)
         );
-        const bananaGeometry = new THREE.TubeGeometry(curve, 12, 0.08, 6, false);
-        const bananaEdges = new THREE.EdgesGeometry(bananaGeometry);
-        const bananaMaterial = new THREE.LineBasicMaterial({
-          color: new THREE.Color(colors.primary),
+        const bananaGeometry = new this.THREE.TubeGeometry(curve, 12, 0.08, 6, false);
+        const bananaEdges = new this.THREE.EdgesGeometry(bananaGeometry);
+        const bananaMaterial = new this.THREE.LineBasicMaterial({
+          color: new this.THREE.Color(colors.primary),
           transparent: true,
           opacity: 0.7
         });
-        const banana = new THREE.LineSegments(bananaEdges, bananaMaterial);
+        const banana = new this.THREE.LineSegments(bananaEdges, bananaMaterial);
         fruitGroup.add(banana);
       }
 
@@ -396,24 +418,24 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
       positions[i * 3 + 2] = radius * Math.cos(phi);
     }
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const geometry = new this.THREE.BufferGeometry();
+    geometry.setAttribute('position', new this.THREE.BufferAttribute(positions, 3));
 
-    const material = new THREE.PointsMaterial({
-      color: new THREE.Color(colors.particles),
+    const material = new this.THREE.PointsMaterial({
+      color: new this.THREE.Color(colors.particles),
       size: 0.03,
       transparent: true,
       opacity: 0.4,
       sizeAttenuation: true
     });
 
-    this.particles = new THREE.Points(geometry, material);
+    this.particles = new this.THREE.Points(geometry, material);
     this.scene.add(this.particles);
   }
 
   private playIntroAnimation(): void {
     // Apple entrance
-    gsap.fromTo(this.appleGroup.scale,
+    this.gsap.fromTo(this.appleGroup.scale,
       { x: 0, y: 0, z: 0 },
       {
         x: 1.2, y: 1.2, z: 1.2,
@@ -423,7 +445,7 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
       }
     );
 
-    gsap.fromTo(this.appleGroup.rotation,
+    this.gsap.fromTo(this.appleGroup.rotation,
       { y: -Math.PI },
       {
         y: 0,
@@ -434,7 +456,7 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
     );
 
     // Bowl entrance
-    gsap.fromTo(this.bowlGroup.scale,
+    this.gsap.fromTo(this.bowlGroup.scale,
       { x: 0, y: 0, z: 0 },
       {
         x: 1, y: 1, z: 1,
@@ -444,7 +466,7 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
       }
     );
 
-    gsap.fromTo(this.bowlGroup.position,
+    this.gsap.fromTo(this.bowlGroup.position,
       { y: -2 },
       {
         y: -0.5,
@@ -456,7 +478,7 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
 
     // Floating fruits entrance
     this.floatingFruits.forEach((fruit, index) => {
-      gsap.fromTo(fruit.scale,
+      this.gsap.fromTo(fruit.scale,
         { x: 0, y: 0, z: 0 },
         {
           x: 1, y: 1, z: 1,
@@ -468,8 +490,8 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
     });
 
     // Particles fade in
-    if (this.particles.material instanceof THREE.PointsMaterial) {
-      gsap.fromTo(this.particles.material,
+    if (this.particles.material instanceof this.THREE.PointsMaterial) {
+      this.gsap.fromTo(this.particles.material,
         { opacity: 0 },
         {
           opacity: 0.4,
@@ -486,26 +508,26 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
     const duration = 0.5;
 
     // Update apple
-    this.appleGroup?.traverse((child) => {
-      if (child instanceof THREE.LineSegments) {
-        const material = child.material as THREE.LineBasicMaterial;
-        gsap.to(material.color, {
-          r: new THREE.Color(colors.primary).r,
-          g: new THREE.Color(colors.primary).g,
-          b: new THREE.Color(colors.primary).b,
+    this.appleGroup?.traverse((child: any) => {
+      if (child instanceof this.THREE.LineSegments) {
+        const material = child.material as any;
+        this.gsap.to(material.color, {
+          r: new this.THREE.Color(colors.primary).r,
+          g: new this.THREE.Color(colors.primary).g,
+          b: new this.THREE.Color(colors.primary).b,
           duration
         });
       }
     });
 
     // Update bowl
-    this.bowlGroup?.traverse((child) => {
-      if (child instanceof THREE.LineSegments) {
-        const material = child.material as THREE.LineBasicMaterial;
-        gsap.to(material.color, {
-          r: new THREE.Color(colors.primary).r,
-          g: new THREE.Color(colors.primary).g,
-          b: new THREE.Color(colors.primary).b,
+    this.bowlGroup?.traverse((child: any) => {
+      if (child instanceof this.THREE.LineSegments) {
+        const material = child.material as any;
+        this.gsap.to(material.color, {
+          r: new this.THREE.Color(colors.primary).r,
+          g: new this.THREE.Color(colors.primary).g,
+          b: new this.THREE.Color(colors.primary).b,
           duration
         });
       }
@@ -513,13 +535,13 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
 
     // Update floating fruits
     this.floatingFruits.forEach(fruit => {
-      fruit.traverse((child) => {
-        if (child instanceof THREE.LineSegments) {
-          const material = child.material as THREE.LineBasicMaterial;
-          gsap.to(material.color, {
-            r: new THREE.Color(colors.primary).r,
-            g: new THREE.Color(colors.primary).g,
-            b: new THREE.Color(colors.primary).b,
+      fruit.traverse((child: any) => {
+        if (child instanceof this.THREE.LineSegments) {
+          const material = child.material as any;
+          this.gsap.to(material.color, {
+            r: new this.THREE.Color(colors.primary).r,
+            g: new this.THREE.Color(colors.primary).g,
+            b: new this.THREE.Color(colors.primary).b,
             duration
           });
         }
@@ -527,11 +549,11 @@ export class NutritionSceneComponent implements AfterViewInit, OnDestroy {
     });
 
     // Update particles
-    if (this.particles?.material instanceof THREE.PointsMaterial) {
-      gsap.to(this.particles.material.color, {
-        r: new THREE.Color(colors.particles).r,
-        g: new THREE.Color(colors.particles).g,
-        b: new THREE.Color(colors.particles).b,
+    if (this.particles?.material instanceof this.THREE.PointsMaterial) {
+      this.gsap.to(this.particles.material.color, {
+        r: new this.THREE.Color(colors.particles).r,
+        g: new this.THREE.Color(colors.particles).g,
+        b: new this.THREE.Color(colors.particles).b,
         duration
       });
     }

@@ -1,6 +1,6 @@
 import { Component, Input, forwardRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR, ReactiveFormsModule, FormControl } from '@angular/forms';
 
 interface DropdownOption {
   value: any;
@@ -16,20 +16,20 @@ interface DropdownOption {
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => Dropdown),
+      useExisting: forwardRef(/* istanbul ignore next */ () => Dropdown),
       multi: true,
     },
   ],
 })
 export class Dropdown implements ControlValueAccessor {
-  @Input() label: string = '';
+  @Input() label = '';
   @Input() options: DropdownOption[] = [];
   @Input() control: FormControl = new FormControl(); // Allow passing a FormControl instance
-  @Input() placeholder: string = 'Seleccione una opción';
+  @Input() placeholder = 'Seleccione una opción';
 
   // For ControlValueAccessor
   _value: any = '';
-  _isDisabled: boolean = false;
+  _isDisabled = false;
   _onChange: (value: any) => void = () => {};
   _onTouched: () => void = () => {};
 

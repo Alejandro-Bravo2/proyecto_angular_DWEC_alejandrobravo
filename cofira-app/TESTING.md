@@ -28,14 +28,15 @@ Ejecuta los tests en modo interactivo sin coverage.
 
 ## Coverage Actual
 
-**Último reporte:**
+**Último reporte (Enero 2026):**
 
-- **Statements:** 45.1% (401/889)
-- **Branches:** 34.09% (60/176)
-- **Functions:** 30.37% (96/316)
-- **Lines:** 44.98% (377/838)
+- **Statements:** 51.88% (1885/3633)
+- **Branches:** 40.19% (379/943)
+- **Functions:** 51.06% (529/1036)
+- **Lines:** 52.14% (1774/3402)
+- **Total Tests:** 1025 specs
 
-**Estado:** Coverage > 45% alcanzado
+**Estado:** Coverage > 50% alcanzado
 
 ## Estructura de Tests
 

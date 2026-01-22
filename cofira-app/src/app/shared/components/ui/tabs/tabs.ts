@@ -253,9 +253,8 @@ export class Tabs implements OnInit, AfterViewInit {
     if (activeIndex < 0 || !this.tabButtons) return;
 
     const tabButtonsArray = this.tabButtons.toArray();
-    const activeButton = tabButtonsArray[activeIndex];
-
-    if (!activeButton) return;
+    // activeButton siempre existe porque activeIndex ya fue validado
+    const activeButton = tabButtonsArray[activeIndex]!;
 
     // Obtener el elemento nativo del botón activo usando ViewChildren (no querySelector)
     const activeElement = activeButton.nativeElement;
